@@ -7,6 +7,422 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <style>
+    .search-highlight { background-color: #ffeb3b; font-weight: bold; }
+    .fade-enter-active, .fade-leave-active { transition: opacity 0.3s; }
+    .fade-enter, .fade-leave-to { opacity: 0; }
+    .slide-enter-active, .slide-leave-active { transition: transform 0.3s, opacity 0.3s; }
+    .slide-enter, .slide-leave-to { transform: translateY(20px); opacity: 0; }
+    .shadow-card { box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1); }
+    .scrollbar-custom::-webkit-scrollbar { width: 8px; }
+    .scrollbar-custom::-webkit-scrollbar-track { background: #f1f5f9; }
+    .scrollbar-custom::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+    .scrollbar-custom::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+  </style>
+</head>
+<body class="h-full" x-data="saleApp()">
+  <main class="flex-1 p-4 md:p-6">
+    <form method="POST" action="{{ route('sales.store') }}" class="max-w-6xl mx-auto bg-white rounded-2xl shadow-card overflow-hidden">
+      <!-- En-tête -->
+      {{ csrfField() }}
+      <div class="bg-gradient-to-r from-blue-600 to-indigo-700 px-6 py-5">
+        <div class="flex flex-col md:flex-row justify-between items-center">
+          <h1 class="text-2xl md:text-3xl font-bold text-white flex items-center">
+            <i class="fas fa-cart-plus mr-3 text-blue-200"></i>Nouvelle Transaction
+          </h1>
+          <div class="mt-4 md:mt-0 flex space-x-3">
+            <a href="/sales" class="px-4 py-2 bg-white/10 text-white rounded-lg hover:bg-white/20 transition">
+              <i class="fas fa-arrow-left mr-2"></i>Retour
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="p-6">
+        <!-- Barre de recherche -->
+        <div class="mb-8">
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
+              <i class="fas fa-search"></i>
+            </div>
+            <input 
+              type="text" 
+              x-model="searchQuery" 
+              @input="searchProducts()"
+              class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              placeholder="Rechercher un produit par nom ou catégorie..."
+            >
+            <div class="absolute inset-y-0 right-0 flex items-center pr-3">
+              <button 
+                @click="searchQuery = ''; searchResults = []" 
+                class="text-gray-400 hover:text-gray-600"
+                x-show="searchQuery"
+              >
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+          </div>
+          
+          <!-- Résultats de recherche -->
+          <div 
+            class="mt-2 bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden max-h-80 overflow-y-auto scrollbar-custom"
+            x-show="searchResults.length > 0"
+            x-transition:enter="fade-enter"
+            x-transition:enter-start="fade-enter"
+            style="display: none;"
+          >
+            <template x-for="product in searchResults" :key="product.id">
+              <div 
+                class="flex items-center justify-between p-4 border-b border-gray-100 hover:bg-gray-50 cursor-pointer"
+                @click="addToCart(product)"
+              >
+                <div class="flex items-center">
+                  <div class="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl p-2 flex items-center justify-center mr-3">
+                    <i class="fas fa-pills text-blue-500 text-lg"></i>
+                  </div>
+                  <div>
+                    <div class="font-medium text-gray-800" x-text="highlightMatch(product.name)"></div>
+                    <div class="text-sm text-gray-500 mt-1">
+                      {{--  Pour afficher dans les resultats de recherche le nom de la catégorie  --}}
+                      {{--  <span class="bg-gray-100 px-2 py-1 rounded" x-text="'Cat: ' + product.category"></span>  --}}
+                    </div>
+                  </div>
+                </div>
+                <div class="text-right">
+                  <div class="text-lg font-bold text-blue-600" x-text="product.price + ' Fc'"></div>
+                  <div class="text-sm" :class="product.stock < 10 ? 'text-red-600' : 'text-gray-600'">
+                    Stock: <span x-text="product.stock"></span>
+                  </div>
+                </div>
+              </div>
+            </template>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <!-- Section Panier -->
+          <div class="bg-gray-50 rounded-xl p-5 border border-gray-200">
+            <div class="flex justify-between items-center mb-5">
+              <h2 class="text-xl font-bold text-gray-800">
+                <i class="fas fa-shopping-cart mr-2 text-blue-600"></i>Panier
+              </h2>
+              <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full font-medium" 
+                    x-text="'Produits: ' + cart.length"></span>
+            </div>
+            
+            <!-- Liste des produits dans le panier -->
+            <div class="space-y-4 max-h-96 overflow-y-auto scrollbar-custom p-2" x-show="cart.length > 0">
+              <template x-for="(item, index) in cart" :key="item.id">
+                <div 
+                  class="bg-white rounded-xl border border-gray-200 shadow-sm transition-all hover:shadow-md"
+                  x-transition:enter="slide-enter"
+                >
+                  <div class="p-4">
+                    <div class="flex justify-between">
+                      <div>
+                        <div class="font-bold text-gray-800" x-text="item.name"></div>
+                      </div>
+                      <button 
+                        @click="removeFromCart(index)"
+                        class="text-red-500 hover:text-red-700 transition-colors"
+                      >
+                        <i class="fas fa-trash"></i>
+                      </button>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-4 mt-4">
+                      <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Quantité</label>
+                        <div class="flex items-center">
+                          <button 
+                          type="button"
+                            @click="updateQuantity(index, item.quantity - 1)"
+                            :disabled="item.quantity <= 1"
+                            class="bg-gray-200 rounded-l-lg px-3 py-2 text-gray-700 disabled:opacity-50"
+                          >
+                            <i class="fas fa-minus"></i>
+                          </button>
+                          <input 
+                            type="number" 
+                            x-model="item.quantity" 
+                            min="1" 
+                            :max="item.stock"
+                            class="w-full text-center px-2 py-2 border-t border-b border-gray-300"
+                            @change="validateQuantity(index)"
+                          >
+                          <button 
+                          type="button"
+                            @click="updateQuantity(index, item.quantity + 1)"
+                            :disabled="item.quantity >= item.stock"
+                            class="bg-gray-200 rounded-r-lg px-3 py-2 text-gray-700 disabled:opacity-50"
+                          >
+                            <i class="fas fa-plus"></i>
+                          </button>
+                        </div>
+                      </div>
+                      
+                      <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Prix</label>
+                        <div class="flex justify-between items-center">
+                          <span class="text-gray-600" x-text="item.price + ' Fc'"></span>
+                          <span class="font-bold text-blue-600" x-text="calculateItemTotal(item) + ' Fc'"></span>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div class="mt-3 text-sm">
+                      <span class="inline-flex items-center">
+                        <i class="fas fa-box text-gray-400 mr-2"></i>
+                        Stock: <span :class="item.stock < 10 ? 'text-red-600 font-bold' : 'text-gray-600'" 
+                               x-text="item.stock"></span>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </template>
+            </div>
+            
+            <!-- Panier vide -->
+            <div 
+              class="text-center py-10 text-gray-500" 
+              x-show="cart.length === 0"
+              x-transition:enter="fade-enter"
+            >
+              <i class="fas fa-shopping-cart fa-3x mb-4"></i>
+              <p class="text-lg">Votre panier est vide</p>
+              <p class="mt-2">Commencez par rechercher et ajouter des produits</p>
+            </div>
+          </div>
+          
+          <!-- Section Récapitulatif et Paiement -->
+          <div>
+            <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-5 border border-blue-100">
+              <h2 class="text-xl font-bold text-gray-800 mb-5">
+                <i class="fas fa-receipt mr-2 text-blue-600"></i>Récapitulatif
+              </h2>
+     
+                <div class="border-t border-gray-200 pt-3 mt-2">
+                  <div class="flex justify-between text-lg font-bold">
+                    <span>Total:</span>
+                    <span class="text-blue-600" x-text="calculateTotal() + ' Fc'"></span>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Bouton de confirmation -->
+              <div class="mt-8 pt-5 border-t border-gray-200">
+                <button 
+                type="submit" 
+                @click="document.getElementById('venteForm').submit()"
+                  class="w-full bg-gradient-to-r from-blue-600 to-indigo-700 text-white py-3 rounded-lg font-bold hover:from-blue-700 hover:to-indigo-800 transition-all shadow-md"
+                >
+                  <i class="fas fa-check-circle mr-2"></i>Finaliser la vente
+                </button>
+              </div>
+            </div>
+             <!-- Données de la vente -->
+  <input type="hidden" name="nombre_de_produit" :value="cart.length">
+  <input type="hidden" name="prix_total" :value="calculateTotal()">
+
+  <!-- Produits du panier -->
+  <template x-for="(item, index) in cart" :key="item.id">
+    <div>
+      <input type="hidden" :name="'produits['+index+'][id_produit]'" :value="item.id">
+      <input type="hidden" :name="'produits['+index+'][quantite]'" :value="item.quantity">
+      <input type="hidden" :name="'produits['+index+'][prix_unitaire]'" :value="item.price">
+    </div>
+  </template>
+           
+          </div>
+        </div>
+      </div>
+    </form>
+  </main>
+
+  <!-- Notification -->
+  <div 
+    x-show="showNotification" 
+    x-transition:enter="transition ease-out duration-300"
+    x-transition:enter-start="opacity-0 transform translate-y-4"
+    x-transition:enter-end="opacity-100 transform translate-y-0"
+    x-transition:leave="transition ease-in duration-200"
+    x-transition:leave-start="opacity-100 transform translate-y-0"
+    x-transition:leave-end="opacity-0 transform translate-y-4"
+    class="fixed bottom-4 right-4 bg-green-600 text-white px-4 py-3 rounded-lg shadow-lg flex items-center"
+    style="display: none;"
+  >
+    <i class="fas fa-check-circle mr-2"></i>
+    <span x-text="notificationMessage"></span>
+  </div>
+
+  <script>
+    function saleApp() {
+      return {
+        searchQuery: '',
+        searchResults: [],
+        cart: [],
+        discount: 0,
+        paymentMethod: 'cash',
+        showNotification: false,
+        notificationMessage: '',
+        products: [
+         @each(product in products)
+         { id: "{{ product.id }}",
+      name: "{{ product.name }}",
+      price: "{{ product.price }}",
+      stock: "{{ product.quantity }}"
+        
+      },
+         @end
+        ],
+        // [
+        //   { id: 1, name: "Paracétamol 500mg", price: 1500, stock: 45, code: "PARA500", category: "Analgésique" },
+        //   { id: 2, name: "Vitamine C 1000mg", price: 2500, stock: 28, code: "VITC1000", category: "Vitamine" },
+        //   { id: 3, name: "Ibuprofène 400mg", price: 1800, stock: 32, code: "IBU400", category: "Anti-inflammatoire" },
+        //   { id: 4, name: "Omeprazole 20mg", price: 3200, stock: 18, code: "OMP20", category: "Gastrologie" },
+        //   { id: 5, name: "Amoxicilline 500mg", price: 2800, stock: 22, code: "AMOX500", category: "Antibiotique" },
+        //   { id: 6, name: "Loratadine 10mg", price: 2100, stock: 36, code: "LOR10", category: "Antihistaminique" },
+        //   { id: 7, name: "Doliprane 1000mg", price: 1700, stock: 15, code: "DOL1000", category: "Analgésique" },
+        //   { id: 8, name: "Smecta", price: 1200, stock: 42, code: "SMECTA", category: "Digestif" },
+        //   { id: 9, name: "Voltaren Emulgel", price: 4500, stock: 12, code: "VOLTAREN", category: "Anti-inflammatoire" },
+        //   { id: 10, name: "Efferalgan Vit C", price: 3000, stock: 24, code: "EFFERALGAN", category: "Analgésique" }
+        // ],
+        
+        searchProducts() {
+          if (!this.searchQuery) {
+            this.searchResults = [];
+            return;
+          }
+          
+          const query = this.searchQuery.toLowerCase();
+          this.searchResults = this.products.filter(product => 
+            product.name.toLowerCase().includes(query) 
+            // ||
+            // product.category.toLowerCase().includes(query)
+          ).slice(0, 8);
+        },
+        
+        highlightMatch(text) {
+          if (!this.searchQuery) return text;
+          
+          const query = this.searchQuery.toLowerCase();
+          const index = text.toLowerCase().indexOf(query);
+          
+          if (index >= 0) {
+            const before = text.substring(0, index);
+            const match = text.substring(index, index + query.length);
+            const after = text.substring(index + query.length);
+            
+            return `${before}${match}${after}`;
+          }
+          
+          return text;
+        },
+        
+        addToCart(product) {
+          // Vérifier si le produit est déjà dans le panier
+          const existingItem = this.cart.find(item => item.id === product.id);
+          
+          if (existingItem) {
+            // Augmenter la quantité si possible
+            if (existingItem.quantity < existingItem.stock) {
+              existingItem.quantity += 1;
+              this.showNotificationMessage("Quantité augmentée pour " + product.name);
+            } else {
+              this.showNotificationMessage("Stock insuffisant pour " + product.name);
+            }
+          } else {
+            // Ajouter le produit au panier
+            this.cart.push({
+              ...product,
+              quantity: 1
+            });
+            this.showNotificationMessage(product.name + " ajouté au panier");
+          }
+          
+          // Réinitialiser la recherche
+          this.searchQuery = '';
+          this.searchResults = [];
+        },
+        
+        removeFromCart(index) {
+          const productName = this.cart[index].name;
+          this.cart.splice(index, 1);
+          this.showNotificationMessage(productName + " retiré du panier");
+        },
+        
+        updateQuantity(index, newQuantity) {
+          newQuantity = Math.max(1, Math.min(this.cart[index].stock, newQuantity));
+          this.cart[index].quantity = newQuantity;
+        },
+        
+        validateQuantity(index) {
+          if (this.cart[index].quantity < 1) {
+            this.cart[index].quantity = 1;
+          } else if (this.cart[index].quantity > this.cart[index].stock) {
+            this.cart[index].quantity = this.cart[index].stock;
+          }
+        },
+        
+        calculateItemTotal(item) {
+          return item.price * item.quantity;
+        },
+        
+        calculateSubtotal() {
+          return this.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        },
+        
+        calculateDiscountAmount() {
+          return (this.calculateSubtotal() * this.discount) / 100;
+        },
+        
+        calculateTotal() {
+          return this.calculateSubtotal() - this.calculateDiscountAmount();
+        },
+        
+        showNotificationMessage(message) {
+          this.notificationMessage = message;
+          this.showNotification = true;
+          setTimeout(() => {
+            this.showNotification = false;
+          }, 3000);
+        },
+        
+        saveDraft() {
+          this.showNotificationMessage("Brouillon enregistré avec succès");
+        },
+        
+        processSale() {
+          if (this.cart.length === 0) {
+            this.showNotificationMessage("Veuillez ajouter des produits au panier");
+            return;
+          }
+          
+          // Simuler le traitement de la vente
+          this.showNotificationMessage("Vente enregistrée avec succès !");
+          
+          // Réinitialiser le panier après la vente
+          setTimeout(() => {
+            this.cart = [];
+            this.discount = 0;
+          }, 2000);
+        }
+      }
+    }
+  </script>
+</body>
+</html>
+
+
+{{--  <!DOCTYPE html>
+<html lang="fr" class="h-full bg-gray-50">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PharmaManager - Nouvelle Vente</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
 <body class="h-full">
   <main class="flex-1 p-6">
@@ -90,4 +506,4 @@
     });
   </script>
 </body>
-</html>
+</html>  --}}

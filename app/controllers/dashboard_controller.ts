@@ -9,6 +9,13 @@ export default class DashboardController {
       .where('userid', Number(auth.user?.id))
       .limit(5)
 
+       const ventes = await Sale.query()
+          .preload('produits', (query) => {
+            query.preload('product') // si tu veux aussi les infos du produit lié
+          })
+          .orderBy('created_at', 'desc').where('userid', Number(auth.user?.id))
+      
+
     const saleS = recentSales.map((sale) => {
       return {
         date: sale.createdAt.plus({ hours: 2 }).toFormat('dd/MM/yyyy HH:mm'),
@@ -50,6 +57,7 @@ export default class DashboardController {
       sales: SALE,
       auth,
       saleS,
+      ventes
     })
   }
 }

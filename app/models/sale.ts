@@ -1,6 +1,7 @@
 import { DateTime } from 'luxon'
-import { BaseModel, column, belongsTo,  } from '@adonisjs/lucid/orm'
+import { BaseModel, column, belongsTo, hasMany,  } from '@adonisjs/lucid/orm'
 import Product from '#models/product'
+import ProduitDeVente from '#models/produit_de_vente'
 import * as relations  from '@adonisjs/lucid/types/relations'
 
 export default class Sale extends BaseModel {
@@ -10,8 +11,11 @@ export default class Sale extends BaseModel {
   @column()
   declare productId: number
 
+  // @column()
+  // declare quantitySold: number
+
   @column()
-  declare quantitySold: number
+  declare nombreDeProduit: number 
 
   @column()
   declare totalPrice: number
@@ -19,8 +23,12 @@ export default class Sale extends BaseModel {
   @column()
   declare userid: number
 
-  @column()
-  declare paymentMethod: string
+  // @column()
+  // declare paymentMethod: string
+
+  @hasMany(() => ProduitDeVente, { foreignKey: 'idSale', localKey: 'id' })
+  declare produits: relations.HasMany<typeof ProduitDeVente>
+
 
   @belongsTo(() => Product)
   declare product: relations.BelongsTo<typeof Product>

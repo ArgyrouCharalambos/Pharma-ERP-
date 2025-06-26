@@ -141,46 +141,132 @@
         });
       </script>
       
-      <!-- Dernières Ventes -->
-      <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
-        <div class="p-6 border-b border-gray-100">
-          <h2 class="text-xl font-bold text-gray-800">Transactions Récentes</h2>
-        </div>
-        <div class="overflow-x-auto">
-          <table class="min-w-full divide-y divide-gray-200">
-            <thead class="bg-blue-50">
-              <tr>
-                <th class="px-6 py-3 text-left text-sm font-semibold text-blue-600 uppercase">Produit</th>
-                <th class="px-6 py-3 text-left text-sm font-semibold text-blue-600 uppercase">Quantité</th>
-                <th class="px-6 py-3 text-left text-sm font-semibold text-blue-600 uppercase">Prix</th>
-                <th class="px-6 py-3 text-left text-sm font-semibold text-blue-600 uppercase">Date</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-200">
-              @each(sale in sales)
-              <tr class="hover:bg-blue-50 transition-colors">
-                <td class="px-6 py-4">
-                  <div class="flex items-center">
-                    <div class="flex-shrink-0 h-10 w-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                      <i class="fas fa-pills text-blue-600"></i>
-                    </div>
-                    <div class="ml-4">
-                      <div class="font-medium text-gray-800">{{ sale.product.name }}</div>
-                    </div>
-                  </div>
-                </td>
-                <td class="px-6 py-4">{{ sale.quantitySold }}</td>
-                <td class="px-6 py-4 font-medium">{{ sale.totalPrice }} Fc</td>
-                
-                <td class="px-6 py-4">{{ sale.createdAt.plus({ hours: 2 }).toFormat('dd/MM/yyyy HH:mm') }}</td>
-              </tr>
-              @endeach
-            </tbody>
-          </table>
+    <!-- Liste des Ventes -->
+    <div class="bg-white rounded-2xl shadow-card overflow-hidden">
+      <div class="p-5 border-b border-gray-200 flex flex-col md:flex-row justify-between items-start md:items-center">
+        <h2 class="text-xl font-bold text-gray-800">Historique des Transactions</h2>
+        <div class="flex items-center space-x-3 mt-3 md:mt-0">
+          <button class="flex items-center text-gray-600 hover:text-blue-600">
+            <i class="fas fa-file-export mr-2"></i> Exporter
+          </button>
+          <div class="relative">
+            <button class="flex items-center text-gray-600 hover:text-blue-600">
+              <i class="fas fa-filter mr-2"></i> Filtrer
+            </button>
+          </div>
         </div>
       </div>
-    </main>
-    <!-- Footer avec déconnexion -->
+      
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-blue-50">
+            <tr>
+              <th class="px-6 py-4 text-left text-sm font-semibold text-blue-600 uppercase">Date & Heure</th>
+              <th class="px-6 py-4 text-left text-sm font-semibold text-blue-600 uppercase">Nombre de Produit</th>
+              <th class="px-6 py-4 text-left text-sm font-semibold text-blue-600 uppercase">Montant</th>
+              <th class="px-6 py-4 text-left text-sm font-semibold text-blue-600 uppercase w-32">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-200">
+            <!-- Vente 1 -->
+            
+      @each(sale in sales)
+            <tr class="hover:bg-blue-50 transition-colors">
+              <td class="px-6 py-4">
+                <div class="flex items-center">
+                  <i class="fas fa-clock text-gray-400 mr-2"></i>
+                  <span>
+            {{ sale.createdAt.plus({ hours: 2 }).toFormat('dd/MM/yyyy HH:mm') }}
+
+                  </span>
+                </div>
+              </td>
+              <td class="px-6 py-4 font-semibold text-green-600">{{sale.nombreDeProduit}} Pcs </td>
+             
+              <td class="px-6 py-4 font-semibold text-green-600">{{sale.totalPrice}} Fc </td>
+             
+              <td class="px-6 py-4">
+                <button 
+                  @click="expandedSaleId = expandedSaleId === {{sale.id}} ? null : {{sale.id}}"
+                  class="text-blue-600 hover:text-blue-800 flex items-center"
+                >
+                  <i class="fas" :class="expandedSaleId === {{sale.id}} ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+                  <span class="ml-2">Détails</span>
+                </button>
+              </td>
+            </tr>
+            
+            <!-- Détails de la vente 1 -->
+            <tr x-show="expandedSaleId === {{sale.id}}" x-transition:enter="slide-enter" x-transition:leave="slide-enter">
+              <td colspan="6" class="px-6 py-4 bg-blue-50">
+                <div class="ml-10">
+                  <h3 class="font-bold text-gray-800 mb-4 flex items-center">
+                    <i class="fas fa-list mr-2 text-blue-600"></i> Produits vendus
+                  </h3>
+                  
+                  <div class="bg-white rounded-lg border border-gray-200 overflow-hidden">
+                    <table class="min-w-full divide-y divide-gray-200">
+                      <thead class="bg-gray-50">
+                        <tr>
+                          <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Produit</th>
+                          <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Quantité</th>
+                          <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Prix Unitaire</th>
+                          <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Total</th>
+                        </tr>
+                      </thead>
+                      <tbody class="divide-y divide-gray-200">
+                        @each(item in sale.produits)               
+                        <tr>
+                          <td class="px-4 py-3">
+                            <div class="flex items-center">
+                              <div class="bg-blue-100 rounded-lg p-2 mr-3">
+                                <i class="fas fa-pills text-blue-600"></i>
+                              </div>
+                              <div>
+                                <div class="font-medium">{{item.product?.name}}</div>
+                              </div>
+                            </div>
+                          </td>
+                          <td class="px-4 py-3">{{item.quantity}}</td>
+                          <td class="px-4 py-3">{{item.prixUnitaire}} Fc</td>
+                          <td class="px-4 py-3 font-medium">{{item.quantity * item.prixUnitaire}} </td>
+                        </tr>
+                        @end
+                       
+                       
+                      </tbody>
+                    </table>
+                  </div>
+                 </div>
+                </div>
+              </td>
+            </tr>
+
+            @end
+
+          </tbody>
+        </table>
+      </div>
+      
+      <!-- Pagination -->
+      <div class="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
+        <div class="text-sm text-gray-700">
+          Affichage de <span class="font-medium">1</span> à <span class="font-medium">3</span> sur <span class="font-medium">42</span> ventes
+        </div>
+        <div class="flex space-x-2">
+          <button class="px-3 py-1 rounded-md border border-gray-300 text-gray-600 hover:bg-gray-100">
+            <i class="fas fa-chevron-left"></i>
+          </button>
+          <button class="px-3 py-1 rounded-md bg-blue-600 text-white">1</button>
+          <button class="px-3 py-1 rounded-md border border-gray-300 text-gray-600 hover:bg-gray-100">2</button>
+          <button class="px-3 py-1 rounded-md border border-gray-300 text-gray-600 hover:bg-gray-100">3</button>
+          <button class="px-3 py-1 rounded-md border border-gray-300 text-gray-600 hover:bg-gray-100">
+            <i class="fas fa-chevron-right"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+           <!-- Footer avec déconnexion -->
 <footer class="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-6 mt-10">
   <div class="container mx-auto px-4">
     <div class="flex flex-col md:flex-row justify-between items-center">
@@ -215,6 +301,10 @@
     </div>
   </div>
 </footer>
+      </div>
+      
+    </main>
+ 
   </div>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
