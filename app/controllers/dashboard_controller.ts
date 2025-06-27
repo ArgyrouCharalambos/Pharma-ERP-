@@ -1,4 +1,3 @@
-import Product from '#models/product'
 import Sale from '#models/sale'
 import type { HttpContext } from '@adonisjs/core/http'
 import { DateTime } from 'luxon'
@@ -10,12 +9,12 @@ export default class DashboardController {
       .where('userid', Number(auth.user?.id))
       .limit(5)
 
-       const ventes = await Sale.query()
-          .preload('produits', (query) => {
-            query.preload('product') // si tu veux aussi les infos du produit lié
-          })
-          .orderBy('created_at', 'desc').where('userid', Number(auth.user?.id))
-      
+    const ventes = await Sale.query()
+      .preload('produits', (query) => {
+        query.preload('product') // si tu veux aussi les infos du produit lié
+      })
+      .orderBy('created_at', 'desc')
+      .where('userid', Number(auth.user?.id))
 
     const saleS = recentSales.map((sale) => {
       return {
@@ -23,55 +22,54 @@ export default class DashboardController {
         amount: Number(sale.totalPrice),
       }
     })
+    const now = DateTime.now()
+    const startOfMonth = now.startOf('month').toJSDate()
+    const endOfMonth = now.endOf('month').toJSDate()
 
-    const total =
-      (
-        await Product.query()
-          .sum('quantity as total')
-          .where('userid', Number(auth.user?.id))
-          .first()
-      )?.$extras.total || 0
-    const vente =
+    const rawTotal =
       (
         await Sale.query()
           .sum('total_price as total')
           .where('userid', Number(auth.user?.id))
+          .whereBetween('created_at', [startOfMonth, endOfMonth])
           .first()
       )?.$extras.total || 0
-    // const alt =
-    //   (
-    //     await Product.query()
-    //       .where('alert_expired', true)
-    //       .where('userid', Number(auth.user?.id))
-    //       .count('* as total')
-    //   )[0]?.$extras.total || 0
+
     const SALE = await Sale.query()
       .orderBy('created_at', 'desc')
       .where('userid', Number(auth.user?.id))
       .limit(5)
       .preload('product')
 
-      const critiqueResult = await Product.query().where('userid',Number(auth.user?.id)).where('quantity', '<', 10).count('* as total')
-          const Critique = critiqueResult[0]?.$extras.total || 0
-          const Expire =
-            (
-              await Product.query()
-                .where('userid',Number(auth.user?.id))
-                .where('expiration_date', '<', DateTime.now().toSQLDate())
-                .count('* as total')
-            )[0]?.$extras.total || 0
+    const startOfYear = now.startOf('year').toJSDate()
+    const endOfYear = now.endOf('year').toJSDate()
 
-            let alt = (Number(Critique) + Number(Expire))
+    const venteAnnee =
+      (
+        await Sale.query()
+          .sum('total_price as total')
+          .where('userid', Number(auth.user?.id))
+          .whereBetween('created_at', [startOfYear, endOfYear])
+          .first()
+      )?.$extras.total || 0
 
+    const venteJour = await Sale.query()
+      .where('userid', auth.user!.id)
+      .whereBetween('created_at', [
+        DateTime.now().startOf('day').toJSDate(),
+        DateTime.now().endOf('day').toJSDate(),
+      ])
+      .sum('total_price as total')
+      .then((result) => Number(result[0]?.$extras.total || 0))
 
     return view.render('dashboard', {
-      totalStock: total,
-      venteMois: vente,
-      Alerte: alt,
+      totalStock: venteJour,
+      venteMois: rawTotal,
+      Alerte: venteAnnee,
       sales: SALE,
       auth,
       saleS,
-      ventes
+      ventes,
     })
   }
 }

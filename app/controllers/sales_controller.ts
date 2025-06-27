@@ -48,12 +48,12 @@ export default class SalesController {
 
       // 2. Créer les produits associés à cette vente
       for (const produit of produits) {
-        const produit_de_vente  = await ProduitDeVente.create({
+         await ProduitDeVente.create({
           idSale: vente.id,
           userid:auth.user?.id,
           idProduct: produit.id_produit,
           quantity: produit.quantite,
-          prixUnitaire: Math.round(produit.prix_unitaire * 100)
+          prixUnitaire: produit.prix_unitaire
         })
        
       }
@@ -63,24 +63,6 @@ export default class SalesController {
     return response.redirect('/sales')
       
     }
-    // const { product_name, quantity_sold } = request.only(['product_name', 'quantity_sold'])
-
-    // const product = await Product.findByOrFail('name', product_name)
-    // if (product.quantity < quantity_sold) {
-    //   throw new Error('Stock insuffisant')
-    // }
-
-    // const totalPrice = product.price * quantity_sold
-    // await Sale.create({
-    //   productId: product.id,
-    //   quantitySold: quantity_sold,
-    //   totalPrice: totalPrice,
-    //   paymentMethod: 'cash',
-    //   userid: auth.user?.id,
-    // })
-
-    // product.quantity -= quantity_sold
-    // await product.save()
 
   public async stats({}: HttpContext) {
   }
