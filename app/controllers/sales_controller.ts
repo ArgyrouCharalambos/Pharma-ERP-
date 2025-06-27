@@ -53,7 +53,7 @@ export default class SalesController {
           userid:auth.user?.id,
           idProduct: produit.id_produit,
           quantity: produit.quantite,
-          prixUnitaire: produit.prix_unitaire
+          prixUnitaire: parseFloat(produit.prix_unitaire) 
         })
        
       }

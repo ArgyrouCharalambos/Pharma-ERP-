@@ -5,27 +5,47 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>PharmaManager - Alertes</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body class="h-full" x-data="{ sidebarOpen: true }">
-  <!-- Structure header/sidebar similaire -->
-
-<div class="h-full flex flex-col transition-all duration-300" :class="sidebarOpen ? 'ml-64' : 'ml-0'">
-
-  
-  <header class="bg-white shadow-sm">
-    <div class="flex items-center justify-between px-6 py-4">
-      <div class="flex items-center space-x-4">
-        
-        <div class="flex items-center space-x-2">
+ <div class="fixed inset-y-0 z-40 w-[200px] bg-gradient-to-b from-blue-800 to-blue-900 shadow-2xl transform transition-transform duration-300"
+ :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'">
+<div class="p-6 border-b border-blue-700">
+<h1 class="text-lg font-bold text-white flex items-center">
+  <i class="fas fa-clinic-medical "></i>PharmaManager
+</h1>
+</div>
+<nav class="p-4 space-y-2">
+<a href="/" class="flex items-center p-3 text-white/90 hover:bg-blue-700/20 rounded-lg transition-all">
+  <i class="fas fa-chart-pie mr-3"></i> Dashboard
+</a>
+<a href="/products" class="flex items-center p-3 text-white/90 hover:bg-blue-700/20 rounded-lg transition-all">
+  <i class="fas fa-pills mr-3"></i> Produits
+</a>
+<a href="/sales" class="flex items-center p-3 text-white/90 hover:bg-blue-700/20 rounded-lg transition-all">
+  <i class="fas fa-receipt mr-3"></i> Ventes
+</a>
+</nav>
+</div>
+<div class="h-full flex flex-col transition-all duration-300" :class="sidebarOpen ? 'ml-48' : 'ml-0'">
+<!-- Header -->
+<header class="bg-white shadow-sm">
+<div class="flex items-center justify-between px-6 py-4">
+  <button @click="sidebarOpen = !sidebarOpen" class="text-blue-600 hover:text-blue-800">
+    <i class="fas fa-bars text-xl"></i>
+  </button>
+  <div class="flex items-center space-x-4">
+    
+    <div class="flex items-center space-x-2">
+      
+      <span class="text-gray-700 font-medium p-3 pt-2 text-white font-bold text-center bg-blue-600 w-10 h-10 rounded-[50%] ">{{(auth.user?.fullName).charAt(0)}} </span>
           
-          <span class="text-gray-700 font-medium p-3 pt-2 text-white font-bold text-center bg-blue-600 w-10 h-10 rounded-[50%] ">{{(auth.user?.fullName).charAt(0)}} </span>
-              
-          <span class="text-gray-700 font-medium">{{auth.user?.fullName}} </span>
-        </div>
-      </div>
+      <span class="text-gray-700 font-medium">{{auth.user?.fullName}} </span>
     </div>
-  </header>
+  </div>
+</div>
+</header>
   <main class="flex-1 p-6">
     <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-8">
       <h1 class="text-2xl font-bold text-gray-800 flex items-center">
