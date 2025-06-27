@@ -49,10 +49,7 @@
           <div class="flex justify-between items-start">
             <div>
               <h3 class="font-bold text-red-800">{{ product.name }}</h3>
-              <p class="text-sm text-red-600">Expiré depuis {{ product.expirationDate.diffNow('days').days * -1 }} jours</p>
-              <div class="mt-2">
-                <p class="text-gray-600">Stock restant: {{ product.quantity }}</p>
-              </div>
+              <p class="text-sm text-red-600">Expiré depuis {{ (product.expirationDate.diffNow('days').days * -1).toFixed(0) }} jours</p>
             </div>
             <form action="{{ route('products.destroy', [product.id]) }}?_method=DELETE" method="POST">
         {{ csrfField() }}
