@@ -9,7 +9,28 @@ export default class ProductsController {
       .orderBy(sortBy, 'asc')
       .where('userid', Number(auth.user?.id))
     const products = await Product.findManyBy('userid', auth.user?.id)
-    return view.render('products/index', { products, PRODUCT, auth })
+
+     const total =
+          (
+            await Product.query()
+              .sum('quantity as total')
+              .where('userid', Number(auth.user?.id))
+              .first()
+          )?.$extras.total || 0
+
+     const critiqueResult = await Product.query().where('userid',Number(auth.user?.id)).where('quantity', '<', 10).count('* as total')
+              const Critique = critiqueResult[0]?.$extras.total || 0
+              const Expire =
+                (
+                  await Product.query()
+                    .where('userid',Number(auth.user?.id))
+                    .where('expiration_date', '<', DateTime.now().toSQLDate())
+                    .count('* as total')
+                )[0]?.$extras.total || 0
+    
+                let alt = (Number(Critique) + Number(Expire))
+
+    return view.render('products/index', { totalStock: total,products, PRODUCT, auth,Alerte:alt })
   }
 
   public async create({ view }: HttpContext) {

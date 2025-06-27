@@ -49,6 +49,39 @@
     </header>
   <main class="flex-1 p-6">
     
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+      <!-- Carte Statistique 1 -->
+      <div class="bg-white rounded-2xl shadow-xl p-6 border-t-4 border-blue-600">
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="text-xl font-bold text-gray-800 mb-2">Stock Total</h2>
+            <div class="text-4xl font-bold text-blue-600">
+              {{ totalStock }}
+            </div>
+          </div>
+          <i class="fas fa-capsules text-4xl text-blue-100"></i>
+        </div>
+      </div>
+
+      <!-- Carte Statistique 3 -->
+      <a href="/products/alerts" class="bg-white rounded-2xl shadow-xl p-6 border-t-4 border-purple-600">
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="text-xl font-bold text-gray-800 mb-2">Alertes Actives</h2>
+            <div class="text-4xl font-bold text-purple-600">
+              {{ Alerte }}
+            </div>
+          </div>
+          <span>
+            @if(Alerte)
+            <i class="fas fa-exclamation-triangle text-4xl text-red-600"></i>
+            @else
+          <i class="fas fa-exclamation-triangle text-4xl text-purple-100"></i>
+          @endif
+          </span>
+        </div>
+      </a>
+    </div>
     <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-8">
       <h1 class="text-2xl font-bold text-gray-800 flex items-center">
         <i class="fas fa-pills mr-3 text-blue-600"></i>Gestion des Médicaments
