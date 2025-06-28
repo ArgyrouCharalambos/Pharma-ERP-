@@ -103,6 +103,62 @@ export default class DashboardController {
       const PanierMoyenMonth = rawTotal / transactionMonth;
 
 
+      const Panier = await Sale.query().where("userid",Number(auth.user?.id))
+      .whereBetween('created_at',  [
+        DateTime.now().startOf('day').toJSDate(),
+        DateTime.now().endOf('day').toJSDate(),
+      ])
+
+      let panierMaxDay = -Infinity;
+      let panierMinDay = Infinity;
+
+      Panier.forEach(e => {
+      let price = Number(e.totalPrice)
+
+        if(panierMaxDay < price){
+          panierMaxDay = e.totalPrice;
+        }
+        if(panierMinDay > price){
+          panierMinDay = e.totalPrice;
+        }
+      });
+
+      const PanierWeek = await Sale.query().where("userid",Number(auth.user?.id))
+      .whereBetween('created_at', [startOfWeek, endOfWeek])
+
+
+      let panierMaxWeek = -Infinity;
+      let panierMinWeek = Infinity;
+
+      PanierWeek.forEach(e => {
+      let price = Number(e.totalPrice)
+
+        if(panierMaxWeek < price){
+          panierMaxWeek = e.totalPrice;
+        }
+        if(panierMinWeek > price){
+          panierMinWeek = e.totalPrice;
+        }
+      });
+
+      const PanierMonth = await Sale.query().where("userid",Number(auth.user?.id))
+      .whereBetween('created_at', [startOfMonth, endOfMonth])
+
+      
+      let panierMaxMonth = -Infinity;
+      let panierMinMonth = Infinity;
+
+      PanierMonth.forEach(e => {
+      let price = Number(e.totalPrice)
+
+        if(panierMaxMonth < price){
+          panierMaxMonth = e.totalPrice;
+        }
+        if(panierMinMonth > price){
+          panierMinMonth = e.totalPrice;
+        }
+      });
+
     return view.render('dashboard', {
       venteJour,
       venteMois: rawTotal,
@@ -116,7 +172,13 @@ export default class DashboardController {
       transactionMonth,
       PanierMoyenDay,
       PanierMoyenWeek,
-      PanierMoyenMonth
+      PanierMoyenMonth,
+      panierMaxDay,
+      panierMinDay,
+      panierMaxWeek,
+      panierMinWeek,
+      panierMaxMonth,
+      panierMinMonth
     })
   }
 }
