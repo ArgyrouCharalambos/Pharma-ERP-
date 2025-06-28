@@ -436,7 +436,7 @@
             <main class="flex-1 overflow-y-auto p-6 bg-gray-50">
                 <!-- Daily Report -->
                 <div id="dailyContent" class="tab-content active">
-                    <h2 class="text-2xl font-bold text-dark mb-6">Rapport Journalier <span class="text-primary">- 29 juin 2023</span></h2>
+                    <h2 class="text-2xl font-bold text-dark mb-6">Rapport Journalier du <span class="text-primary" id="dateDisplay">29 juin 2023</span></h2>
                     
                     <!-- Stats Cards -->
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
@@ -1145,7 +1145,9 @@
             // Set current date
             const now = new Date();
             const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-            document.getElementById('dateDisplay').textContent = now.toLocaleDateString('fr-FR', options);
+            document.querySelectorAll('#dateDisplay').forEach(e => {
+              e.textContent = now.toLocaleDateString('fr-FR', options);
+            }); 
         });
     </script>
 </body>
