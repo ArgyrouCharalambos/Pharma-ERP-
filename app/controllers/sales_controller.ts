@@ -34,28 +34,34 @@ export default class SalesController {
 
   public async store({ request, response ,auth}: HttpContext) {
 
-    const produits = request.input('produits') // C’est un tableau d’objets : produits[0][...] etc.
+    const produits = request.input('produits') 
     const prixTotal = request.input('prix_total')
     const nombreDeProduit = request.input('nombre_de_produit')
 
 
-      // 1. Créer la vente
-      const vente = await Sale.create({
-        nombreDeProduit: nombreDeProduit,
-        totalPrice: prixTotal,
-        userid:auth.user?.id
-      })
-
-      // 2. Créer les produits associés à cette vente
-      for (const produit of produits) {
-         await ProduitDeVente.create({
-          idSale: vente.id,
-          userid:auth.user?.id,
-          idProduct: produit.id_produit,
-          quantity: produit.quantite,
-          prixUnitaire: parseFloat(produit.prix_unitaire) 
+      // Créer la vente
+      if(produits && prixTotal && nombreDeProduit){
+        const vente = await Sale.create({
+          nombreDeProduit: nombreDeProduit,
+          totalPrice: prixTotal,
+          userid:auth.user?.id
         })
-       
+  
+        // Créer les produits associés à cette vente
+        for (const produit of produits) {
+          const produitSelection = await Product.findOrFail(produit.id_produit);
+          produitSelection.quantity -= produit.quantite;
+          produitSelection.save();
+
+           await ProduitDeVente.create({
+            idSale: vente.id,
+            userid:auth.user?.id,
+            idProduct: produit.id_produit,
+            quantity: produit.quantite,
+            prixUnitaire: parseFloat(produit.prix_unitaire) 
+          })
+         
+        }
       }
    
 
