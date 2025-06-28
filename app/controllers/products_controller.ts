@@ -4,7 +4,7 @@ import { DateTime } from 'luxon'
 
 export default class ProductsController {
   public async index({ view, request, auth }: HttpContext) {
-    const sortBy = request.input('sortBy', 'id') // Default to 'id' if not provided
+    const sortBy = request.input('sortBy', 'id') 
     const PRODUCT = await Product.query()
       .orderBy(sortBy, 'asc')
       .where('userid', Number(auth.user?.id))
@@ -30,7 +30,17 @@ export default class ProductsController {
     
                 let alt = (Number(Critique) + Number(Expire))
 
-    return view.render('products/index', { totalStock: total,products, PRODUCT, auth,Alerte:alt })
+                const Total = Product.findManyBy('userid', auth.user?.id)
+
+                let valeurTotalDuStock = 0;
+                
+                (await Total).forEach(e => {
+                  valeurTotalDuStock = valeurTotalDuStock + (e.quantity * e.price);
+
+                });
+
+
+    return view.render('products/index', { totalStock: total,products, PRODUCT, auth,Alerte:alt ,valeurTotalDuStock})
   }
 
   public async create({ view }: HttpContext) {

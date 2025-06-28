@@ -8,7 +8,7 @@ export default class SalesController {
 
     const sales = await Sale.query()
     .preload('produits', (query) => {
-      query.preload('product') // si tu veux aussi les infos du produit lié
+      query.preload('product') 
     })
     .orderBy('created_at', 'desc').where('userid', Number(auth.user?.id))
 
