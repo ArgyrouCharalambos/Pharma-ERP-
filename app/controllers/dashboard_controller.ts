@@ -7,7 +7,7 @@ export default class DashboardController {
     const recentSales = await Sale.query()
       .orderBy('created_at', 'desc')
       .where('userid', Number(auth.user?.id))
-      .limit(5)
+      .limit(10)
 
     const ventes = await Sale.query()
       .preload('produits', (query) => {
@@ -40,7 +40,7 @@ export default class DashboardController {
             query.preload('product') 
           })
           .orderBy('created_at', 'desc').where('userid', Number(auth.user?.id))
-          .limit(5);
+          .limit(10);
       
           SALE.forEach(e => {
             console.log(e.produits)
