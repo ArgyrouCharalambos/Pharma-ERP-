@@ -35,18 +35,17 @@ export default class DashboardController {
           .first()
       )?.$extras.total || 0
 
-       const SALE = await Sale.query() 
-          .preload('produits', (query) => {
-            query.preload('product') 
-          })
-          .orderBy('created_at', 'desc').where('userid', Number(auth.user?.id))
-          .limit(5);
-      
-          SALE.forEach(e => {
-            console.log(e.produits)
-      
-            
-          })
+    const SALE = await Sale.query()
+      .preload('produits', (query) => {
+        query.preload('product')
+      })
+      .orderBy('created_at', 'desc')
+      .where('userid', Number(auth.user?.id))
+      .limit(5)
+
+    SALE.forEach((e) => {
+      console.log(e.produits)
+    })
 
     const startOfWeek = now.startOf('week').toJSDate()
     const endOfWeek = now.endOf('week').toJSDate()
@@ -64,22 +63,24 @@ export default class DashboardController {
       .where('userid', Number(auth.user?.id))
       .whereBetween('created_at', [
         DateTime.now().startOf('day').toJSDate(),
-        DateTime.now().endOf('day').toJSDate()
+        DateTime.now().endOf('day').toJSDate(),
       ])
       .sum('total_price as total')
       .then((result) => Number(result[0]?.$extras.total || 0))
 
-      const transactionDay =
+    const transactionDay =
       (
         await Sale.query()
           .count('* as total')
           .where('userid', Number(auth.user?.id))
-          .whereBetween('created_at', [DateTime.now().startOf('day').toJSDate(),  DateTime.now().endOf('day').toJSDate()])
+          .whereBetween('created_at', [
+            DateTime.now().startOf('day').toJSDate(),
+            DateTime.now().endOf('day').toJSDate(),
+          ])
           .first()
       )?.$extras.total || 0
 
-
-      const transactionWeek =
+    const transactionWeek =
       (
         await Sale.query()
           .count('* as total')
@@ -88,7 +89,7 @@ export default class DashboardController {
           .first()
       )?.$extras.total || 0
 
-      const transactionMonth =
+    const transactionMonth =
       (
         await Sale.query()
           .count('* as total')
@@ -97,15 +98,25 @@ export default class DashboardController {
           .first()
       )?.$extras.total || 0
 
+      const PanierMoyenDay = venteJour / transactionDay;
+      const PanierMoyenWeek = venteWeek / transactionWeek;
+      const PanierMoyenMonth = rawTotal / transactionMonth;
+
+
     return view.render('dashboard', {
-       venteJour,
+      venteJour,
       venteMois: rawTotal,
       venteWeek,
       sales: SALE,
       auth,
       saleS,
       ventes,
-      transactionDay , transactionWeek , transactionMonth
+      transactionDay,
+      transactionWeek,
+      transactionMonth,
+      PanierMoyenDay,
+      PanierMoyenWeek,
+      PanierMoyenMonth
     })
   }
 }
