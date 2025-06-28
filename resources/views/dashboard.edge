@@ -10,7 +10,10 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 </head>
-<body class="h-full" x-data="{ sidebarOpen: true }">
+<body class="h-full" x-data="{ 
+  sidebarOpen: true,
+  expandedSaleId: null 
+}">
   <!-- Sidebar -->
   <div class="fixed inset-y-0 z-40 w-[200px] bg-gradient-to-b from-blue-800 to-blue-900 shadow-2xl transform transition-transform duration-300"
        :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'">
@@ -231,7 +234,7 @@
                           </td>
                           <td class="px-4 py-3">{{item.quantity}}</td>
                           <td class="px-4 py-3">{{item.prixUnitaire}} Fc</td>
-                          <td class="px-4 py-3 font-medium">{{item.quantity * item.prixUnitaire}} </td>
+                          <td class="px-4 py-3 font-medium">{{item.quantity * item.prixUnitaire}} Fc</td>
                         </tr>
                         @end
                        

@@ -35,11 +35,18 @@ export default class DashboardController {
           .first()
       )?.$extras.total || 0
 
-    const SALE = await Sale.query()
-      .orderBy('created_at', 'desc')
-      .where('userid', Number(auth.user?.id))
-      .limit(5)
-      .preload('product')
+       const SALE = await Sale.query() 
+          .preload('produits', (query) => {
+            query.preload('product') 
+          })
+          .orderBy('created_at', 'desc').where('userid', Number(auth.user?.id))
+          .limit(5);
+      
+          SALE.forEach(e => {
+            console.log(e.produits)
+      
+            
+          })
 
     const startOfYear = now.startOf('year').toJSDate()
     const endOfYear = now.endOf('year').toJSDate()
