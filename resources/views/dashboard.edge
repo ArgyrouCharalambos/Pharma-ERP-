@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+{{--  <!DOCTYPE html>
 <html lang="fr" class="h-full bg-gradient-to-br from-gray-50 to-blue-50">
 <head>
   <meta charset="UTF-8">
@@ -282,5 +282,871 @@
   </div>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</body>
+</html>  --}}
+
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tableau de Bord - Rapport de Ventes</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1e40af',
+                        secondary: '#3b82f6',
+                        accent: '#60a5fa',
+                        light: '#dbeafe',
+                        dark: '#1e3a8a'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #f0f9ff;
+        }
+        
+        .dashboard-card {
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(30, 64, 175, 0.1);
+        }
+        
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px rgba(30, 64, 175, 0.2);
+        }
+        
+        .tab-active {
+            border-bottom: 3px solid #1e40af;
+            color: #1e40af;
+            font-weight: 600;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #dbeafe 0%, #eff6ff 100%);
+            border-left: 4px solid #1e40af;
+        }
+        
+        .progress-bar {
+            background: linear-gradient(90deg, #3b82f6, #60a5fa);
+            height: 8px;
+            border-radius: 4px;
+        }
+        
+        .sale-item:hover {
+            background-color: #eff6ff;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .time-period-btn {
+            transition: all 0.2s ease;
+        }
+        
+        .time-period-btn:hover {
+            background-color: #3b82f6;
+            color: white;
+        }
+        
+        .time-period-btn.active {
+            background-color: #1e40af;
+            color: white;
+        }
+    </style>
+</head>
+<body class="bg-gray-50" x-data="{ 
+  expandedSaleId: null 
+}">
+    <div class="flex min-h-screen">
+       <!-- Sidebar -->
+  <div class=" z-40 w-[200px] bg-gradient-to-b from-blue-800 to-blue-900 shadow-2xl transform transition-transform duration-300"
+  :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'">
+<div class="p-6 border-b border-blue-700">
+ <h1 class="text-md font-bold text-white flex items-center">
+   <i class="fas fa-clinic-medical"></i>PharmaManager
+ </h1>
+</div>
+<nav class="p-4 space-y-2">
+ <a href="/" class="flex items-center p-3 text-white/90 hover:bg-blue-700/20 rounded-lg transition-all">
+   <i class="fas fa-chart-pie mr-3"></i> Dashboard
+ </a>
+ <a href="/products" class="flex items-center p-3 text-white/90 hover:bg-blue-700/20 rounded-lg transition-all">
+   <i class="fas fa-pills mr-3"></i> Produits
+ </a>
+ <a href="/sales" class="flex items-center p-3 text-white/90 hover:bg-blue-700/20 rounded-lg transition-all">
+   <i class="fas fa-receipt mr-3"></i> Ventes
+ </a>
+</nav>
+</div>
+        
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+        
+            <!-- Header -->
+            <header class="bg-white border-b border-gray-200">
+                <div class="flex justify-between items-center py-4 px-6">
+                    <div class="flex items-center">
+                        <h2 class="text-xl font-semibold text-dark">Rapport de Ventes</h2>
+                        <div class="ml-6 flex space-x-1">
+                            <button id="dailyBtn" class="time-period-btn px-4 py-1 rounded-lg bg-primary text-white font-medium">Journalier</button>
+                            <button id="weeklyBtn" class="time-period-btn px-4 py-1 rounded-lg bg-light text-primary font-medium">Hebdomadaire</button>
+                            <button id="monthlyBtn" class="time-period-btn px-4 py-1 rounded-lg bg-light text-primary font-medium">Mensuel</button>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center space-x-4">
+                        <div class="relative">
+                            <input type="text" placeholder="Rechercher..." class="pl-10 pr-4 py-2 bg-light rounded-lg focus:outline-none focus:ring-2 focus:ring-accent">
+                            <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                        </div>
+                        <div class="flex items-center bg-light rounded-lg px-3 py-1">
+                            <i class="fas fa-calendar-alt text-primary mr-2"></i>
+                            <span id="dateDisplay" class="text-primary">29 juin 2023</span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            
+            <!-- Tab Content Container -->
+            <main class="flex-1 overflow-y-auto p-6 bg-gray-50">
+                <!-- Daily Report -->
+                <div id="dailyContent" class="tab-content active">
+                    <h2 class="text-2xl font-bold text-dark mb-6">Rapport Journalier <span class="text-primary">- 29 juin 2023</span></h2>
+                    
+                    <!-- Stats Cards -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+                        <div class="dashboard-card stat-card p-6 rounded-xl">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <p class="text-gray-500">Chiffre d'Affaires</p>
+                                    <p class="text-2xl font-bold mt-2">{{ venteJour }} Fc</p>
+                                    <p class="text-green-500 mt-1"><i class="fas fa-arrow-up mr-1"></i> 8.7%</p>
+                                </div>
+                                <div class="p-3 rounded-lg bg-blue-100 text-primary">
+                                  <p class="text-2xl font-bold">Fc</p>
+                                </div>
+                            </div>
+                            
+                        </div>
+                        
+                        <div class="dashboard-card stat-card p-6 rounded-xl">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <p class="text-gray-500">Transactions</p>
+                                    <p class="text-2xl font-bold mt-2"> {{  transactionDay }} </p>
+                                    <p class="text-green-500 mt-1"><i class="fas fa-arrow-up mr-1"></i> 6.2%</p>
+                                </div>
+                                <div class="p-3 rounded-lg bg-blue-100 text-primary">
+                                    <i class="fas fa-shopping-cart text-xl"></i>
+                                </div>
+                            </div>
+                           
+                        </div>
+                        
+                           
+                        
+                        <div class="dashboard-card stat-card p-6 rounded-xl">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <p class="text-gray-500">Panier Moyen</p>
+                                    <p class="text-2xl font-bold mt-2">131.56 Fc</p>
+                                    <p class="text-green-500 mt-1"><i class="fas fa-arrow-up mr-1"></i> 2.3%</p>
+                                </div>
+                                <div class="p-3 rounded-lg bg-blue-100 text-primary">
+                                    <i class="fas fa-shopping-basket text-xl"></i>
+                                </div>
+                            </div>
+                            <div class="mt-4">
+                                <div class="flex justify-between text-sm">
+                                    <span>Max: 450.00 Fc</span>
+                                    <span>Min: 25.99 Fc</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Charts Section -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+                        <!-- Hourly Sales Chart -->
+                        <div class="lg:col-span-2">
+                            <div class="dashboard-card bg-white p-6 rounded-xl">
+                                <div class="flex justify-between items-center mb-6">
+                                    <h3 class="text-lg font-semibold text-dark">Ventes par Heure</h3>
+                                    <div class="flex space-x-2">
+                                        <button class="px-3 py-1 bg-light rounded-lg text-primary">Hier</button>
+                                        <button class="px-3 py-1 bg-primary text-white rounded-lg">Aujourd'hui</button>
+                                    </div>
+                                </div>
+                                <div class="h-80">
+                                    <canvas id="hourlyChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Performance Summary -->
+                        <div>
+                            <div class="dashboard-card bg-white p-6 rounded-xl h-full">
+                                <h3 class="text-lg font-semibold text-dark mb-6">Performance du Jour</h3>
+                                <div class="mt-8">
+                                    <h4 class="font-medium mb-3">Top Produit</h4>
+                                    <div class="space-y-3">
+                                        <div class="flex items-center">
+                                            <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center mr-3">
+                                                <i class="fas fa-user text-primary"></i>
+                                            </div>
+                                            <span class="flex-1">Paracetamol</span>
+                                            <span class="font-medium">100.500 Fc</span>
+                                        </div>
+                                        <div class="flex items-center">
+                                            <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center mr-3">
+                                                <i class="fas fa-user text-primary"></i>
+                                            </div>
+                                            <span class="flex-1">Doliprame</span>
+                                            <span class="font-medium">90.000 Fc</span>
+                                        </div>
+                                        <div class="flex items-center">
+                                            <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center mr-3">
+                                                <i class="fas fa-user text-primary"></i>
+                                            </div>
+                                            <span class="flex-1">Power Plus</span>
+                                            <span class="font-medium">65.000 Fc</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Liste des Ventes -->
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-blue-50">
+            <tr>
+              <th class="px-6 py-4 text-left text-sm font-semibold text-blue-600 uppercase">Date & Heure</th>
+              <th class="px-6 py-4 text-left text-sm font-semibold text-blue-600 uppercase">Nombre de Produit</th>
+              <th class="px-6 py-4 text-left text-sm font-semibold text-blue-600 uppercase">Montant</th>
+              <th class="px-6 py-4 text-left text-sm font-semibold text-blue-600 uppercase w-32">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-200">
+            <!-- Vente 1 -->
+            
+      @each(sale in sales)
+            <tr class="hover:bg-blue-50 bg-white transition-colors">
+              <td class="px-6 py-4">
+                <div class="flex items-center">
+                  <i class="fas fa-clock text-gray-400 mr-2"></i>
+                  <span>
+            {{ sale.createdAt.plus({ hours: 2 }).toFormat('dd/MM/yyyy HH:mm') }}
+
+                  </span>
+                </div>
+              </td>
+              <td class="px-6 py-4 font-semibold text-green-600">{{sale.nombreDeProduit}} Pcs </td>
+             
+              <td class="px-6 py-4 font-semibold text-green-600">{{Number(sale.totalPrice).toFixed(0)}} Fc </td>
+             
+              <td class="px-6 py-4">
+                <button 
+                  @click="expandedSaleId = expandedSaleId === {{sale.id}} ? null : {{sale.id}}"
+                  class="text-blue-600 hover:text-blue-800 flex items-center"
+                >
+                  <i class="fas" :class="expandedSaleId === {{sale.id}} ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+                  <span class="ml-2">Détails</span>
+                </button>
+              </td>
+            </tr>
+            
+            <!-- Détails de la vente 1 -->
+            <tr x-show="expandedSaleId === {{sale.id}}" x-transition:enter="slide-enter" x-transition:leave="slide-enter">
+              <td colspan="6" class="px-6 py-4 bg-blue-50">
+                <div class="ml-10">
+                  <h3 class="font-bold text-gray-800 mb-4 flex items-center">
+                 Produits vendus
+                  </h3>
+                  
+                  <div class="bg-white rounded-lg border border-gray-200 overflow-hidden">
+                    <table class="min-w-full divide-y divide-gray-200">
+                      <thead class="bg-gray-50">
+                        <tr>
+                          <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Produit</th>
+                          <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Quantité</th>
+                          <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Prix Unitaire</th>
+                          <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Total</th>
+                        </tr>
+                      </thead>
+                      <tbody class="divide-y divide-gray-200">
+                        @each(item in sale.produits)               
+                        <tr>
+                          <td class="px-4 py-3">
+                            <div class="flex items-center">
+                              <div class="bg-blue-100 rounded-lg p-2 mr-3">
+                                <i class="fas fa-pills text-blue-600"></i>
+                              </div>
+                              <div>
+                                <div class="font-medium">{{item.product?.name}}</div>
+                              </div>
+                            </div>
+                          </td>
+                          <td class="px-4 py-3">{{item.quantity}}</td>
+                          <td class="px-4 py-3">{{item.prixUnitaire}} Fc</td>
+                          <td class="px-4 py-3 font-medium">{{item.quantity * item.prixUnitaire}} Fc</td>
+                        </tr>
+                        @end
+                       
+                       
+                      </tbody>
+                    </table>
+                  </div>
+                 </div>
+                </div>
+              </td>
+            </tr>
+
+            @end
+
+          </tbody>
+        </table>
+                   
+                    
+                    <!-- Time Navigation -->
+                    <div class="mt-4 bg-white rounded-xl p-6 dashboard-card">
+                        <h3 class="text-lg font-semibold text-dark mb-4">Naviguer dans le Temps</h3>
+                        <div class="flex flex-wrap gap-4">
+                            <button class="px-4 py-2 bg-primary text-white rounded-lg flex items-center">
+                                <i class="fas fa-arrow-left mr-2"></i> Hier
+                            </button>
+                            <button class="px-4 py-2 bg-light text-primary rounded-lg">Aujourd'hui</button>
+                            <button class="px-4 py-2 bg-light text-primary rounded-lg flex items-center">
+                                Demain <i class="fas fa-arrow-right ml-2"></i>
+                            </button>
+                            
+                            <div class="ml-auto flex items-center">
+                                <span class="mr-3">Sélectionner une date:</span>
+                                <div class="relative">
+                                    <input type="date" class="pl-4 pr-8 py-2 bg-light rounded-lg focus:outline-none focus:ring-2 focus:ring-accent">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Weekly Report -->
+                <div id="weeklyContent" class="tab-content">
+                    <h2 class="text-2xl font-bold text-dark mb-6">Rapport Hebdomadaire <span class="text-primary">- Semaine 26 (26 juin - 2 juillet 2023)</span></h2>
+                    
+                    <!-- Stats Cards -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+                        <div class="dashboard-card stat-card p-6 rounded-xl">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <p class="text-gray-500">Chiffre d'Affaires</p>
+                                    <p class="text-2xl font-bold mt-2">{{ Number(venteWeek).toFixed(0)}} Fc</p>
+                                    <p class="text-green-500 mt-1"><i class="fas fa-arrow-up mr-1"></i> 10.2%</p>
+                                </div>
+                                <div class="p-3 rounded-lg bg-blue-100 text-primary">
+                                  <p class="text-2xl font-bold">Fc</p>
+                                </div>
+                            </div>
+                          
+                        </div>
+                        
+                        <div class="dashboard-card stat-card p-6 rounded-xl">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <p class="text-gray-500">Transactions</p>
+                                    <p class="text-2xl font-bold mt-2">{{transactionWeek }} </p>
+                                    <p class="text-green-500 mt-1"><i class="fas fa-arrow-up mr-1"></i> 7.5%</p>
+                                </div>
+                                <div class="p-3 rounded-lg bg-blue-100 text-primary">
+                                    <i class="fas fa-shopping-cart text-xl"></i>
+                                </div>
+                            </div>
+                           
+                        </div>
+                        
+                   
+                        
+                        <div class="dashboard-card stat-card p-6 rounded-xl">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <p class="text-gray-500">Panier Moyen</p>
+                                    <p class="text-2xl font-bold mt-2">130.64 Fc</p>
+                                    <p class="text-green-500 mt-1"><i class="fas fa-arrow-up mr-1"></i> 1.8%</p>
+                                </div>
+                                <div class="p-3 rounded-lg bg-blue-100 text-primary">
+                                    <i class="fas fa-shopping-basket text-xl"></i>
+                                </div>
+                            </div>
+                            <div class="mt-4">
+                                <div class="flex justify-between text-sm">
+                                    <span>Max: 1,299 Fc</span>
+                                    <span>Min: 19.99 Fc</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Charts Section -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+                        <!-- Daily Sales Chart -->
+                        <div class="lg:col-span-2">
+                            <div class="dashboard-card bg-white p-6 rounded-xl">
+                                <div class="flex justify-between items-center mb-6">
+                                    <h3 class="text-lg font-semibold text-dark">Ventes par Jour</h3>
+                                    <div class="flex space-x-2">
+                                        <button class="px-3 py-1 bg-light rounded-lg text-primary">Semaine dernière</button>
+                                        <button class="px-3 py-1 bg-primary text-white rounded-lg">Cette semaine</button>
+                                    </div>
+                                </div>
+                                <div class="h-80">
+                                    <canvas id="weeklyChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Weekly Summary -->
+                        <div>
+                            <div class="dashboard-card bg-white p-6 rounded-xl h-full">
+                                <h3 class="text-lg font-semibold text-dark mb-6">Résumé Hebdomadaire</h3>
+                                
+                                <div class="mb-6">
+                                    <h4 class="font-medium mb-3">Meilleurs jours</h4>
+                                    <div class="space-y-3">
+                                        <div class="flex items-center justify-between">
+                                            <span>Jeudi</span>
+                                            <span class="font-medium">8,420 Fc</span>
+                                        </div>
+                                        <div class="flex items-center justify-between">
+                                            <span>Vendredi</span>
+                                            <span class="font-medium">7,980 Fc</span>
+                                        </div>
+                                        <div class="flex items-center justify-between">
+                                            <span>Mercredi</span>
+                                            <span class="font-medium">7,150 Fc</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-6">
+                                    <h4 class="font-medium mb-3">Top catégories</h4>
+                                    <div class="space-y-3">
+                                        <div class="flex items-center">
+                                            <div class="w-3 h-3 bg-primary rounded-full mr-2"></div>
+                                            <span class="flex-1">Anti-fangique</span>
+                                            <span class="font-medium">18,560 Fc</span>
+                                        </div>
+                                        <div class="flex items-center">
+                                            <div class="w-3 h-3 bg-secondary rounded-full mr-2"></div>
+                                            <span class="flex-1">Comprimé</span>
+                                            <span class="font-medium">9,420 Fc</span>
+                                        </div>
+                                        <div class="flex items-center">
+                                            <div class="w-3 h-3 bg-accent rounded-full mr-2"></div>
+                                            <span class="flex-1">Anti-bacterie</span>
+                                            <span class="font-medium">7,850 Fc</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Time Navigation -->
+                    <div class="mt-4 bg-white rounded-xl p-6 dashboard-card">
+                        <h3 class="text-lg font-semibold text-dark mb-4">Naviguer dans les Semaines</h3>
+                        <div class="flex flex-wrap gap-4">
+                            <button class="px-4 py-2 bg-primary text-white rounded-lg flex items-center">
+                                <i class="fas fa-arrow-left mr-2"></i> Semaine dernière
+                            </button>
+                            <button class="px-4 py-2 bg-light text-primary rounded-lg">Cette semaine</button>
+                            <button class="px-4 py-2 bg-light text-primary rounded-lg flex items-center">
+                                Semaine prochaine <i class="fas fa-arrow-right ml-2"></i>
+                            </button>
+                            
+                            <div class="ml-auto flex items-center">
+                                <span class="mr-3">Sélectionner une semaine:</span>
+                                <div class="relative">
+                                    <input type="week" class="pl-4 pr-8 py-2 bg-light rounded-lg focus:outline-none focus:ring-2 focus:ring-accent">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Monthly Report -->
+                <div id="monthlyContent" class="tab-content">
+                    <h2 class="text-2xl font-bold text-dark mb-6">Rapport Mensuel <span class="text-primary">- Juin 2023</span></h2>
+                    
+                    <!-- Stats Cards -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+                        <div class="dashboard-card stat-card p-6 rounded-xl">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <p class="text-gray-500">Chiffre d'Affaires</p>
+                                    <p class="text-2xl font-bold mt-2"> {{ Number(venteMois).toFixed(0) }} Fc</p>
+                                    <p class="text-green-500 mt-1"><i class="fas fa-arrow-up mr-1"></i> 8.4%</p>
+                                </div>
+                                <div class="p-3 rounded-lg bg-blue-100 text-primary">
+                                    <p class="text-2xl font-bold">Fc</p>
+                                </div>
+                            </div>
+                            
+                        </div>
+                        
+                        <div class="dashboard-card stat-card p-6 rounded-xl">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <p class="text-gray-500">Transactions</p>
+                                    <p class="text-2xl font-bold mt-2"> {{ transactionMonth}} </p>
+                                    <p class="text-green-500 mt-1"><i class="fas fa-arrow-up mr-1"></i> 5.3%</p>
+                                </div>
+                                <div class="p-3 rounded-lg bg-blue-100 text-primary">
+                                    <i class="fas fa-shopping-cart text-xl"></i>
+                                </div>
+                            </div>
+                            
+                        </div>
+                        
+                                             
+                        <div class="dashboard-card stat-card p-6 rounded-xl">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <p class="text-gray-500">Panier Moyen</p>
+                                    <p class="text-2xl font-bold mt-2">122.15 Fc</p>
+                                    <p class="text-green-500 mt-1"><i class="fas fa-arrow-up mr-1"></i> 1.2%</p>
+                                </div>
+                                <div class="p-3 rounded-lg bg-blue-100 text-primary">
+                                    <i class="fas fa-shopping-basket text-xl"></i>
+                                </div>
+                            </div>
+                            <div class="mt-4">
+                                <div class="flex justify-between text-sm">
+                                    <span>Max: 1,499 Fc</span>
+                                    <span>Min: 15.99 Fc</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Charts Section -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+                        <!-- Monthly Sales Chart -->
+                        <div class="lg:col-span-2">
+                            <div class="dashboard-card bg-white p-6 rounded-xl">
+                                <div class="flex justify-between items-center mb-6">
+                                    <h3 class="text-lg font-semibold text-dark">Évolution Mensuelle</h3>
+                                    <div class="flex space-x-2">
+                                        <button class="px-3 py-1 bg-light rounded-lg text-primary">Mai 2023</button>
+                                        <button class="px-3 py-1 bg-primary text-white rounded-lg">Juin 2023</button>
+                                        <button class="px-3 py-1 bg-light rounded-lg text-primary">Année</button>
+                                    </div>
+                                </div>
+                                <div class="h-80">
+                                    <canvas id="monthlyChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Monthly Summary -->
+                        <div>
+                            <div class="dashboard-card bg-white p-6 rounded-xl h-full">
+                                <h3 class="text-lg font-semibold text-dark mb-6">Résumé Mensuel</h3>
+                                
+                                <div class="mb-6">
+                                    <h4 class="font-medium mb-3">Comparaison mensuelle</h4>
+                                    <div class="space-y-4">
+                                        <div class="flex justify-between">
+                                            <span>Chiffre d'affaires</span>
+                                            <div>
+                                                <span class="font-medium">156,820 Fc</span>
+                                                <span class="text-green-500 ml-2">+8.4%</span>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="flex justify-between">
+                                            <span>Panier moyen</span>
+                                            <div>
+                                                <span class="font-medium">122.15 Fc</span>
+                                                <span class="text-green-500 ml-2">+1.2%</span>
+                                            </div>
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Time Navigation -->
+                    <div class="mt-4 bg-white rounded-xl p-6 dashboard-card">
+                        <h3 class="text-lg font-semibold text-dark mb-4">Naviguer dans les Mois</h3>
+                        <div class="flex flex-wrap gap-4">
+                            <button class="px-4 py-2 bg-primary text-white rounded-lg flex items-center">
+                                <i class="fas fa-arrow-left mr-2"></i> Mai 2023
+                            </button>
+                            <button class="px-4 py-2 bg-light text-primary rounded-lg">Juin 2023</button>
+                            <button class="px-4 py-2 bg-light text-primary rounded-lg flex items-center">
+                                Juillet 2023 <i class="fas fa-arrow-right ml-2"></i>
+                            </button>
+                            
+                            <div class="ml-auto flex items-center">
+                                <span class="mr-3">Sélectionner un mois:</span>
+                                <div class="relative">
+                                    <input type="month" class="pl-4 pr-8 py-2 bg-light rounded-lg focus:outline-none focus:ring-2 focus:ring-accent" value="2023-06">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-6 border-t pt-6">
+                            <h4 class="font-medium mb-3">Comparaison annuelle</h4>
+                            <div class="flex flex-wrap gap-3">
+                                <button class="px-4 py-2 bg-light text-primary rounded-lg">Janvier 2023</button>
+                                <button class="px-4 py-2 bg-light text-primary rounded-lg">Février 2023</button>
+                                <button class="px-4 py-2 bg-light text-primary rounded-lg">Mars 2023</button>
+                                <button class="px-4 py-2 bg-light text-primary rounded-lg">Avril 2023</button>
+                                <button class="px-4 py-2 bg-light text-primary rounded-lg">Mai 2023</button>
+                                <button class="px-4 py-2 bg-primary text-white rounded-lg">Juin 2023</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+            
+            <footer class="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-6 mt-10">
+              <div class="container mx-auto px-4">
+                <div class="flex flex-col md:flex-row justify-between items-center">
+                  <!-- Logo et copyright -->
+                  <div class="mb-4 md:mb-0">
+                    <div class="flex items-center space-x-2">
+                      <i class="fas fa-clinic-medical text-2xl"></i>
+                      <span class="text-xl font-bold">PharmaManager</span>
+                    </div>
+                    <p class="text-blue-100 text-sm mt-1">© 2025 Tous droits réservés</p>
+                  </div>
+            
+                  <!-- Liens de navigation -->
+                  <div class="flex flex-wrap justify-center gap-6">
+                    <a href="/" class="hover:text-blue-200 transition-colors">
+                      <i class="fas fa-chart-pie mr-2"></i> Dashboard
+                    </a>
+                    <a href="/products" class="hover:text-blue-200 transition-colors">
+                      <i class="fas fa-pills mr-2"></i> Produits
+                    </a>
+                    <a href="/sales" class="hover:text-blue-200 transition-colors">
+                      <i class="fas fa-receipt mr-2"></i> Ventes
+                    </a>
+                  </div>
+            
+                  <!-- Bouton de déconnexion -->
+                  <form method="GET" action="/deconnect" class="mt-4 md:mt-0">
+                    <button type="submit" class="bg-white text-blue-600 hover:bg-blue-50 px-4 py-2 rounded-lg font-medium flex items-center transition-colors">
+                      <i class="fas fa-sign-out-alt mr-2"></i> Déconnexion
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </footer>
+        </div>
+    </div>
+
+    <script>
+        // Tab switching functionality
+        document.getElementById('dailyBtn').addEventListener('click', function() {
+            switchTab('daily');
+        });
+        
+        document.getElementById('weeklyBtn').addEventListener('click', function() {
+            switchTab('weekly');
+        });
+        
+        document.getElementById('monthlyBtn').addEventListener('click', function() {
+            switchTab('monthly');
+        });
+        
+        function switchTab(tabName) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected tab content
+            document.getElementById(`${tabName}Content`).classList.add('active');
+            
+            // Update active button
+            document.querySelectorAll('.time-period-btn').forEach(btn => {
+                btn.classList.remove('bg-primary', 'text-white');
+                btn.classList.add('bg-light', 'text-primary');
+            });
+            
+            document.getElementById(`${tabName}Btn`).classList.remove('bg-light', 'text-primary');
+            document.getElementById(`${tabName}Btn`).classList.add('bg-primary', 'text-white');
+        }
+        
+        // Initialize charts
+        document.addEventListener('DOMContentLoaded', function() {
+            // Hourly Chart (Daily Report)
+            const hourlyCtx = document.getElementById('hourlyChart').getContext('2d');
+            const hourlyChart = new Chart(hourlyCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['9h', '10h', '11h', '12h', '13h', '14h', '15h', '16h', '17h', '18h'],
+                    datasets: [{
+                        label: 'Ventes (€)',
+                        data: [420, 780, 920, 1200, 850, 950, 1450, 1320, 980, 620],
+                        backgroundColor: '#3b82f6',
+                        borderColor: '#1e40af',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                drawBorder: false
+                            },
+                            ticks: {
+                                callback: function(value) {
+                                    return '€' + value;
+                                }
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Weekly Chart (Weekly Report)
+            const weeklyCtx = document.getElementById('weeklyChart').getContext('2d');
+            const weeklyChart = new Chart(weeklyCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'],
+                    datasets: [
+                        {
+                            label: 'Cette semaine',
+                            data: [6200, 6850, 7150, 8420, 7980, 7350, 6850],
+                            borderColor: '#1e40af',
+                            backgroundColor: 'rgba(30, 64, 175, 0.05)',
+                            tension: 0.3,
+                            fill: true
+                        },
+                        {
+                            label: 'Semaine dernière',
+                            data: [5800, 6150, 6350, 7450, 6980, 6250, 5650],
+                            borderColor: '#60a5fa',
+                            borderDash: [5, 5],
+                            tension: 0.3,
+                            fill: false
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                drawBorder: false
+                            },
+                            ticks: {
+                                callback: function(value) {
+                                    return '€' + value;
+                                }
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Monthly Chart (Monthly Report)
+            const monthlyCtx = document.getElementById('monthlyChart').getContext('2d');
+            const monthlyChart = new Chart(monthlyCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc'],
+                    datasets: [{
+                        label: 'Chiffre d\'affaires (k€)',
+                        data: [132, 145, 158, 142, 148, 156.8, 0, 0, 0, 0, 0, 0],
+                        backgroundColor: [
+                            '#3b82f6', '#3b82f6', '#3b82f6', '#3b82f6', '#3b82f6', '#1e40af', 
+                            '#dbeafe', '#dbeafe', '#dbeafe', '#dbeafe', '#dbeafe', '#dbeafe'
+                        ],
+                        borderColor: '#1e40af',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                drawBorder: false
+                            },
+                            ticks: {
+                                callback: function(value) {
+                                    return '€' + value + 'k';
+                                }
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Set current date
+            const now = new Date();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('dateDisplay').textContent = now.toLocaleDateString('fr-FR', options);
+        });
+    </script>
 </body>
 </html>

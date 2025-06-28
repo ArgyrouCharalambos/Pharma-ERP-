@@ -7,7 +7,7 @@ export default class DashboardController {
     const recentSales = await Sale.query()
       .orderBy('created_at', 'desc')
       .where('userid', Number(auth.user?.id))
-      .limit(10)
+      .limit(5)
 
     const ventes = await Sale.query()
       .preload('produits', (query) => {
@@ -40,7 +40,7 @@ export default class DashboardController {
             query.preload('product') 
           })
           .orderBy('created_at', 'desc').where('userid', Number(auth.user?.id))
-          .limit(10);
+          .limit(5);
       
           SALE.forEach(e => {
             console.log(e.produits)
@@ -61,13 +61,41 @@ export default class DashboardController {
       )?.$extras.total || 0
 
     const venteJour = await Sale.query()
-      .where('userid', auth.user!.id)
+      .where('userid', Number(auth.user?.id))
       .whereBetween('created_at', [
         DateTime.now().startOf('day').toJSDate(),
-        DateTime.now().endOf('day').toJSDate(),
+        DateTime.now().endOf('day').toJSDate()
       ])
       .sum('total_price as total')
       .then((result) => Number(result[0]?.$extras.total || 0))
+
+      const transactionDay =
+      (
+        await Sale.query()
+          .count('* as total')
+          .where('userid', Number(auth.user?.id))
+          .whereBetween('created_at', [DateTime.now().startOf('day').toJSDate(),  DateTime.now().endOf('day').toJSDate()])
+          .first()
+      )?.$extras.total || 0
+
+
+      const transactionWeek =
+      (
+        await Sale.query()
+          .count('* as total')
+          .where('userid', Number(auth.user?.id))
+          .whereBetween('created_at', [startOfWeek, endOfWeek])
+          .first()
+      )?.$extras.total || 0
+
+      const transactionMonth =
+      (
+        await Sale.query()
+          .count('* as total')
+          .where('userid', Number(auth.user?.id))
+          .whereBetween('created_at', [startOfMonth, endOfMonth])
+          .first()
+      )?.$extras.total || 0
 
     return view.render('dashboard', {
        venteJour,
@@ -77,6 +105,7 @@ export default class DashboardController {
       auth,
       saleS,
       ventes,
+      transactionDay , transactionWeek , transactionMonth
     })
   }
 }
