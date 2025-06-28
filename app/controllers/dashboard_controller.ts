@@ -48,15 +48,15 @@ export default class DashboardController {
             
           })
 
-    const startOfYear = now.startOf('year').toJSDate()
-    const endOfYear = now.endOf('year').toJSDate()
+    const startOfWeek = now.startOf('week').toJSDate()
+    const endOfWeek = now.endOf('week').toJSDate()
 
-    const venteAnnee =
+    const venteWeek =
       (
         await Sale.query()
           .sum('total_price as total')
           .where('userid', Number(auth.user?.id))
-          .whereBetween('created_at', [startOfYear, endOfYear])
+          .whereBetween('created_at', [startOfWeek, endOfWeek])
           .first()
       )?.$extras.total || 0
 
@@ -70,9 +70,9 @@ export default class DashboardController {
       .then((result) => Number(result[0]?.$extras.total || 0))
 
     return view.render('dashboard', {
-      totalStock: venteJour,
+       venteJour,
       venteMois: rawTotal,
-      Alerte: venteAnnee,
+      venteWeek,
       sales: SALE,
       auth,
       saleS,

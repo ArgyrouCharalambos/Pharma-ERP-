@@ -18,7 +18,7 @@
   <div class="fixed inset-y-0 z-40 w-[200px] bg-gradient-to-b from-blue-800 to-blue-900 shadow-2xl transform transition-transform duration-300"
        :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'">
     <div class="p-6 border-b border-blue-700">
-      <h1 class="text-lg font-bold text-white flex items-center">
+      <h1 class="text-md font-bold text-white flex items-center">
         <i class="fas fa-clinic-medical"></i>PharmaManager
       </h1>
     </div>
@@ -56,15 +56,15 @@
     </header>
 
     <!-- Content -->
-    <main class="flex-1 p-6">
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+    <main class="flex-1 ">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6 mb-6 mx-6">
         <!-- Carte Statistique 1 -->
         <div class="bg-white rounded-2xl shadow-xl p-6 border-t-4 border-blue-600">
           <div class="flex items-center justify-between">
             <div>
               <h2 class="text-xl font-bold text-gray-800 mb-2">Ventes journalières</h2>
               <div class="text-4xl font-bold text-blue-600">
-                {{ totalStock }} Fc
+                {{ venteJour }} Fc
               </div>
             </div>
             <i class="fas fa-chart-line text-4xl text-green-100"></i>
@@ -76,9 +76,9 @@
         <div class="bg-white rounded-2xl shadow-xl p-6 border-t-4 border-green-600">
           <div class="flex items-center justify-between">
             <div>
-              <h2 class="text-xl font-bold text-gray-800 mb-2">Ventes mensuelles</h2>
+              <h2 class="text-xl font-bold text-gray-800 mb-2">Ventes hebdomadaires</h2>
               <div class="text-4xl font-bold text-green-600">
-                {{ Number(venteMois).toFixed(0)}} Fc
+                {{ Number(venteWeek).toFixed(0)}} Fc
               </div>
             </div>
             <i class="fas fa-chart-line text-4xl text-green-100"></i>
@@ -89,9 +89,9 @@
         <div class="bg-white rounded-2xl shadow-xl p-6 border-t-4 border-purple-600">
           <div class="flex items-center justify-between">
             <div>
-              <h2 class="text-xl font-bold text-gray-800 mb-2">Ventes annuelles</h2>
+              <h2 class="text-xl font-bold text-gray-800 mb-2">Ventes mensuelles</h2>
               <div class="text-4xl font-bold text-purple-600">
-                {{ Number(Alerte).toFixed(0) }} Fc
+                {{ Number(venteMois).toFixed(0) }} Fc
               </div>
             </div>
             <a href="/products/alerts">
@@ -102,7 +102,7 @@
         </div>
       </div>
 
-      <div class="bg-white p-6 rounded-xl shadow-xl mb-4">
+      <div class="bg-white p-6 rounded-xl shadow-xl mb-4 mx-6">
         <h2 class="text-lg font-semibold mb-4">10 Dernières Ventes</h2>
         <canvas id="salesChart" height="100"></canvas>
       </div>
@@ -147,7 +147,7 @@
       </script>
       
     <!-- Liste des Ventes -->
-    <div class="bg-white rounded-2xl shadow-card overflow-hidden">    
+    <div class="bg-white rounded-2xl shadow-card overflow-hidden mx-6">    
       <div class="overflow-x-auto">
         <table class="min-w-full divide-y divide-gray-200">
           <thead class="bg-blue-50">
