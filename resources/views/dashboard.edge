@@ -386,11 +386,11 @@
        <!-- Sidebar -->
   <div class=" z-40 w-[200px] bg-gradient-to-b from-blue-800 to-blue-900 shadow-2xl transform transition-transform duration-300"
   :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'">
-<div class="p-6 border-b border-blue-700">
- <h1 class="text-md font-bold text-white flex items-center">
-   <i class="fas fa-clinic-medical"></i>PharmaManager
- </h1>
-</div>
+  <div class="py-6 px-2 border-b border-blue-700">
+    <h1 class="text-lg font-bold text-white flex items-center">
+      <i class="fas fa-clinic-medical mr-1"></i>PharmaManager
+    </h1>
+  </div>
 <nav class="p-4 space-y-2">
  <a href="/" class="flex items-center p-3 text-white/90 hover:bg-blue-700/20 rounded-lg transition-all">
    <i class="fas fa-chart-pie mr-3"></i> Dashboard
@@ -401,6 +401,16 @@
  <a href="/sales" class="flex items-center p-3 text-white/90 hover:bg-blue-700/20 rounded-lg transition-all">
    <i class="fas fa-receipt mr-3"></i> Ventes
  </a>
+ <a href="/products/alerts" class="flex gap-3 items-center p-3 text-white/90 hover:bg-blue-700/20 rounded-lg transition-all">
+  @if(Alerte)
+      <i class="fas fa-exclamation-triangle text-md text-red-600"></i>
+      @else
+    <i class="fas fa-exclamation-triangle text-md text-purple-100 "></i>
+    @endif
+    <p>
+      Alerte
+    </p>
+</a>
 </nav>
 </div>
         
@@ -474,7 +484,11 @@
                             <div class="flex justify-between items-start">
                                 <div>
                                     <p class="text-gray-500">Panier Moyen</p>
+                                    @if(PanierMoyenDay)
                                     <p class="text-2xl font-bold mt-2">{{PanierMoyenDay.toFixed(0)}} Fc</p>
+                                    @else 
+                                    <p class="text-2xl font-bold mt-2">0 Fc</p>
+                                    @endif
                                     <p class="text-green-500 mt-1"><i class="fas fa-arrow-up mr-1"></i> 2.3%</p>
                                 </div>
                                 <div class="p-3 rounded-lg bg-blue-100 text-primary">
@@ -694,7 +708,11 @@
                             <div class="flex justify-between items-start">
                                 <div>
                                     <p class="text-gray-500">Panier Moyen</p>
+                                    @if(PanierMoyenWeek)
                                     <p class="text-2xl font-bold mt-2">{{PanierMoyenWeek.toFixed(0)}} Fc</p>
+                                    @else 
+                                    <p class="text-2xl font-bold mt-2">0 Fc</p>
+                                    @endif
                                     <p class="text-green-500 mt-1"><i class="fas fa-arrow-up mr-1"></i> 1.8%</p>
                                 </div>
                                 <div class="p-3 rounded-lg bg-blue-100 text-primary">
@@ -751,27 +769,7 @@
                                     </div>
                                 </div>
                                 
-                                <div class="mb-6">
-                                    <h4 class="font-medium mb-3">Top catégories</h4>
-                                    <div class="space-y-3">
-                                        <div class="flex items-center">
-                                            <div class="w-3 h-3 bg-primary rounded-full mr-2"></div>
-                                            <span class="flex-1">Anti-fangique</span>
-                                            <span class="font-medium">18,560 Fc</span>
-                                        </div>
-                                        <div class="flex items-center">
-                                            <div class="w-3 h-3 bg-secondary rounded-full mr-2"></div>
-                                            <span class="flex-1">Comprimé</span>
-                                            <span class="font-medium">9,420 Fc</span>
-                                        </div>
-                                        <div class="flex items-center">
-                                            <div class="w-3 h-3 bg-accent rounded-full mr-2"></div>
-                                            <span class="flex-1">Anti-bacterie</span>
-                                            <span class="font-medium">7,850 Fc</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                
+                           
                             </div>
                         </div>
                     </div>
@@ -837,7 +835,11 @@
                             <div class="flex justify-between items-start">
                                 <div>
                                     <p class="text-gray-500">Panier Moyen</p>
+                                    @if(PanierMoyenMonth)
                                     <p class="text-2xl font-bold mt-2">{{PanierMoyenMonth.toFixed(0)}} Fc</p>
+                                    @else 
+                                    <p class="text-2xl font-bold mt-2">0 Fc</p>
+                                    @endif
                                     <p class="text-green-500 mt-1"><i class="fas fa-arrow-up mr-1"></i> 1.2%</p>
                                 </div>
                                 <div class="p-3 rounded-lg bg-blue-100 text-primary">
@@ -878,10 +880,10 @@
                                 <h3 class="text-lg font-semibold text-dark mb-6">Résumé Mensuel</h3>
                                 
                                 <div class="mb-6">
-                                    <h4 class="font-medium mb-3">Comparaison mensuelle</h4>
+                                    <h4 class="font-medium mb-3">Meilleurs Mois</h4>
                                     <div class="space-y-4">
                                         <div class="flex justify-between">
-                                            <span>Chiffre d'affaires</span>
+                                            <span>Mars</span>
                                             <div>
                                                 <span class="font-medium">156,820 Fc</span>
                                                 <span class="text-green-500 ml-2">+8.4%</span>
@@ -889,7 +891,7 @@
                                         </div>
                                         
                                         <div class="flex justify-between">
-                                            <span>Panier moyen</span>
+                                            <span>Avril</span>
                                             <div>
                                                 <span class="font-medium">122.15 Fc</span>
                                                 <span class="text-green-500 ml-2">+1.2%</span>
@@ -1016,7 +1018,7 @@
                 data: {
                     labels: ['9h', '10h', '11h', '12h', '13h', '14h', '15h', '16h', '17h', '18h'],
                     datasets: [{
-                        label: 'Ventes (€)',
+                        label: 'Ventes (Fc)',
                         data: [420, 780, 920, 1200, 850, 950, 1450, 1320, 980, 620],
                         backgroundColor: '#3b82f6',
                         borderColor: '#1e40af',
@@ -1034,7 +1036,7 @@
                             },
                             ticks: {
                                 callback: function(value) {
-                                    return '€' + value;
+                                    return  value + 'Fc';
                                 }
                             }
                         },
@@ -1088,7 +1090,7 @@
                             },
                             ticks: {
                                 callback: function(value) {
-                                    return '€' + value;
+                                    return value + 'Fc';
                                 }
                             }
                         },
@@ -1108,7 +1110,7 @@
                 data: {
                     labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc'],
                     datasets: [{
-                        label: 'Chiffre d\'affaires (k€)',
+                        label: 'Chiffre d\'affaires (Fc)',
                         data: [132, 145, 158, 142, 148, 156.8, 0, 0, 0, 0, 0, 0],
                         backgroundColor: [
                             '#3b82f6', '#3b82f6', '#3b82f6', '#3b82f6', '#3b82f6', '#1e40af', 
@@ -1129,7 +1131,7 @@
                             },
                             ticks: {
                                 callback: function(value) {
-                                    return '€' + value + 'k';
+                                    return value + 'Fc' ;
                                 }
                             }
                         },

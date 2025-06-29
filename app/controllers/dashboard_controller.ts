@@ -1,3 +1,4 @@
+import Product from '#models/product'
 import Sale from '#models/sale'
 import type { HttpContext } from '@adonisjs/core/http'
 import { DateTime } from 'luxon'
@@ -159,6 +160,19 @@ export default class DashboardController {
         }
       });
 
+
+      const critiqueResult = await Product.query().where('userid',Number(auth.user?.id)).where('quantity', '<', 10).count('* as total')
+                    const Critique = critiqueResult[0]?.$extras.total || 0
+                    const Expire =
+                      (
+                        await Product.query()
+                          .where('userid',Number(auth.user?.id))
+                          .where('expiration_date', '<', DateTime.now().toSQLDate())
+                          .count('* as total')
+                      )[0]?.$extras.total || 0
+          
+                      let alt = (Number(Critique) + Number(Expire))
+
     return view.render('dashboard', {
       venteJour,
       venteMois: rawTotal,
@@ -178,7 +192,8 @@ export default class DashboardController {
       panierMaxWeek,
       panierMinWeek,
       panierMaxMonth,
-      panierMinMonth
+      panierMinMonth,
+      Alerte:alt
     })
   }
 }

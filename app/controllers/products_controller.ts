@@ -95,6 +95,8 @@ export default class ProductsController {
           .where('expiration_date', '<', DateTime.now().toSQLDate())
           .count('* as total')
       )[0]?.$extras.total || 0
-    return view.render('products/alerts', { products, auth, Expire, PRODUCTS, Critique, PRODUCT })
+               
+   let alt = (Number(Critique) + Number(Expire))
+    return view.render('products/alerts', { products, auth, Expire, PRODUCTS, Critique, PRODUCT ,Alerte:alt})
   }
 }
