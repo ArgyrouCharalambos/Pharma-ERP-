@@ -497,8 +497,19 @@
                             </div>
                             <div class="mt-4">
                                 <div class="flex justify-between text-sm">
+                                  @if(panierMaxDay === -Infinity)
+                                  <span>Max: 0 Fc</span>
+                                    @else 
                                     <span>Max: {{panierMaxDay}} Fc</span>
+                                    @endif
+
+                                  @if(panierMinDay === Infinity)
+                                  <span>Min: 0 Fc</span>
+                                    @else 
                                     <span>Min: {{panierMinDay}} Fc</span>
+                                    @endif
+
+
                                 </div>
                             </div>
                         </div>
@@ -721,8 +732,18 @@
                             </div>
                             <div class="mt-4">
                                 <div class="flex justify-between text-sm">
-                                    <span>Max: {{panierMaxWeek}} Fc</span>
-                                    <span>Min: {{panierMinWeek}} Fc</span>
+                                  @if(panierMaxWeek === -Infinity)
+                                  <span>Max: 0 Fc</span>
+                                  @else 
+                                  <span>Max: {{panierMaxWeek}} Fc</span>
+                                  @endif
+
+                                @if(panierMinWeek === Infinity)
+                                <span>Min: 0 Fc</span>
+                                  @else 
+                                  <span>Min: {{panierMinWeek}} Fc</span>
+                                  @endif
+                                   
                                 </div>
                             </div>
                         </div>
@@ -848,8 +869,17 @@
                             </div>
                             <div class="mt-4">
                                 <div class="flex justify-between text-sm">
-                                    <span>Max: {{panierMaxMonth}} Fc</span>
-                                    <span>Min: {{panierMinMonth}} Fc</span>
+                                  @if(panierMaxMonth === -Infinity)
+                                  <span>Max: 0 Fc</span>
+                                  @else 
+                                  <span>Max: {{panierMaxMonth}} Fc</span>
+                                  @endif
+
+                                @if(panierMinMonth === Infinity)
+                                <span>Min: 0 Fc</span>
+                                  @else 
+                                  <span>Min: {{panierMinMonth}} Fc</span>
+                                  @endif
                                 </div>
                             </div>
                         </div>
