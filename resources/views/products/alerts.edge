@@ -33,7 +33,7 @@
 <a href="/sales" class="flex items-center p-3 text-white/90 hover:bg-blue-700/20 rounded-lg transition-all">
   <i class="fas fa-receipt mr-3"></i> Ventes
 </a>
-<a href="/products/alerts" class="flex gap-3 items-center p-3 text-white/90 hover:bg-blue-700/20 rounded-lg transition-all">
+<a href="/products/alerts" class="flex gap-3 items-center p-3 text-white/90 bg-blue-700/30 rounded-lg transition-all">
   @if(Alerte)
       <i class="fas fa-exclamation-triangle text-md text-red-600"></i>
       @else
@@ -88,7 +88,7 @@
               <h3 class="font-bold text-red-800">{{ product.name }}</h3>
               <p class="text-sm text-red-600">Expiré depuis {{ (product.expirationDate.diffNow('days').days * -1).toFixed(0) }} jours</p>
             </div>
-            <form action="{{ route('products.destroy', [product.id]) }}?_method=DELETE" method="POST">
+            <form action="/productsDestroy/{{product.id}}" method="POST">
         {{ csrfField() }}
               <input type="hidden" name="_method" value="DELETE">
               <button type="submit" class="text-red-600 hover:text-red-800">

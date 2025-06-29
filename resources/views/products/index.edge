@@ -13,6 +13,22 @@
             font-family: 'Montserrat', sans-serif;
             background-color: #f0f9ff;
         }
+        .text-gradient {
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+        .bg-gradient-to-r {
+            background-image: linear-gradient(to right, var(--tw-gradient-stops));
+        }
+        .transition-all {
+            transition-property: all;
+            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+            transition-duration: 150ms;
+        }
+        .group:hover .group-hover\:opacity-100 {
+            opacity: 1;
+        }
   </style>
 </head>
 <body class="h-full"  x-data="{ searchQuery: '', sortBy: 'name' ,sidebarOpen: true}">
@@ -28,7 +44,7 @@
       <a href="/" class="flex items-center p-3 text-white/90 hover:bg-blue-700/20 rounded-lg transition-all">
         <i class="fas fa-chart-pie mr-3"></i> Dashboard
       </a>
-      <a href="/products" class="flex items-center p-3 text-white/90 hover:bg-blue-700/20 rounded-lg transition-all">
+      <a href="/products" class="flex items-center p-3 text-white/90 bg-blue-700/30 rounded-lg transition-all">
         <i class="fas fa-pills mr-3"></i> Produits
       </a>
       <a href="/sales" class="flex items-center p-3 text-white/90 hover:bg-blue-700/20 rounded-lg transition-all">
@@ -115,128 +131,50 @@
    
 <div class="space-y-4">
   <div class="space-y-4">
-    <!-- Header de la liste -->
-    <div class="bg-gradient-to-r from-blue-600 to-cyan-500 rounded-xl p-4 shadow-md">
-      <div class="flex items-center justify-between text-white">
-        <h2 class="text-xl font-bold">Inventaire des Médicaments</h2>
-        <div class="flex items-center space-x-4">
-          <span class="text-sm font-medium bg-white/20 px-3 py-1 rounded-full">Total : {{ PRODUCT.length }} produits</span>
-          <a href="/products/create" class="bg-white text-blue-600 px-4 py-2 rounded-lg font-semibold hover:bg-gray-50 transition-all">
-            <i class="fas fa-plus mr-2"></i>Ajouter
-          </a>
-        </div>
-      </div>
-    </div>
-  
-    <!-- Filtres rapides -->
-    <div class="bg-white rounded-xl p-3 shadow-sm border border-gray-100 flex flex-wrap items-center gap-3">
-      <div class="relative flex-1 min-w-[200px]">
-        <input type="text" placeholder="Rechercher un produit..." class="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all">
-        <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-      </div>
-      <select class="bg-white border border-gray-200 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none transition-all">
-        <option>Tous les statuts</option>
-        <option>Valides</option>
-        <option>Expirés</option>
-      </select>
-      <select class="bg-white border border-gray-200 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none transition-all">
-        <option>Trier par</option>
-        <option>Nom (A-Z)</option>
-        <option>Date d'expiration</option>
-        <option>Quantité croissante</option>
-      </select>
-    </div>
-  
-    <!-- Liste des produits -->
-    <div class="grid gap-4">
-      @each(product in PRODUCT)
-      <div class="bg-white rounded-xl shadow-sm hover:shadow-md transition-all overflow-hidden border border-gray-100 group">
-        <div class="flex flex-col md:flex-row">
-          <!-- Colonne principale -->
-          <div class="flex-1 p-4 md:p-5 flex items-start gap-4">
-            <div class="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl p-3 flex items-center justify-center shrink-0">
-              <i class="fas fa-pills text-blue-500 text-xl md:text-2xl"></i>
-            </div>
-            
-            <div class="flex-1 min-w-0">
-              <div class="flex items-baseline gap-2 flex-wrap">
-                <h3 class="text-lg md:text-xl font-bold text-gray-800 truncate">{{ product.name }}</h3>
-                <span class="px-2 py-1 rounded-full text-xs font-medium {{ product.alertExpired ? 'bg-red-100 text-red-800' : 'bg-emerald-100 text-emerald-800' }}">
-                  {{ product.alertExpired ? 'EXPIRÉ' : 'VALIDE' }}
-                </span>
-              </div>
-              
-              <div class="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <p class="text-xs font-semibold text-gray-500">Stock</p>
-                  <div class="flex items-center gap-3">
-                    <div class="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
-                      <div class="bg-gradient-to-r from-cyan-500 to-blue-600 h-full" 
-                           :style="`width: ${Math.min({{product.quantity}}, 100)}%`"></div>
-                    </div>
-                    <span class="text-sm font-bold whitespace-nowrap">{{ product.quantity }} unités</span>
-                  </div>
+    <div class="space-y-4">
+        <!-- Header de la liste -->
+        <div class="bg-gradient-to-r from-blue-600 to-cyan-500 rounded-xl p-4 shadow-md">
+            <div class="flex items-center justify-between text-white">
+                <h2 class="text-xl font-bold">Inventaire des Médicaments</h2>
+                <div class="flex items-center space-x-4">
+                    <span id="total-products" class="text-sm font-medium bg-white/20 px-3 py-1 rounded-full">Total : 0 produits</span>
+                    <a href="{{ route('products.create' )}}" class="bg-white text-blue-600 px-4 py-2 rounded-lg font-semibold hover:bg-gray-50 transition-all">
+                        <i class="fas fa-plus mr-2"></i>Ajouter
+                    </a>
                 </div>
-                
-                <div>
-                  <p class="text-xs font-semibold text-gray-500">Prix unitaire</p>
-                  <p class="text-lg font-bold text-gradient bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">
-                    {{Number(product.price).toFixed(0)}} Fc
-                  </p>
-                </div>
-              </div>
             </div>
-          </div>
-          
-          <!-- Colonne secondaire -->
-          <div class="border-t md:border-t-0 md:border-l border-gray-100 md:w-48 flex flex-col">
-            <div class="p-4 flex items-center justify-between">
-              <div class="flex items-center text-sm {{ product.alertExpired ? 'text-red-600' : 'text-gray-600' }}">
-                <i class="far fa-calendar mr-2"></i>
-                <span>{{ product.expirationDate.toFormat('dd/MM/yyyy') }}</span>
-              </div>
-              
-              <div class="flex space-x-3 opacity-0 group-hover:opacity-100 transition-opacity">
-                <a href="{{ route('products.edit', [product.id]) }}" class="text-blue-500 hover:text-blue-700">
-                  <i class="fas fa-pen fa-sm"></i>
-                </a>
-                <form action="{{ route('products.destroy', [product.id]) }}?_method=DELETE" method="POST">
-                  {{ csrfField() }}
-                  <input type="hidden" name="_method" value="DELETE">
-                  <button type="submit" class="text-rose-500 hover:text-rose-700">
-                    <i class="fas fa-trash fa-sm"></i>
-                  </button>
-                </form>
-              </div>
-            </div>
-            
-            <div class="p-4 bg-gray-50 text-xs text-gray-500 border-t border-gray-100">
-              MAJ : {{ product.updatedAt.toFormat('dd/MM/yyyy') }}
-            </div>
-          </div>
         </div>
-      </div>
-      @endeach
+    
+        <!-- Filtres rapides -->
+        <div class="bg-white rounded-xl p-3 shadow-sm border border-gray-100 flex flex-wrap items-center gap-3">
+            <div class="relative flex-1 min-w-[200px]">
+                <input type="text" id="search-medicament" placeholder="Rechercher un produit..." class="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all">
+                <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+            </div>
+        </div>
+    
+        <!-- Liste des produits -->
+        <div id="product-list" class="grid gap-4">
+            <!-- Les produits seront injectés ici dynamiquement -->
+        </div>
+    
+        <!-- Pagination -->
+        <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 flex items-center justify-between">
+            <div id="pagination-info" class="text-sm text-gray-600">
+                Affichage de 0 à 0 sur 0 produits
+            </div>
+            <div class="flex space-x-2">
+                <button id="prev-page" class="px-3 py-1 border border-gray-200 rounded-lg text-gray-600 hover:bg-gray-50 disabled:opacity-50">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <!-- Les boutons de pagination seront générés ici -->
+                <button id="next-page" class="px-3 py-1 border border-gray-200 rounded-lg text-gray-600 hover:bg-gray-50">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+        </div>
     </div>
-  
-    <!-- Pagination -->
-    <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 flex items-center justify-between">
-      <div class="text-sm text-gray-600">
-        Affichage de 1 à {{ Math.min(PRODUCT.length, 10) }} sur {{ PRODUCT.length }} produits
-      </div>
-      <div class="flex space-x-2">
-        <button class="px-3 py-1 border border-gray-200 rounded-lg text-gray-600 hover:bg-gray-50 disabled:opacity-50">
-          <i class="fas fa-chevron-left"></i>
-        </button>
-        <button class="px-3 py-1 bg-blue-600 text-white rounded-lg font-medium">1</button>
-        <button class="px-3 py-1 border border-gray-200 rounded-lg text-gray-600 hover:bg-gray-50">2</button>
-        <button class="px-3 py-1 border border-gray-200 rounded-lg text-gray-600 hover:bg-gray-50">3</button>
-        <button class="px-3 py-1 border border-gray-200 rounded-lg text-gray-600 hover:bg-gray-50">
-          <i class="fas fa-chevron-right"></i>
-        </button>
-      </div>
-    </div>
-  </div>
+</div>
 </div>
   </main>
   <!-- Footer avec déconnexion -->
@@ -274,5 +212,394 @@
     </div>
   </div>
 </footer>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+      // Configuration
+      const productsPerPage = 5;
+      let currentPage = 1;
+      let allProducts = [];
+      let filteredProducts = [];
+
+      // Éléments du DOM
+      const searchInput = document.getElementById('search-medicament');
+      const productContainer = document.getElementById('product-list');
+      const paginationInfo = document.getElementById('pagination-info');
+      const prevButton = document.getElementById('prev-page');
+      const nextButton = document.getElementById('next-page');
+      const totalProductsSpan = document.getElementById('total-products');
+      
+      // Générer des produits de démonstration
+      function generateSampleProducts(count) {
+          const products = [];
+          
+          @each(product in PRODUCT)
+      
+
+          products.push({
+             id: {{product.id}},
+                  name: "{{product.name}}",
+                  alertExpired: {{product.alertExpired}},
+                  quantity:{{product.quantity}} ,
+                  status:
+                  @if((product.expirationDate).toFormat('yyyy') <= DateTime.now().toFormat('yyyy'))
+                  @if((product.expirationDate).toFormat('MM') <= DateTime.now().toFormat('MM'))
+                  @if((product.expirationDate).toFormat('dd') <= DateTime.now().toFormat('dd'))
+                  "EXPIRÉ"
+                  @else
+                  'VALIDE'
+                  @endif
+                  @else
+                  'VALIDE'
+                  @endif
+                   @else
+                   "VALIDE"
+                   @endif
+                   ,
+                  price: {{product.price}},
+                  expirationDate: "{{(product.expirationDate).toFormat('dd/MM/yyyy')}}",
+                  updatedAt:"{{(product.updatedAt).toFormat('dd/MM/yyyy')}}" 
+          } )
+          @end
+
+          return products;
+      }
+      
+      // Formater une date au format dd/MM/yyyy
+      function formatDate(date) {
+          const day = String(date.getDate()).padStart(2, '0');
+          const month = String(date.getMonth() + 1).padStart(2, '0');
+          const year = date.getFullYear();
+          return `${day}/${month}/${year}`;
+      }
+      function renderProducts(products) {
+    productContainer.innerHTML = ''; // Vider le conteneur
+
+    products.forEach(product => {
+        const productCard = document.createElement('div');
+        productCard.className = 'product-card bg-white rounded-xl shadow-sm hover:shadow-md transition-all overflow-hidden border border-gray-100 group';
+
+        const layoutWrapper = document.createElement('div');
+        layoutWrapper.className = 'flex flex-col md:flex-row';
+
+        // -- Colonne principale
+        const mainColumn = document.createElement('div');
+        mainColumn.className = 'flex-1 p-4 md:p-5 flex items-start gap-4';
+
+        const iconWrapper = document.createElement('div');
+        iconWrapper.className = 'bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl p-3 flex items-center justify-center shrink-0';
+        const icon = document.createElement('i');
+        icon.className = 'fas fa-pills text-blue-500 text-xl md:text-2xl';
+        iconWrapper.appendChild(icon);
+
+        const infoWrapper = document.createElement('div');
+        infoWrapper.className = 'flex-1 min-w-0';
+
+        const header = document.createElement('div');
+        header.className = 'flex items-baseline gap-2 flex-wrap';
+
+        const name = document.createElement('h3');
+        name.className = 'product-name text-lg md:text-xl font-bold text-gray-800 truncate';
+        name.textContent = product.name;
+
+        const badge = document.createElement('span');
+        badge.className = 'px-2 py-1 rounded-full text-xs font-medium ' + (product.status === "EXPIRÉ" ? 'bg-red-100 text-red-800' : 'bg-emerald-100 text-emerald-800');
+        badge.textContent = product.status ;
+
+        header.appendChild(name);
+        header.appendChild(badge);
+
+        // Stock et prix
+        const detailsGrid = document.createElement('div');
+        detailsGrid.className = 'mt-2 grid grid-cols-1 sm:grid-cols-2 gap-3';
+
+        // Stock
+        const stockDiv = document.createElement('div');
+        const stockLabel = document.createElement('p');
+        stockLabel.className = 'text-xs font-semibold text-gray-500';
+        stockLabel.textContent = 'Stock';
+
+        const stockBarWrapper = document.createElement('div');
+        stockBarWrapper.className = 'flex items-center gap-3';
+
+        const stockBarBg = document.createElement('div');
+        stockBarBg.className = 'w-full bg-gray-200 rounded-full h-2 overflow-hidden';
+
+        const stockBar = document.createElement('div');
+        stockBar.className = 'bg-gradient-to-r from-cyan-500 to-blue-600 h-full';
+        stockBar.style.width = Math.min(product.quantity, 100) + '%';
+        stockBarBg.appendChild(stockBar);
+
+        const stockValue = document.createElement('span');
+        stockValue.className = 'text-sm font-bold whitespace-nowrap';
+        stockValue.textContent = product.quantity + ' unités';
+
+        stockBarWrapper.appendChild(stockBarBg);
+        stockBarWrapper.appendChild(stockValue);
+
+        stockDiv.appendChild(stockLabel);
+        stockDiv.appendChild(stockBarWrapper);
+
+        // Prix
+        const priceDiv = document.createElement('div');
+        const priceLabel = document.createElement('p');
+        priceLabel.className = 'text-xs font-semibold text-gray-500';
+        priceLabel.textContent = 'Prix unitaire';
+
+        const priceValue = document.createElement('p');
+        priceValue.className = 'text-lg font-bold text-gradient bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent';
+        priceValue.textContent = parseInt(product.price) + ' Fc';
+
+        priceDiv.appendChild(priceLabel);
+        priceDiv.appendChild(priceValue);
+
+        detailsGrid.appendChild(stockDiv);
+        detailsGrid.appendChild(priceDiv);
+
+        infoWrapper.appendChild(header);
+        infoWrapper.appendChild(detailsGrid);
+
+        mainColumn.appendChild(iconWrapper);
+        mainColumn.appendChild(infoWrapper);
+
+        // -- Colonne secondaire
+        const secondaryColumn = document.createElement('div');
+        secondaryColumn.className = 'border-t md:border-t-0 md:border-l border-gray-100 md:w-48 flex flex-col';
+
+        const topBar = document.createElement('div');
+        topBar.className = 'p-4 flex items-center justify-between';
+
+        const expiration = document.createElement('div');
+        expiration.className = `flex items-center text-sm ${product.alertExpired ? 'text-red-600' : 'text-gray-600'}`;
+        const calIcon = document.createElement('i');
+        calIcon.className = 'far fa-calendar mr-2';
+        const dateText = document.createElement('span');
+        dateText.textContent = product.expirationDate;
+
+        expiration.appendChild(calIcon);
+        expiration.appendChild(dateText);
+
+        const actions = document.createElement('div');
+        actions.className = 'flex space-x-3 opacity-0 group-hover:opacity-100 transition-opacity';
+
+        const editLink = document.createElement('a');
+        editLink.href = `/products/${product.id}/edit`;
+        editLink.className = 'text-blue-500 hover:text-blue-700';
+        const editIcon = document.createElement('i');
+        editIcon.className = 'fas fa-pen fa-sm';
+        editLink.appendChild(editIcon);
+
+        const deleteForm = document.createElement('form');
+        deleteForm.action = `/productsDestroy/${product.id}`;
+        deleteForm.method = 'POST';
+
+        const csrfInput = document.createElement('input');
+        csrfInput.className = 'hidden';
+        csrfInput.innerHTML = "{{ csrfField() }}"
+
+        deleteForm.appendChild(csrfInput)
+
+        const methodInput = document.createElement('input');
+        methodInput.type = 'hidden';
+        methodInput.name = '_method';
+        methodInput.value = 'DELETE';
+
+        const deleteButton = document.createElement('button');
+        deleteButton.type = 'submit';
+        deleteButton.className = 'text-rose-500 hover:text-rose-700';
+        const deleteIcon = document.createElement('i');
+        deleteIcon.className = 'fas fa-trash fa-sm';
+        deleteButton.appendChild(deleteIcon);
+
+        deleteForm.appendChild(csrfInput);
+        deleteForm.appendChild(methodInput);
+        deleteForm.appendChild(deleteButton);
+
+        actions.appendChild(editLink);
+        actions.appendChild(deleteForm);
+
+        topBar.appendChild(expiration);
+        topBar.appendChild(actions);
+
+        const bottomBar = document.createElement('div');
+        bottomBar.className = 'p-4 bg-gray-50 text-xs text-gray-500 border-t border-gray-100';
+        bottomBar.textContent = 'MAJ : ' + product.updatedAt;
+
+        secondaryColumn.appendChild(topBar);
+        secondaryColumn.appendChild(bottomBar);
+
+        // Ajout final
+        layoutWrapper.appendChild(mainColumn);
+        layoutWrapper.appendChild(secondaryColumn);
+        productCard.appendChild(layoutWrapper);
+        productContainer.appendChild(productCard);
+    });
+}
+
+      // // Afficher les produits
+      // function renderProducts(products) {
+      //     productContainer.innerHTML = '';
+          
+      //     products.forEach(product => {
+      //         const productCard = document.createElement('div');
+      //         productCard.className = 'product-card bg-white rounded-xl shadow-sm hover:shadow-md transition-all overflow-hidden border border-gray-100 group';
+      //         productCard.innerHTML = `
+      //             <div class="flex flex-col md:flex-row">
+      //                 <!-- Colonne principale -->
+      //                 <div class="flex-1 p-4 md:p-5 flex items-start gap-4">
+      //                     <div class="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl p-3 flex items-center justify-center shrink-0">
+      //                         <i class="fas fa-pills text-blue-500 text-xl md:text-2xl"></i>
+      //                     </div>
+                          
+      //                     <div class="flex-1 min-w-0">
+      //                         <div class="flex items-baseline gap-2 flex-wrap">
+      //                             <h3 class="product-name text-lg md:text-xl font-bold text-gray-800 truncate">${product.name}</h3>
+      //                             <span class="px-2 py-1 rounded-full text-xs font-medium ${product.alertExpired ? 'bg-red-100 text-red-800' : 'bg-emerald-100 text-emerald-800'}">
+      //                                 ${product.alertExpired ? 'EXPIRÉ' : 'VALIDE'}
+      //                             </span>
+      //                         </div>
+                              
+      //                         <div class="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-3">
+      //                             <div>
+      //                                 <p class="text-xs font-semibold text-gray-500">Stock</p>
+      //                                 <div class="flex items-center gap-3">
+      //                                     <div class="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+      //                                         <div class="bg-gradient-to-r from-cyan-500 to-blue-600 h-full" 
+      //                                              style="width: ${Math.min(product.quantity, 100)}%"></div>
+      //                                     </div>
+      //                                     <span class="text-sm font-bold whitespace-nowrap">${product.quantity} unités</span>
+      //                                 </div>
+      //                             </div>
+                                  
+      //                             <div>
+      //                                 <p class="text-xs font-semibold text-gray-500">Prix unitaire</p>
+      //                                 <p class="text-lg font-bold text-gradient bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">
+      //                                     ${parseInt(product.price)} Fc
+      //                                 </p>
+      //                             </div>
+      //                         </div>
+      //                     </div>
+      //                 </div>
+                      
+      //                 <!-- Colonne secondaire -->
+      //                 <div class="border-t md:border-t-0 md:border-l border-gray-100 md:w-48 flex flex-col">
+      //                     <div class="p-4 flex items-center justify-between">
+      //                         <div class="flex items-center text-sm ${product.alertExpired ? 'text-red-600' : 'text-gray-600'}">
+      //                             <i class="far fa-calendar mr-2"></i>
+      //                             <span>${(product.expirationDate)}</span>
+      //                         </div>
+                              
+      //                          <div class="flex space-x-3 opacity-0 group-hover:opacity-100 transition-opacity">
+      //           <a href="/products/${product.id}/edit" class="text-blue-500 hover:text-blue-700">
+      //             <i class="fas fa-pen fa-sm"></i>
+      //           </a>
+      //           <form action="/products/${product.id}/destroy?_method=DELETE" method="POST">
+      //             {{ csrfField() }}
+      //             <input type="hidden" name="_method" value="DELETE">
+      //             <button type="submit" class="text-rose-500 hover:text-rose-700">
+      //               <i class="fas fa-trash fa-sm"></i>
+      //             </button>
+      //           </form>
+      //         </div>
+      //                     </div>
+                          
+      //                     <div class="p-4 bg-gray-50 text-xs text-gray-500 border-t border-gray-100">
+      //                         MAJ : ${(product.updatedAt)}
+      //                     </div>
+      //                 </div>
+      //             </div>
+      //         `;
+      //         productContainer.appendChild(productCard);
+      //     });
+      // }
+      
+      // Initialisation
+      function init() {
+          // Générer des produits de démonstration
+          allProducts = generateSampleProducts(23);
+          filteredProducts = [...allProducts];
+          
+          // Mettre à jour le compteur total
+          totalProductsSpan.textContent = `Total : ${allProducts.length} produits`;
+          
+          // Initialiser l'affichage
+          updateDisplay();
+          setupEventListeners();
+      }
+      
+      // Configuration des écouteurs d'événements
+      function setupEventListeners() {
+          // Recherche
+          searchInput.addEventListener('input', filterProducts);
+          
+          // Navigation pagination
+          prevButton.addEventListener('click', () => navigateToPage(currentPage - 1));
+          nextButton.addEventListener('click', () => navigateToPage(currentPage + 1));
+      }
+      
+      // Filtrage des produits
+      function filterProducts() {
+          const searchTerm = searchInput.value.trim().toLowerCase();
+          
+          filteredProducts = allProducts.filter(product => {
+              return product.name.toLowerCase().includes(searchTerm);
+          });
+          
+          currentPage = 1;
+          updateDisplay();
+      }
+      
+      // Mise à jour de l'affichage
+      function updateDisplay() {
+          // Calculer les produits à afficher pour la page courante
+          const startIdx = (currentPage - 1) * productsPerPage;
+          const endIdx = startIdx + productsPerPage;
+          const productsToShow = filteredProducts.slice(startIdx, endIdx);
+          
+          // Afficher les produits
+          renderProducts(productsToShow);
+          
+          // Mettre à jour les informations de pagination
+          updatePaginationInfo();
+          
+          // Mettre à jour l'état des boutons de navigation
+          updateNavigationButtons();
+      }
+      
+      // Mettre à jour les informations de pagination
+      function updatePaginationInfo() {
+          const totalProducts = filteredProducts.length;
+          const start = Math.min((currentPage - 1) * productsPerPage + 1, totalProducts);
+          const end = Math.min((currentPage + 1 )* productsPerPage - 1, totalProducts);
+          
+          paginationInfo.textContent = `Affichage de ${start} à ${end} sur ${totalProducts} produits`;
+      }
+      
+      // Mettre à jour l'état des boutons de navigation
+      function updateNavigationButtons() {
+          const totalProducts = filteredProducts.length;
+          const totalPages = Math.ceil(totalProducts / productsPerPage);
+          
+          // Bouton précédent
+          prevButton.disabled = currentPage === 1;
+          
+          // Bouton suivant
+          nextButton.disabled = currentPage === totalPages || totalPages === 0;
+      }
+      
+      // Navigation entre les pages
+      function navigateToPage(page) {
+          const totalProducts = filteredProducts.length;
+          const totalPages = Math.ceil(totalProducts / productsPerPage);
+          
+          if (page >= 1 && page <= totalPages) {
+              currentPage = page;
+              updateDisplay();
+          }
+      }
+      
+      // Initialisation
+      init();
+  });
+</script>
 </body>
 </html>

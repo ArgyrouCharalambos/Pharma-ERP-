@@ -40,7 +40,7 @@ export default class ProductsController {
                 });
 
 
-    return view.render('products/index', { totalStock: total,products, PRODUCT, auth,Alerte:alt ,valeurTotalDuStock})
+    return view.render('products/index', { totalStock: total,products, PRODUCT, auth,Alerte:alt ,valeurTotalDuStock,DateTime})
   }
 
   public async create({ view }: HttpContext) {

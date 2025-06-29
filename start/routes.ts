@@ -18,9 +18,10 @@ const SalesController = () => import('#controllers/sales_controller')
 // Products
 router
   .group(() => {
-    router.resource('products', ProductsController).except(['show', 'update'])
+    router.resource('products', ProductsController).except(['show', 'update','destroy'])
     router.get('products/alerts', [ProductsController, 'alerts'])
     router.post('products/update/:id', [ProductsController, 'update'])
+    router.post('/productsDestroy/:id', [ProductsController, 'destroy'])
     router.get('sales/stat', [SalesController, 'stats'])
 
     // Sales
