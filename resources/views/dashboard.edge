@@ -48,7 +48,7 @@
         }
         
         .stat-card {
-            background: linear-gradient(135deg, #dbeafe 0%, #eff6ff 100%);
+            background: linear-gradient(135deg, # 0%, #eff6ff 100%);
             border-left: 4px solid #1e40af;
         }
         
@@ -96,7 +96,7 @@
 }">
     <div class="flex min-h-screen">
        <!-- Sidebar -->
-  <div class=" z-40 w-[200px] bg-gradient-to-b from-blue-800 to-blue-900 shadow-2xl transform transition-transform duration-300"
+  <div class="hidden md:block z-40 w-[200px] bg-gradient-to-b from-blue-800 to-blue-900 shadow-2xl transform transition-transform duration-300"
   :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'">
   <div class="py-6 px-2 border-b border-blue-700">
     <h1 class="text-lg font-bold text-white flex items-center">
@@ -131,21 +131,18 @@
         
             <!-- Header -->
             <header class="bg-white border-b border-gray-200">
-                <div class="flex justify-between items-center py-4 px-6">
+                <div class="md:flex justify-between items-center py-4 px-6">
                     <div class="flex items-center">
                         <h2 class="text-xl font-semibold text-dark">Rapport de Ventes</h2>
-                        <div class="ml-6 flex space-x-1">
-                            <button id="dailyBtn" class="time-period-btn px-4 py-1 rounded-lg bg-primary text-white font-medium">Journalier</button>
-                            <button id="weeklyBtn" class="time-period-btn px-4 py-1 rounded-lg bg-light text-primary font-medium">Hebdomadaire</button>
-                            <button id="monthlyBtn" class="time-period-btn px-4 py-1 rounded-lg bg-light text-primary font-medium">Mensuel</button>
+                        <div class="flex ml-6 space-x-1">
+                            <button id="dailyBtn" class="time-period-btn px-4 py-1 rounded-lg bg-primary text-white font-medium"><p class="hidden md:block">Journalier</p><p class="md:hidden block">J</p></button>
+                            <button id="weeklyBtn" class="time-period-btn px-4 py-1 rounded-lg bg-light text-primary font-medium"><p class="hidden  md:block">Hebdomadaire</p><p class="md:hidden block">H</p></button>
+                            <button id="monthlyBtn" class="time-period-btn px-4 py-1 rounded-lg bg-light text-primary font-medium"><p class="hidden  md:block">Mensuel</p><p class="md:hidden block">M</p></button>
                         </div>
                     </div>
                     
                     <div class="flex items-center space-x-4">
-                        <div class="relative">
-                            <input type="text" placeholder="Rechercher..." class="pl-10 pr-4 py-2 bg-light rounded-lg focus:outline-none focus:ring-2 focus:ring-accent">
-                            <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
-                        </div>
+                        
                         <div class="flex items-center bg-light rounded-lg px-3 py-1">
                             <i class="fas fa-calendar-alt text-primary mr-2"></i>
                             <span id="dateDisplay" class="text-primary">29 juin 2023</span>
@@ -162,7 +159,7 @@
                     
                     <!-- Stats Cards -->
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-                        <div class="dashboard-card stat-card p-6 rounded-xl">
+                        <div class="dashboard-card bg-white stat-card p-6 rounded-xl">
                             <div class="flex justify-between items-start">
                                 <div>
                                     <p class="text-gray-500">Chiffre d'Affaires</p>
@@ -180,7 +177,7 @@
                             
                         </div>
                         
-                        <div class="dashboard-card stat-card p-6 rounded-xl">
+                        <div class="dashboard-card bg-white stat-card p-6 rounded-xl">
                             <div class="flex justify-between items-start">
                                 <div>
                                     <p class="text-gray-500">Transactions</p>
@@ -200,7 +197,7 @@
                         
                            
                         
-                        <div class="dashboard-card stat-card p-6 rounded-xl">
+                        <div class="dashboard-card bg-white stat-card p-6 rounded-xl">
                             <div class="flex justify-between items-start">
                                 <div>
                                     <p class="text-gray-500">Panier Moyen</p>
@@ -411,7 +408,7 @@
                     
                     <!-- Stats Cards -->
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-                        <div class="dashboard-card stat-card p-6 rounded-xl">
+                        <div class="dashboard-card bg-white stat-card p-6 rounded-xl">
                             <div class="flex justify-between items-start">
                                 <div>
                                     <p class="text-gray-500">Chiffre d'Affaires</p>
@@ -430,7 +427,7 @@
                           
                         </div>
                         
-                        <div class="dashboard-card stat-card p-6 rounded-xl">
+                        <div class="dashboard-card bg-white stat-card p-6 rounded-xl">
                             <div class="flex justify-between items-start">
                                 <div>
                                     <p class="text-gray-500">Transactions</p>
@@ -450,7 +447,7 @@
                         
                    
                         
-                        <div class="dashboard-card stat-card p-6 rounded-xl">
+                        <div class="dashboard-card bg-white stat-card p-6 rounded-xl">
                             <div class="flex justify-between items-start">
                                 <div>
                                     <p class="text-gray-500">Panier Moyen</p>
@@ -560,7 +557,7 @@
                     
                     <!-- Stats Cards -->
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-                        <div class="dashboard-card stat-card p-6 rounded-xl">
+                        <div class="dashboard-card bg-white stat-card p-6 rounded-xl">
                             <div class="flex justify-between items-start">
                                 <div>
                                     <p class="text-gray-500">Chiffre d'Affaires</p>
@@ -578,7 +575,7 @@
                             
                         </div>
                         
-                        <div class="dashboard-card stat-card p-6 rounded-xl">
+                        <div class="dashboard-card bg-white stat-card p-6 rounded-xl">
                             <div class="flex justify-between items-start">
                                 <div>
                                     <p class="text-gray-500">Transactions</p>
@@ -597,7 +594,7 @@
                         </div>
                         
                                              
-                        <div class="dashboard-card stat-card p-6 rounded-xl">
+                        <div class="dashboard-card bg-white stat-card p-6 rounded-xl">
                             <div class="flex justify-between items-start">
                                 <div>
                                     <p class="text-gray-500">Panier Moyen</p>
@@ -793,10 +790,18 @@
                 data: {
                     labels: ['0h','1h','2h','3h','5h','6h','7h','8h','9h', '10h', '11h', '12h', '13h', '14h', '15h', '16h', '17h', '18h','19h','20h','21h','22h','23h'],
                     datasets: [{
-                        label: 'Ventes (Fc)',
+                        label: "Vente D'aujourd'hui (Fc)",
                         data: [{{ salesByHour.join(',') }}],
                         backgroundColor: '#3b82f6',
                         borderColor: '#1e40af',
+                        borderWidth: 1
+                    },
+                    {
+                        label: "Vente D'hier (Fc)",
+                        data: [{{ salesByHourHier.join(',') }}],
+                        backgroundColor: '#dbeafe',
+                        borderDash: [5, 5],
+                        borderColor: '#3b82f6',
                         borderWidth: 1
                     }]
                 },

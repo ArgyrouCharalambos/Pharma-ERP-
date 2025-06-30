@@ -323,6 +323,23 @@ salesToday.forEach(sale => {
   }
 });
 
+// 1. Données horaires (9h-18h) pour aujourd'hui
+const salesByHourHier = Array(24).fill(0); // 10 heures de 9h à 18h
+
+const startOfDay2Hier = DateTime.now().setZone('Africa/Lubumbashi').minus({ days: 1 }).startOf('day').toJSDate()
+const endOfDay2Hier = DateTime.now().setZone('Africa/Lubumbashi').minus({ days: 1 }).endOf('day').toJSDate()
+
+const salesTodayHier = await Sale.query()
+  .where('userid', Number(auth.user?.id))
+  .whereBetween('created_at', [startOfDay2Hier, endOfDay2Hier]);
+
+salesTodayHier.forEach(sale => {
+  const hour = sale.createdAt.setZone('Africa/Lubumbashi').plus({hours:-1}).hour;
+  if (hour >= 0 && hour <= 23) {
+    salesByHourHier[hour - 0] += Number(sale.totalPrice);
+  }
+});
+
 // 2. Données hebdomadaires (cette semaine et semaine dernière)
 const currentWeekSales = Array(7).fill(0); // 7 jours
 const lastWeekSales = Array(7).fill(0);
@@ -374,7 +391,7 @@ salesThisYear.forEach(sale => {
 
 
     return view.render('dashboard', {
-
+      salesByHourHier,
       salesByHour,
   currentWeekSales,
   lastWeekSales,
