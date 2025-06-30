@@ -24,7 +24,7 @@ export default class ProductsController {
                 (
                   await Product.query()
                     .where('userid',Number(auth.user?.id))
-                    .where('expiration_date', '<', DateTime.now().toSQLDate())
+                    .where('expiration_date', '<=', DateTime.now().setZone('Africa/Lubumbashi').toJSDate())
                     .count('* as total')
                 )[0]?.$extras.total || 0
     
@@ -84,7 +84,7 @@ export default class ProductsController {
 
   public async alerts({ view, auth }: HttpContext) {
     const products = await Product.query()
-    const PRODUCTS = await Product.query().where('userid',Number(auth.user?.id)).where('expiration_date', '<', DateTime.now().toSQLDate())
+    const PRODUCTS = await Product.query().where('userid',Number(auth.user?.id)).where('expiration_date', '<=', DateTime.now().setZone('Africa/Lubumbashi').toJSDate())
     const critiqueResult = await Product.query().where('userid',Number(auth.user?.id)).where('quantity', '<', 10).count('* as total')
     const Critique = critiqueResult[0]?.$extras.total || 0
     const PRODUCT = await Product.query().where('userid',Number(auth.user?.id)).where('quantity', '<', 10)
@@ -92,7 +92,7 @@ export default class ProductsController {
       (
         await Product.query()
           .where('userid',Number(auth.user?.id))
-          .where('expiration_date', '<', DateTime.now().toSQLDate())
+          .where('expiration_date', '<=', DateTime.now().setZone('Africa/Lubumbashi').toJSDate())
           .count('* as total')
       )[0]?.$extras.total || 0
                

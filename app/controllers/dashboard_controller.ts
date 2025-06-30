@@ -168,7 +168,7 @@ const endOfDay = DateTime.now().setZone('Africa/Lubumbashi').endOf('day').toJSDa
                       (
                         await Product.query()
                           .where('userid',Number(auth.user?.id))
-                          .where('expiration_date', '<', DateTime.now().toSQLDate())
+                          .where('expiration_date', '<=', DateTime.now().setZone('Africa/Lubumbashi').toJSDate())
                           .count('* as total')
                       )[0]?.$extras.total || 0
           
