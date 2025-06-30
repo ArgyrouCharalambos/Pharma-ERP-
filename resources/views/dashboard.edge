@@ -693,7 +693,9 @@
                 
                 <!-- Weekly Report -->
                 <div id="weeklyContent" class="tab-content">
-                    <h2 class="text-2xl font-bold text-dark mb-6">Rapport Hebdomadaire <span class="text-primary">- Semaine 26 (26 juin - 2 juillet 2023)</span></h2>
+                    <h2 class="text-2xl font-bold text-dark mb-6">Rapport Hebdomadaire <span class="text-primary">
+                      {{--  - Semaine #    --}}
+                      {{DateTime.now().setZone('Africa/Lubumbashi').startOf('week').toFormat('dd LLL',{ locale: "fr" })}} - {{DateTime.now().setZone('Africa/Lubumbashi').endOf('week').toFormat('dd LLL yyyy',{ locale: "fr" })}}</span></h2>
                     
                     <!-- Stats Cards -->
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
@@ -845,7 +847,7 @@
                 
                 <!-- Monthly Report -->
                 <div id="monthlyContent" class="tab-content">
-                    <h2 class="text-2xl font-bold text-dark mb-6">Rapport Mensuel <span class="text-primary">- Juin 2023</span></h2>
+                    <h2 class="text-2xl font-bold text-dark mb-6">Rapport Mensuel <span class="text-primary">{{DateTime.now().toFormat('LLL yyyy',{ locale: "fr" })}}</span></h2>
                     
                     <!-- Stats Cards -->
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">

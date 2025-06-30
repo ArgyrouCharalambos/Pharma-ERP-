@@ -338,7 +338,8 @@ let augmentationTransactionMonthStat = (cacultransactionHierMonthStat*100)
       panierMinWeek,
       panierMaxMonth,
       panierMinMonth,
-      Alerte:alt
+      Alerte:alt,
+      DateTime
     })
   }
 }
