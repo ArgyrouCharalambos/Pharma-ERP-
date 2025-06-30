@@ -174,7 +174,79 @@ const endOfDay = DateTime.now().setZone('Africa/Lubumbashi').endOf('day').toJSDa
           
                       let alt = (Number(Critique) + Number(Expire))
 
+
+
+
+const debutHier = DateTime.now().setZone('Africa/Lubumbashi').minus({ days: 1 }).startOf('day').toJSDate()
+const finHier = DateTime.now().setZone('Africa/Lubumbashi').minus({ days: 1 }).endOf('day').toJSDate()
+
+const ventesHier = await Sale.query()
+  .where('userid', Number(auth.user?.id))
+  .whereBetween('created_at', [debutHier, finHier])
+  .sum('total_price as total')
+  .then((result) => Number(result[0]?.$extras.total || 0))
+
+
+let cacul = (venteJour-ventesHier)/ventesHier;
+let auglantationDay = (cacul*100)
+
+// Aller au début de la semaine actuelle, puis reculer de 1 semaine
+const debutSemainePassee = DateTime.now()
+  .setZone('Africa/Lubumbashi')
+  .startOf('week')
+  .minus({ weeks: 1 })
+  .toJSDate()
+
+const finSemainePassee = DateTime.now()
+  .setZone('Africa/Lubumbashi')
+  .startOf('week')
+  .minus({ days: 1 }) // Dimanche dernier (juste avant cette semaine)
+  .endOf('day')
+  .toJSDate()
+
+const ventesSemainePassee = await Sale.query()
+  .where('userid', Number(auth.user?.id))
+  .whereBetween('created_at', [debutSemainePassee, finSemainePassee])
+  .sum('total_price as total')
+  .then((result) => Number(result[0]?.$extras.total || 0))
+
+
+
+let caculWeek = (venteWeek-ventesSemainePassee)/venteWeek;
+let augmentationWeek = (caculWeek*100)
+
+// Obtenir le début et la fin du mois précédent
+const debutMoisPasse = DateTime.now()
+  .setZone('Africa/Lubumbashi')
+  .minus({ months: 1 })
+  .startOf('month')
+  .toJSDate()
+
+const finMoisPasse = DateTime.now()
+  .setZone('Africa/Lubumbashi')
+  .minus({ months: 1 })
+  .endOf('month')
+  .toJSDate()
+
+
+// Faire la requête pour toutes les ventes du mois précédent
+const ventesMoisPasse = await Sale.query()
+  .where('userid', Number(auth.user?.id))
+  .whereBetween('created_at', [debutMoisPasse, finMoisPasse])
+  .sum('total_price as total')
+  .then((result) => Number(result[0]?.$extras.total || 0))
+
+  let caculMonth = (rawTotal-ventesMoisPasse)/rawTotal;
+  let augmentationMonth = (caculMonth*100)
+  
+
+
+
+
     return view.render('dashboard', {
+      augmentationMonth:augmentationMonth.toFixed(1),
+      augmentationWeek:augmentationWeek.toFixed(1),
+      augmentationDay:auglantationDay.toFixed(1),
       venteJour,
       venteMois: rawTotal,
       venteWeek,

@@ -455,7 +455,11 @@
                                 <div>
                                     <p class="text-gray-500">Chiffre d'Affaires</p>
                                     <p class="text-2xl font-bold mt-2">{{ venteJour }} Fc</p>
-                                    <p class="text-green-500 mt-1"><i class="fas fa-arrow-up mr-1"></i> 8.7%</p>
+                                    @if(augmentationDay > 0)
+                                    <p class="text-green-500 mt-1"><i class="fas fa-arrow-up mr-1"></i> {{augmentationDay}} %</p>
+                                    @elseif(augmentationDay < 0)
+                                    <p class="text-red-500 mt-1"><i class="fas fa-arrow-down mr-1"></i> {{augmentationDay}} %</p>
+                                    @endif
                                 </div>
                                 <div class="p-3 rounded-lg bg-blue-100 text-primary">
                                   <p class="text-2xl font-bold">Fc</p>
@@ -690,7 +694,12 @@
                                 <div>
                                     <p class="text-gray-500">Chiffre d'Affaires</p>
                                     <p class="text-2xl font-bold mt-2">{{ Number(venteWeek).toFixed(0)}} Fc</p>
-                                    <p class="text-green-500 mt-1"><i class="fas fa-arrow-up mr-1"></i> 10.2%</p>
+                                    @if(augmentationWeek > 0)
+                                    <p class="text-green-500 mt-1"><i class="fas fa-arrow-up mr-1"></i> {{augmentationWeek}} %</p>
+                                    @elseif(augmentationWeek < 0)
+                                    <p class="text-red-500 mt-1"><i class="fas fa-arrow-down mr-1"></i> {{augmentationWeek}} %</p>
+                                    @endif
+
                                 </div>
                                 <div class="p-3 rounded-lg bg-blue-100 text-primary">
                                   <p class="text-2xl font-bold">Fc</p>
@@ -828,7 +837,11 @@
                                 <div>
                                     <p class="text-gray-500">Chiffre d'Affaires</p>
                                     <p class="text-2xl font-bold mt-2"> {{ Number(venteMois).toFixed(0) }} Fc</p>
-                                    <p class="text-green-500 mt-1"><i class="fas fa-arrow-up mr-1"></i> 8.4%</p>
+                                    @if(augmentationMonth > 0)
+                                    <p class="text-green-500 mt-1"><i class="fas fa-arrow-up mr-1"></i> {{augmentationMonth}} %</p>
+                                    @elseif(augmentationMonth < 0)
+                                    <p class="text-red-500 mt-1"><i class="fas fa-arrow-down mr-1"></i> {{augmentationMonth}} %</p>
+                                    @endif
                                 </div>
                                 <div class="p-3 rounded-lg bg-blue-100 text-primary">
                                     <p class="text-2xl font-bold">Fc</p>
