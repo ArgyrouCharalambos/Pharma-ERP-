@@ -24,8 +24,8 @@ export default class DashboardController {
       }
     })
     const now = DateTime.now()
-    const startOfMonth = now.startOf('month').toJSDate()
-    const endOfMonth = now.endOf('month').toJSDate()
+    const startOfMonth = now.setZone('Africa/Lubumbashi').startOf('month').toJSDate()
+    const endOfMonth = now.setZone('Africa/Lubumbashi').endOf('month').toJSDate()
 
     const rawTotal =
       (
@@ -48,8 +48,8 @@ export default class DashboardController {
       console.log(e.produits)
     })
 
-    const startOfWeek = now.startOf('week').toJSDate()
-    const endOfWeek = now.endOf('week').toJSDate()
+    const startOfWeek = now.setZone('Africa/Lubumbashi').startOf('week').toJSDate()
+    const endOfWeek = now.setZone('Africa/Lubumbashi').endOf('week').toJSDate()
 
     const venteWeek =
       (
@@ -60,11 +60,14 @@ export default class DashboardController {
           .first()
       )?.$extras.total || 0
 
+
+      const startOfDay = DateTime.now().setZone('Africa/Lubumbashi').startOf('day').toJSDate()
+const endOfDay = DateTime.now().setZone('Africa/Lubumbashi').endOf('day').toJSDate()
+
     const venteJour = await Sale.query()
       .where('userid', Number(auth.user?.id))
       .whereBetween('created_at', [
-        DateTime.now().startOf('day').toJSDate(),
-        DateTime.now().endOf('day').toJSDate(),
+        startOfDay,endOfDay
       ])
       .sum('total_price as total')
       .then((result) => Number(result[0]?.$extras.total || 0))
@@ -75,8 +78,7 @@ export default class DashboardController {
           .count('* as total')
           .where('userid', Number(auth.user?.id))
           .whereBetween('created_at', [
-            DateTime.now().startOf('day').toJSDate(),
-            DateTime.now().endOf('day').toJSDate(),
+            startOfDay,endOfDay
           ])
           .first()
       )?.$extras.total || 0
@@ -106,8 +108,7 @@ export default class DashboardController {
 
       const Panier = await Sale.query().where("userid",Number(auth.user?.id))
       .whereBetween('created_at',  [
-        DateTime.now().startOf('day').toJSDate(),
-        DateTime.now().endOf('day').toJSDate(),
+        startOfDay,endOfDay
       ])
 
       let panierMaxDay = -Infinity;

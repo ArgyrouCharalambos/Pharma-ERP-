@@ -13,12 +13,6 @@ export default class SalesController {
     })
     .orderBy('created_at', 'desc').where('userid', Number(auth.user?.id))
 
-    sales.forEach(e => {
-      console.log(e.produits)
-
-      
-    })
-
     const produit_de_vente = await ProduitDeVente.query().preload('product').where('userid', Number(auth.user?.id))
     const SALE = await Sale.query()
       .preload('product')
