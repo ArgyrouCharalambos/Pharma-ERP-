@@ -180,6 +180,20 @@ const endOfDay = DateTime.now().setZone('Africa/Lubumbashi').endOf('day').toJSDa
 const debutHier = DateTime.now().setZone('Africa/Lubumbashi').minus({ days: 1 }).startOf('day').toJSDate()
 const finHier = DateTime.now().setZone('Africa/Lubumbashi').minus({ days: 1 }).endOf('day').toJSDate()
 
+const transactionHierDay =
+      (
+        await Sale.query()
+          .count('* as total')
+          .where('userid', Number(auth.user?.id))
+          .whereBetween('created_at', [
+            debutHier,finHier
+          ])
+          .first()
+      )?.$extras.total || 0
+
+      let cacultransactionHierDay = (transactionDay-transactionHierDay)/transactionDay;
+let augmentationTransactionDay = (cacultransactionHierDay*100)
+
 const ventesHier = await Sale.query()
   .where('userid', Number(auth.user?.id))
   .whereBetween('created_at', [debutHier, finHier])
@@ -203,6 +217,21 @@ const finSemainePassee = DateTime.now()
   .minus({ days: 1 }) // Dimanche dernier (juste avant cette semaine)
   .endOf('day')
   .toJSDate()
+
+
+  const transactionHierWeek =
+      (
+        await Sale.query()
+          .count('* as total')
+          .where('userid', Number(auth.user?.id))
+          .whereBetween('created_at', [
+            debutSemainePassee,finSemainePassee
+          ])
+          .first()
+      )?.$extras.total || 0
+
+      let cacultransactionHierWeek = (transactionWeek-transactionHierWeek)/transactionWeek;
+let augmentationTransactionWeek = (cacultransactionHierWeek*100)
 
 const ventesSemainePassee = await Sale.query()
   .where('userid', Number(auth.user?.id))
@@ -229,6 +258,21 @@ const finMoisPasse = DateTime.now()
   .toJSDate()
 
 
+  const transactionHierMonth =
+      (
+        await Sale.query()
+          .count('* as total')
+          .where('userid', Number(auth.user?.id))
+          .whereBetween('created_at', [
+            debutMoisPasse,finMoisPasse
+          ])
+          .first()
+      )?.$extras.total || 0
+
+      let cacultransactionHierMonth = (transactionMonth-transactionHierMonth)/transactionMonth;
+let augmentationTransactionMonth = (cacultransactionHierMonth*100)
+
+
 // Faire la requête pour toutes les ventes du mois précédent
 const ventesMoisPasse = await Sale.query()
   .where('userid', Number(auth.user?.id))
@@ -244,6 +288,10 @@ const ventesMoisPasse = await Sale.query()
 
 
     return view.render('dashboard', {
+      augmentationTransactionMonth:augmentationTransactionMonth.toFixed(1),
+      augmentationTransactionWeek:augmentationTransactionWeek.toFixed(1),
+      augmentationTransactionDay:augmentationTransactionDay.toFixed(1),
+
       augmentationMonth:augmentationMonth.toFixed(1),
       augmentationWeek:augmentationWeek.toFixed(1),
       augmentationDay:auglantationDay.toFixed(1),
