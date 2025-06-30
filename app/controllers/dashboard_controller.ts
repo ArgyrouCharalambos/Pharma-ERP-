@@ -285,9 +285,33 @@ const ventesMoisPasse = await Sale.query()
   
 
 
+  const PanierMoyenDayStat = ventesHier / Number(transactionHierDay);
+const PanierMoyenWeekStat = ventesSemainePassee / Number(transactionHierWeek)
+const PanierMoyenMonthStat = Number(ventesMoisPasse) / Number(transactionHierMonth);
+
+let cacultransactionHierDayStat = (PanierMoyenDay-PanierMoyenDayStat)/PanierMoyenDay;
+let augmentationTransactionDayStat = (cacultransactionHierDayStat*100)
+
+let cacultransactionHierWeekStat = (PanierMoyenWeek-PanierMoyenWeekStat)/PanierMoyenWeek;
+let augmentationTransactionWeekStat = (cacultransactionHierWeekStat*100)
+
+let cacultransactionHierMonthStat = 0;
+if(isNaN(PanierMoyenMonthStat)){
+  cacultransactionHierMonthStat = PanierMoyenMonth/PanierMoyenMonth;
+}
+else{
+  cacultransactionHierMonthStat = (PanierMoyenMonth-PanierMoyenMonthStat)/PanierMoyenMonth;
+}
+
+let augmentationTransactionMonthStat = (cacultransactionHierMonthStat*100)
+
 
 
     return view.render('dashboard', {
+      augmentationTransactionDayStat:augmentationTransactionDayStat.toFixed(1),
+      augmentationTransactionWeekStat:augmentationTransactionWeekStat.toFixed(1),
+      augmentationTransactionMonthStat:augmentationTransactionMonthStat.toFixed(1),
+
       augmentationTransactionMonth:augmentationTransactionMonth.toFixed(1),
       augmentationTransactionWeek:augmentationTransactionWeek.toFixed(1),
       augmentationTransactionDay:augmentationTransactionDay.toFixed(1),

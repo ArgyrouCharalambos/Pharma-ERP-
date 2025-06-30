@@ -497,7 +497,11 @@
                                     @else 
                                     <p class="text-2xl font-bold mt-2">0 Fc</p>
                                     @endif
-                                    <p class="text-green-500 mt-1"><i class="fas fa-arrow-up mr-1"></i> 2.3%</p>
+                                    @if(augmentationTransactionDayStat > 0)
+                                    <p class="text-green-500 mt-1"><i class="fas fa-arrow-up mr-1"></i> {{augmentationTransactionDayStat}} %</p>
+                                    @elseif(augmentationTransactionDayStat < 0)
+                                    <p class="text-red-500 mt-1"><i class="fas fa-arrow-down mr-1"></i> {{augmentationTransactionDayStat}} %</p>
+                                    @endif
                                 </div>
                                 <div class="p-3 rounded-lg bg-blue-100 text-primary">
                                     <i class="fas fa-shopping-basket text-xl"></i>
@@ -741,7 +745,12 @@
                                     @else 
                                     <p class="text-2xl font-bold mt-2">0 Fc</p>
                                     @endif
-                                    <p class="text-green-500 mt-1"><i class="fas fa-arrow-up mr-1"></i> 1.8%</p>
+
+                                    @if(augmentationTransactionWeekStat > 0)
+                                    <p class="text-green-500 mt-1"><i class="fas fa-arrow-up mr-1"></i> {{augmentationTransactionWeekStat}} %</p>
+                                    @elseif(augmentationTransactionWeekStat < 0)
+                                    <p class="text-red-500 mt-1"><i class="fas fa-arrow-down mr-1"></i> {{augmentationTransactionWeekStat}} %</p>
+                                    @endif
                                 </div>
                                 <div class="p-3 rounded-lg bg-blue-100 text-primary">
                                     <i class="fas fa-shopping-basket text-xl"></i>
@@ -886,7 +895,12 @@
                                     @else 
                                     <p class="text-2xl font-bold mt-2">0 Fc</p>
                                     @endif
-                                    <p class="text-green-500 mt-1"><i class="fas fa-arrow-up mr-1"></i> 1.2%</p>
+
+                                    @if(augmentationTransactionMonthStat > 0)
+                                    <p class="text-green-500 mt-1"><i class="fas fa-arrow-up mr-1"></i> {{augmentationTransactionMonthStat}} %</p>
+                                    @elseif(augmentationTransactionMonthStat < 0)
+                                    <p class="text-red-500 mt-1"><i class="fas fa-arrow-down mr-1"></i> {{augmentationTransactionMonthStat}} %</p>
+                                    @endif
                                 </div>
                                 <div class="p-3 rounded-lg bg-blue-100 text-primary">
                                     <i class="fas fa-shopping-basket text-xl"></i>
