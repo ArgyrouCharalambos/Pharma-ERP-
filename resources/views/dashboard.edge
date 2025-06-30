@@ -534,10 +534,7 @@
                             <div class="dashboard-card bg-white p-6 rounded-xl">
                                 <div class="flex justify-between items-center mb-6">
                                     <h3 class="text-lg font-semibold text-dark">Ventes par Heure</h3>
-                                    <div class="flex space-x-2">
-                                        <button class="px-3 py-1 bg-light rounded-lg text-primary">Hier</button>
-                                        <button class="px-3 py-1 bg-primary text-white rounded-lg">Aujourd'hui</button>
-                                    </div>
+                                   
                                 </div>
                                 <div class="h-80">
                                     <canvas id="hourlyChart"></canvas>
@@ -784,10 +781,7 @@
                             <div class="dashboard-card bg-white p-6 rounded-xl">
                                 <div class="flex justify-between items-center mb-6">
                                     <h3 class="text-lg font-semibold text-dark">Ventes par Jour</h3>
-                                    <div class="flex space-x-2">
-                                        <button class="px-3 py-1 bg-light rounded-lg text-primary">Semaine dernière</button>
-                                        <button class="px-3 py-1 bg-primary text-white rounded-lg">Cette semaine</button>
-                                    </div>
+                                    
                                 </div>
                                 <div class="h-80">
                                     <canvas id="weeklyChart"></canvas>
@@ -933,11 +927,6 @@
                             <div class="dashboard-card bg-white p-6 rounded-xl">
                                 <div class="flex justify-between items-center mb-6">
                                     <h3 class="text-lg font-semibold text-dark">Évolution Mensuelle</h3>
-                                    <div class="flex space-x-2">
-                                        <button class="px-3 py-1 bg-light rounded-lg text-primary">Mai 2023</button>
-                                        <button class="px-3 py-1 bg-primary text-white rounded-lg">Juin 2023</button>
-                                        <button class="px-3 py-1 bg-light rounded-lg text-primary">Année</button>
-                                    </div>
                                 </div>
                                 <div class="h-80">
                                     <canvas id="monthlyChart"></canvas>
@@ -1087,10 +1076,10 @@
             const hourlyChart = new Chart(hourlyCtx, {
                 type: 'bar',
                 data: {
-                    labels: ['9h', '10h', '11h', '12h', '13h', '14h', '15h', '16h', '17h', '18h'],
+                    labels: ['0h','1h','2h','3h','5h','6h','7h','8h','9h', '10h', '11h', '12h', '13h', '14h', '15h', '16h', '17h', '18h','19h','20h','21h','22h','23h'],
                     datasets: [{
                         label: 'Ventes (Fc)',
-                        data: [420, 780, 920, 1200, 850, 950, 1450, 1320, 980, 620],
+                        data: [{{ salesByHour.join(',') }}],
                         backgroundColor: '#3b82f6',
                         borderColor: '#1e40af',
                         borderWidth: 1
@@ -1129,7 +1118,7 @@
                     datasets: [
                         {
                             label: 'Cette semaine',
-                            data: [6200, 6850, 7150, 8420, 7980, 7350, 6850],
+                            data: [{{ currentWeekSales.join(',') }}],
                             borderColor: '#1e40af',
                             backgroundColor: 'rgba(30, 64, 175, 0.05)',
                             tension: 0.3,
@@ -1137,7 +1126,7 @@
                         },
                         {
                             label: 'Semaine dernière',
-                            data: [5800, 6150, 6350, 7450, 6980, 6250, 5650],
+                            data: [{{ lastWeekSales.join(',') }}],
                             borderColor: '#60a5fa',
                             borderDash: [5, 5],
                             tension: 0.3,
@@ -1182,7 +1171,7 @@
                     labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc'],
                     datasets: [{
                         label: 'Chiffre d\'affaires (Fc)',
-                        data: [132, 145, 158, 142, 148, 156.8, 0, 0, 0, 0, 0, 0],
+                        data:  [{{ salesByMonth.join(',') }}],
                         backgroundColor: [
                             '#3b82f6', '#3b82f6', '#3b82f6', '#3b82f6', '#3b82f6', '#1e40af', 
                             '#dbeafe', '#dbeafe', '#dbeafe', '#dbeafe', '#dbeafe', '#dbeafe'

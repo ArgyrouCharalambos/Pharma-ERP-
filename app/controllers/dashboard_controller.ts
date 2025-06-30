@@ -306,8 +306,79 @@ else{
 let augmentationTransactionMonthStat = (cacultransactionHierMonthStat*100)
 
 
+// 1. Données horaires (9h-18h) pour aujourd'hui
+const salesByHour = Array(24).fill(0); // 10 heures de 9h à 18h
+
+const startOfDay2 = DateTime.now().setZone('Africa/Lubumbashi').startOf('day').toJSDate()
+const endOfDay2 = DateTime.now().setZone('Africa/Lubumbashi').endOf('day').toJSDate()
+
+const salesToday = await Sale.query()
+  .where('userid', Number(auth.user?.id))
+  .whereBetween('created_at', [startOfDay2, endOfDay2]);
+
+salesToday.forEach(sale => {
+  const hour = sale.createdAt.setZone('Africa/Lubumbashi').plus({hours:-1}).hour;
+  if (hour >= 0 && hour <= 23) {
+    salesByHour[hour - 0] += Number(sale.totalPrice);
+  }
+});
+
+// 2. Données hebdomadaires (cette semaine et semaine dernière)
+const currentWeekSales = Array(7).fill(0); // 7 jours
+const lastWeekSales = Array(7).fill(0);
+
+// Cette semaine
+const salesThisWeek = await Sale.query()
+  .where('userid', Number(auth.user?.id))
+  .whereBetween('created_at', [startOfWeek, endOfWeek]);
+
+salesThisWeek.forEach(sale => {
+  const dayOfWeek = DateTime.fromJSDate(sale.createdAt.toJSDate()).setZone('Africa/Lubumbashi').weekday - 1; // Lundi=0, Dimanche=6
+  if (dayOfWeek >= 0 && dayOfWeek < 7) {
+    currentWeekSales[dayOfWeek] += Number(sale.totalPrice);
+  }
+});
+
+// Semaine dernière
+const startOfLastWeek = DateTime.now().setZone('Africa/Lubumbashi').startOf('week').minus({ weeks: 1 });
+const endOfLastWeek = startOfLastWeek.endOf('week');
+
+const salesLastWeek = await Sale.query()
+  .where('userid', Number(auth.user?.id))
+  .whereBetween('created_at', [startOfLastWeek.toJSDate(), endOfLastWeek.toJSDate()]);
+
+salesLastWeek.forEach(sale => {
+  const dayOfWeek = sale.createdAt.setZone('Africa/Lubumbashi').weekday - 1;
+  if (dayOfWeek >= 0 && dayOfWeek < 7) {
+    lastWeekSales[dayOfWeek] += Number(sale.totalPrice);
+  }
+});
+
+// 3. Données mensuelles (12 mois)
+const salesByMonth = Array(12).fill(0);
+
+const startOfYear = DateTime.now().setZone('Africa/Lubumbashi').startOf('year');
+const endOfYear = startOfYear.endOf('year');
+
+const salesThisYear = await Sale.query()
+  .where('userid', Number(auth.user?.id))
+  .whereBetween('created_at', [startOfYear.toJSDate(), endOfYear.toJSDate()]);
+
+salesThisYear.forEach(sale => {
+  const month = DateTime.fromJSDate(sale.createdAt.toJSDate()).setZone('Africa/Lubumbashi').month - 1; // Janvier=0
+  if (month >= 0 && month < 12) {
+    salesByMonth[month] += Number(sale.totalPrice);
+  }
+});
+
+
 
     return view.render('dashboard', {
+
+      salesByHour,
+  currentWeekSales,
+  lastWeekSales,
+  salesByMonth,
       augmentationTransactionDayStat:augmentationTransactionDayStat.toFixed(1),
       augmentationTransactionWeekStat:augmentationTransactionWeekStat.toFixed(1),
       augmentationTransactionMonthStat:augmentationTransactionMonthStat.toFixed(1),
