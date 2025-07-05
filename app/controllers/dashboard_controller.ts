@@ -194,15 +194,20 @@ const transactionHierDay =
       let cacultransactionHierDay = (transactionDay-transactionHierDay)/transactionDay;
 let augmentationTransactionDay = (cacultransactionHierDay*100)
 
-const ventesHier = await Sale.query()
+let ventesHier = await Sale.query()
   .where('userid', Number(auth.user?.id))
   .whereBetween('created_at', [debutHier, finHier])
   .sum('total_price as total')
   .then((result) => Number(result[0]?.$extras.total || 0))
 
-
-let cacul = (venteJour-ventesHier)/ventesHier;
-let auglantationDay = (cacul*100)
+  let auglantationDay = 0 ;
+  if(ventesHier !== 0){
+    let cacul = (venteJour-ventesHier)/ventesHier;
+    auglantationDay = (cacul*100) 
+  }
+  else{
+    auglantationDay = 100; 
+  }
 
 // Aller au début de la semaine actuelle, puis reculer de 1 semaine
 const debutSemainePassee = DateTime.now()
@@ -323,8 +328,8 @@ salesToday.forEach(sale => {
   }
 });
 
-// 1. Données horaires (9h-18h) pour aujourd'hui
-const salesByHourHier = Array(24).fill(0); // 10 heures de 9h à 18h
+// Données horaires (0h-24h) pour aujourd'hui
+const salesByHourHier = Array(24).fill(0); 
 
 const startOfDay2Hier = DateTime.now().setZone('Africa/Lubumbashi').minus({ days: 1 }).startOf('day').toJSDate()
 const endOfDay2Hier = DateTime.now().setZone('Africa/Lubumbashi').minus({ days: 1 }).endOf('day').toJSDate()
