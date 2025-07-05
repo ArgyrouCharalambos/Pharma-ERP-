@@ -60,15 +60,12 @@ export default class DashboardController {
           .first()
       )?.$extras.total || 0
 
-
-      const startOfDay = DateTime.now().setZone('Africa/Lubumbashi').startOf('day').toJSDate()
-const endOfDay = DateTime.now().setZone('Africa/Lubumbashi').endOf('day').toJSDate()
+    const startOfDay = DateTime.now().setZone('Africa/Lubumbashi').startOf('day').toJSDate()
+    const endOfDay = DateTime.now().setZone('Africa/Lubumbashi').endOf('day').toJSDate()
 
     const venteJour = await Sale.query()
       .where('userid', Number(auth.user?.id))
-      .whereBetween('created_at', [
-        startOfDay,endOfDay
-      ])
+      .whereBetween('created_at', [startOfDay, endOfDay])
       .sum('total_price as total')
       .then((result) => Number(result[0]?.$extras.total || 0))
 
@@ -77,9 +74,7 @@ const endOfDay = DateTime.now().setZone('Africa/Lubumbashi').endOf('day').toJSDa
         await Sale.query()
           .count('* as total')
           .where('userid', Number(auth.user?.id))
-          .whereBetween('created_at', [
-            startOfDay,endOfDay
-          ])
+          .whereBetween('created_at', [startOfDay, endOfDay])
           .first()
       )?.$extras.total || 0
 
@@ -101,317 +96,331 @@ const endOfDay = DateTime.now().setZone('Africa/Lubumbashi').endOf('day').toJSDa
           .first()
       )?.$extras.total || 0
 
-      const PanierMoyenDay = venteJour / transactionDay;
-      const PanierMoyenWeek = venteWeek / transactionWeek;
-      const PanierMoyenMonth = rawTotal / transactionMonth;
+    const PanierMoyenDay = venteJour / transactionDay
+    const PanierMoyenWeek = venteWeek / transactionWeek
+    const PanierMoyenMonth = rawTotal / transactionMonth
 
+    const Panier = await Sale.query()
+      .where('userid', Number(auth.user?.id))
+      .whereBetween('created_at', [startOfDay, endOfDay])
 
-      const Panier = await Sale.query().where("userid",Number(auth.user?.id))
-      .whereBetween('created_at',  [
-        startOfDay,endOfDay
-      ])
+    let panierMaxDay = -Infinity
+    let panierMinDay = Infinity
 
-      let panierMaxDay = -Infinity;
-      let panierMinDay = Infinity;
-
-      Panier.forEach(e => {
+    Panier.forEach((e) => {
       let price = Number(e.totalPrice)
 
-        if(panierMaxDay < price){
-          panierMaxDay = e.totalPrice;
-        }
-        if(panierMinDay > price){
-          panierMinDay = e.totalPrice;
-        }
-      });
+      if (panierMaxDay < price) {
+        panierMaxDay = e.totalPrice
+      }
+      if (panierMinDay > price) {
+        panierMinDay = e.totalPrice
+      }
+    })
 
-      const PanierWeek = await Sale.query().where("userid",Number(auth.user?.id))
+    const PanierWeek = await Sale.query()
+      .where('userid', Number(auth.user?.id))
       .whereBetween('created_at', [startOfWeek, endOfWeek])
 
+    let panierMaxWeek = -Infinity
+    let panierMinWeek = Infinity
 
-      let panierMaxWeek = -Infinity;
-      let panierMinWeek = Infinity;
-
-      PanierWeek.forEach(e => {
+    PanierWeek.forEach((e) => {
       let price = Number(e.totalPrice)
 
-        if(panierMaxWeek < price){
-          panierMaxWeek = e.totalPrice;
-        }
-        if(panierMinWeek > price){
-          panierMinWeek = e.totalPrice;
-        }
-      });
+      if (panierMaxWeek < price) {
+        panierMaxWeek = e.totalPrice
+      }
+      if (panierMinWeek > price) {
+        panierMinWeek = e.totalPrice
+      }
+    })
 
-      const PanierMonth = await Sale.query().where("userid",Number(auth.user?.id))
+    const PanierMonth = await Sale.query()
+      .where('userid', Number(auth.user?.id))
       .whereBetween('created_at', [startOfMonth, endOfMonth])
 
-      
-      let panierMaxMonth = -Infinity;
-      let panierMinMonth = Infinity;
+    let panierMaxMonth = -Infinity
+    let panierMinMonth = Infinity
 
-      PanierMonth.forEach(e => {
+    PanierMonth.forEach((e) => {
       let price = Number(e.totalPrice)
 
-        if(panierMaxMonth < price){
-          panierMaxMonth = e.totalPrice;
-        }
-        if(panierMinMonth > price){
-          panierMinMonth = e.totalPrice;
-        }
-      });
+      if (panierMaxMonth < price) {
+        panierMaxMonth = e.totalPrice
+      }
+      if (panierMinMonth > price) {
+        panierMinMonth = e.totalPrice
+      }
+    })
 
+    const critiqueResult = await Product.query()
+      .where('userid', Number(auth.user?.id))
+      .where('quantity', '<', 10)
+      .count('* as total')
+    const Critique = critiqueResult[0]?.$extras.total || 0
+    const Expire =
+      (
+        await Product.query()
+          .where('userid', Number(auth.user?.id))
+          .where('expiration_date', '<=', DateTime.now().setZone('Africa/Lubumbashi').toJSDate())
+          .count('* as total')
+      )[0]?.$extras.total || 0
 
-      const critiqueResult = await Product.query().where('userid',Number(auth.user?.id)).where('quantity', '<', 10).count('* as total')
-                    const Critique = critiqueResult[0]?.$extras.total || 0
-                    const Expire =
-                      (
-                        await Product.query()
-                          .where('userid',Number(auth.user?.id))
-                          .where('expiration_date', '<=', DateTime.now().setZone('Africa/Lubumbashi').toJSDate())
-                          .count('* as total')
-                      )[0]?.$extras.total || 0
-          
-                      let alt = (Number(Critique) + Number(Expire))
+    let alt = Number(Critique) + Number(Expire)
 
+    const debutHier = DateTime.now()
+      .setZone('Africa/Lubumbashi')
+      .minus({ days: 1 })
+      .startOf('day')
+      .toJSDate()
+    const finHier = DateTime.now()
+      .setZone('Africa/Lubumbashi')
+      .minus({ days: 1 })
+      .endOf('day')
+      .toJSDate()
 
-
-
-const debutHier = DateTime.now().setZone('Africa/Lubumbashi').minus({ days: 1 }).startOf('day').toJSDate()
-const finHier = DateTime.now().setZone('Africa/Lubumbashi').minus({ days: 1 }).endOf('day').toJSDate()
-
-const transactionHierDay =
+    const transactionHierDay =
       (
         await Sale.query()
           .count('* as total')
           .where('userid', Number(auth.user?.id))
-          .whereBetween('created_at', [
-            debutHier,finHier
-          ])
+          .whereBetween('created_at', [debutHier, finHier])
           .first()
       )?.$extras.total || 0
 
-      let cacultransactionHierDay = (transactionDay-transactionHierDay)/transactionDay;
-let augmentationTransactionDay = (cacultransactionHierDay*100)
+    let augmentationTransactionDay = 0
 
-let ventesHier = await Sale.query()
-  .where('userid', Number(auth.user?.id))
-  .whereBetween('created_at', [debutHier, finHier])
-  .sum('total_price as total')
-  .then((result) => Number(result[0]?.$extras.total || 0))
+    if (Number(transactionHierDay) === 0) {
+      augmentationTransactionDay = 100
+    } else {
+      let cacultransactionHierDay = (transactionDay - transactionHierDay) / transactionHierDay
+      augmentationTransactionDay = cacultransactionHierDay * 100
+    }
+    console.log(augmentationTransactionDay)
 
-  let auglantationDay = 0 ;
-  if(ventesHier !== 0){
-    let cacul = (venteJour-ventesHier)/ventesHier;
-    auglantationDay = (cacul*100) 
-  }
-  else{
-    auglantationDay = 100; 
-  }
+    let ventesHier = await Sale.query()
+      .where('userid', Number(auth.user?.id))
+      .whereBetween('created_at', [debutHier, finHier])
+      .sum('total_price as total')
+      .then((result) => Number(result[0]?.$extras.total || 0))
 
-// Aller au début de la semaine actuelle, puis reculer de 1 semaine
-const debutSemainePassee = DateTime.now()
-  .setZone('Africa/Lubumbashi')
-  .startOf('week')
-  .minus({ weeks: 1 })
-  .toJSDate()
+    let auglantationDay = 0
+    if (ventesHier !== 0) {
+      let cacul = (venteJour - ventesHier) / ventesHier
+      auglantationDay = cacul * 100
+    } else {
+      auglantationDay = 100
+    }
 
-const finSemainePassee = DateTime.now()
-  .setZone('Africa/Lubumbashi')
-  .startOf('week')
-  .minus({ days: 1 }) // Dimanche dernier (juste avant cette semaine)
-  .endOf('day')
-  .toJSDate()
+    // Aller au début de la semaine actuelle, puis reculer de 1 semaine
+    const debutSemainePassee = DateTime.now()
+      .setZone('Africa/Lubumbashi')
+      .startOf('week')
+      .minus({ weeks: 1 })
+      .toJSDate()
 
+    const finSemainePassee = DateTime.now()
+      .setZone('Africa/Lubumbashi')
+      .startOf('week')
+      .minus({ days: 1 }) // Dimanche dernier (juste avant cette semaine)
+      .endOf('day')
+      .toJSDate()
 
-  const transactionHierWeek =
+    const transactionHierWeek =
       (
         await Sale.query()
           .count('* as total')
           .where('userid', Number(auth.user?.id))
-          .whereBetween('created_at', [
-            debutSemainePassee,finSemainePassee
-          ])
+          .whereBetween('created_at', [debutSemainePassee, finSemainePassee])
           .first()
       )?.$extras.total || 0
 
-      let cacultransactionHierWeek = (transactionWeek-transactionHierWeek)/transactionWeek;
-let augmentationTransactionWeek = (cacultransactionHierWeek*100)
+    let cacultransactionHierWeek = (transactionWeek - transactionHierWeek) / transactionHierWeek
+    let augmentationTransactionWeek = cacultransactionHierWeek * 100
 
-const ventesSemainePassee = await Sale.query()
-  .where('userid', Number(auth.user?.id))
-  .whereBetween('created_at', [debutSemainePassee, finSemainePassee])
-  .sum('total_price as total')
-  .then((result) => Number(result[0]?.$extras.total || 0))
+    const ventesSemainePassee = await Sale.query()
+      .where('userid', Number(auth.user?.id))
+      .whereBetween('created_at', [debutSemainePassee, finSemainePassee])
+      .sum('total_price as total')
+      .then((result) => Number(result[0]?.$extras.total || 0))
 
+    let caculWeek = (venteWeek - ventesSemainePassee) / ventesSemainePassee
+    let augmentationWeek = caculWeek * 100
 
+    // Obtenir le début et la fin du mois précédent
+    const debutMoisPasse = DateTime.now()
+      .setZone('Africa/Lubumbashi')
+      .minus({ months: 1 })
+      .startOf('month')
+      .toJSDate()
 
-let caculWeek = (venteWeek-ventesSemainePassee)/venteWeek;
-let augmentationWeek = (caculWeek*100)
+    const finMoisPasse = DateTime.now()
+      .setZone('Africa/Lubumbashi')
+      .minus({ months: 1 })
+      .endOf('month')
+      .toJSDate()
 
-// Obtenir le début et la fin du mois précédent
-const debutMoisPasse = DateTime.now()
-  .setZone('Africa/Lubumbashi')
-  .minus({ months: 1 })
-  .startOf('month')
-  .toJSDate()
-
-const finMoisPasse = DateTime.now()
-  .setZone('Africa/Lubumbashi')
-  .minus({ months: 1 })
-  .endOf('month')
-  .toJSDate()
-
-
-  const transactionHierMonth =
+    const transactionHierMonth =
       (
         await Sale.query()
           .count('* as total')
           .where('userid', Number(auth.user?.id))
-          .whereBetween('created_at', [
-            debutMoisPasse,finMoisPasse
-          ])
+          .whereBetween('created_at', [debutMoisPasse, finMoisPasse])
           .first()
       )?.$extras.total || 0
 
-      let cacultransactionHierMonth = (transactionMonth-transactionHierMonth)/transactionMonth;
-let augmentationTransactionMonth = (cacultransactionHierMonth*100)
+    let cacultransactionHierMonth = (transactionMonth - transactionHierMonth) / transactionHierMonth
+    let augmentationTransactionMonth = cacultransactionHierMonth * 100
 
+    // Faire la requête pour toutes les ventes du mois précédent
+    const ventesMoisPasse = await Sale.query()
+      .where('userid', Number(auth.user?.id))
+      .whereBetween('created_at', [debutMoisPasse, finMoisPasse])
+      .sum('total_price as total')
+      .then((result) => Number(result[0]?.$extras.total || 0))
 
-// Faire la requête pour toutes les ventes du mois précédent
-const ventesMoisPasse = await Sale.query()
-  .where('userid', Number(auth.user?.id))
-  .whereBetween('created_at', [debutMoisPasse, finMoisPasse])
-  .sum('total_price as total')
-  .then((result) => Number(result[0]?.$extras.total || 0))
+    let caculMonth = (rawTotal - ventesMoisPasse) / ventesMoisPasse
+    let augmentationMonth = caculMonth * 100
 
-  let caculMonth = (rawTotal-ventesMoisPasse)/rawTotal;
-  let augmentationMonth = (caculMonth*100)
-  
+    const PanierMoyenDayStat = ventesHier / Number(transactionHierDay)
+    const PanierMoyenWeekStat = ventesSemainePassee / Number(transactionHierWeek)
+    const PanierMoyenMonthStat = Number(ventesMoisPasse) / Number(transactionHierMonth)
 
+    let augmentationTransactionDayStat = null
+    let cacultransactionHierDayStat = 0
+    if (isNaN(PanierMoyenDayStat)) {
+      augmentationTransactionDayStat = 100
+    } else {
+      cacultransactionHierDayStat = (PanierMoyenDay - PanierMoyenDayStat) / PanierMoyenDayStat
+      augmentationTransactionDayStat = cacultransactionHierDayStat * 100
+    }
 
-  const PanierMoyenDayStat = ventesHier / Number(transactionHierDay);
-const PanierMoyenWeekStat = ventesSemainePassee / Number(transactionHierWeek)
-const PanierMoyenMonthStat = Number(ventesMoisPasse) / Number(transactionHierMonth);
+    let cacultransactionHierWeekStat = (PanierMoyenWeek - PanierMoyenWeekStat) / PanierMoyenWeekStat
+    let augmentationTransactionWeekStat = cacultransactionHierWeekStat * 100
 
-let cacultransactionHierDayStat = (PanierMoyenDay-PanierMoyenDayStat)/PanierMoyenDay;
-let augmentationTransactionDayStat = (cacultransactionHierDayStat*100)
+    let cacultransactionHierMonthStat = 0
+    if (isNaN(PanierMoyenMonthStat)) {
+      cacultransactionHierMonthStat = 0
+    } else {
+      cacultransactionHierMonthStat =
+        (PanierMoyenMonth - PanierMoyenMonthStat) / PanierMoyenMonthStat
+    }
 
-let cacultransactionHierWeekStat = (PanierMoyenWeek-PanierMoyenWeekStat)/PanierMoyenWeek;
-let augmentationTransactionWeekStat = (cacultransactionHierWeekStat*100)
+    let augmentationTransactionMonthStat = cacultransactionHierMonthStat * 100
 
-let cacultransactionHierMonthStat = 0;
-if(isNaN(PanierMoyenMonthStat)){
-  cacultransactionHierMonthStat = PanierMoyenMonth/PanierMoyenMonth;
-}
-else{
-  cacultransactionHierMonthStat = (PanierMoyenMonth-PanierMoyenMonthStat)/PanierMoyenMonth;
-}
+    // 1. Données horaires (0h-24h) pour aujourd'hui
+    const salesByHour = Array(24).fill(0) 
 
-let augmentationTransactionMonthStat = (cacultransactionHierMonthStat*100)
+    const startOfDay2 = DateTime.now().setZone('Africa/Lubumbashi').startOf('day').toJSDate()
+    const endOfDay2 = DateTime.now().setZone('Africa/Lubumbashi').endOf('day').toJSDate()
 
+    const salesToday = await Sale.query()
+      .where('userid', Number(auth.user?.id))
+      .whereBetween('created_at', [startOfDay2, endOfDay2])
 
-// 1. Données horaires (9h-18h) pour aujourd'hui
-const salesByHour = Array(24).fill(0); // 10 heures de 9h à 18h
+    salesToday.forEach((sale) => {
+      const hour = sale.createdAt.setZone('Africa/Lubumbashi').plus({ hours: -1 }).hour
+      if (hour >= 0 && hour <= 23) {
+        salesByHour[hour - 0] += Number(sale.totalPrice)
+      }
+    })
 
-const startOfDay2 = DateTime.now().setZone('Africa/Lubumbashi').startOf('day').toJSDate()
-const endOfDay2 = DateTime.now().setZone('Africa/Lubumbashi').endOf('day').toJSDate()
+    // Données horaires (0h-24h) pour aujourd'hui
+    const salesByHourHier = Array(24).fill(0)
 
-const salesToday = await Sale.query()
-  .where('userid', Number(auth.user?.id))
-  .whereBetween('created_at', [startOfDay2, endOfDay2]);
+    const startOfDay2Hier = DateTime.now()
+      .setZone('Africa/Lubumbashi')
+      .minus({ days: 1 })
+      .startOf('day')
+      .toJSDate()
+    const endOfDay2Hier = DateTime.now()
+      .setZone('Africa/Lubumbashi')
+      .minus({ days: 1 })
+      .endOf('day')
+      .toJSDate()
 
-salesToday.forEach(sale => {
-  const hour = sale.createdAt.setZone('Africa/Lubumbashi').plus({hours:-1}).hour;
-  if (hour >= 0 && hour <= 23) {
-    salesByHour[hour - 0] += Number(sale.totalPrice);
-  }
-});
+    const salesTodayHier = await Sale.query()
+      .where('userid', Number(auth.user?.id))
+      .whereBetween('created_at', [startOfDay2Hier, endOfDay2Hier])
 
-// Données horaires (0h-24h) pour aujourd'hui
-const salesByHourHier = Array(24).fill(0); 
+    salesTodayHier.forEach((sale) => {
+      const hour = sale.createdAt.setZone('Africa/Lubumbashi').plus({ hours: -1 }).hour
+      if (hour >= 0 && hour <= 23) {
+        salesByHourHier[hour - 0] += Number(sale.totalPrice)
+      }
+    })
 
-const startOfDay2Hier = DateTime.now().setZone('Africa/Lubumbashi').minus({ days: 1 }).startOf('day').toJSDate()
-const endOfDay2Hier = DateTime.now().setZone('Africa/Lubumbashi').minus({ days: 1 }).endOf('day').toJSDate()
+    // 2. Données hebdomadaires (cette semaine et semaine dernière)
+    const currentWeekSales = Array(7).fill(0) // 7 jours
+    const lastWeekSales = Array(7).fill(0)
 
-const salesTodayHier = await Sale.query()
-  .where('userid', Number(auth.user?.id))
-  .whereBetween('created_at', [startOfDay2Hier, endOfDay2Hier]);
+    // Cette semaine
+    const salesThisWeek = await Sale.query()
+      .where('userid', Number(auth.user?.id))
+      .whereBetween('created_at', [startOfWeek, endOfWeek])
 
-salesTodayHier.forEach(sale => {
-  const hour = sale.createdAt.setZone('Africa/Lubumbashi').plus({hours:-1}).hour;
-  if (hour >= 0 && hour <= 23) {
-    salesByHourHier[hour - 0] += Number(sale.totalPrice);
-  }
-});
+    salesThisWeek.forEach((sale) => {
+      const dayOfWeek =
+        DateTime.fromJSDate(sale.createdAt.toJSDate()).setZone('Africa/Lubumbashi').weekday - 1 // Lundi=0, Dimanche=6
+      if (dayOfWeek >= 0 && dayOfWeek < 7) {
+        currentWeekSales[dayOfWeek] += Number(sale.totalPrice)
+      }
+    })
 
-// 2. Données hebdomadaires (cette semaine et semaine dernière)
-const currentWeekSales = Array(7).fill(0); // 7 jours
-const lastWeekSales = Array(7).fill(0);
+    // Semaine dernière
+    const startOfLastWeek = DateTime.now()
+      .setZone('Africa/Lubumbashi')
+      .startOf('week')
+      .minus({ weeks: 1 })
+    const endOfLastWeek = startOfLastWeek.endOf('week')
 
-// Cette semaine
-const salesThisWeek = await Sale.query()
-  .where('userid', Number(auth.user?.id))
-  .whereBetween('created_at', [startOfWeek, endOfWeek]);
+    const salesLastWeek = await Sale.query()
+      .where('userid', Number(auth.user?.id))
+      .whereBetween('created_at', [startOfLastWeek.toJSDate(), endOfLastWeek.toJSDate()])
 
-salesThisWeek.forEach(sale => {
-  const dayOfWeek = DateTime.fromJSDate(sale.createdAt.toJSDate()).setZone('Africa/Lubumbashi').weekday - 1; // Lundi=0, Dimanche=6
-  if (dayOfWeek >= 0 && dayOfWeek < 7) {
-    currentWeekSales[dayOfWeek] += Number(sale.totalPrice);
-  }
-});
+    salesLastWeek.forEach((sale) => {
+      const dayOfWeek = sale.createdAt.setZone('Africa/Lubumbashi').weekday - 1
+      if (dayOfWeek >= 0 && dayOfWeek < 7) {
+        lastWeekSales[dayOfWeek] += Number(sale.totalPrice)
+      }
+    })
 
-// Semaine dernière
-const startOfLastWeek = DateTime.now().setZone('Africa/Lubumbashi').startOf('week').minus({ weeks: 1 });
-const endOfLastWeek = startOfLastWeek.endOf('week');
+    // 3. Données mensuelles (12 mois)
+    const salesByMonth = Array(12).fill(0)
 
-const salesLastWeek = await Sale.query()
-  .where('userid', Number(auth.user?.id))
-  .whereBetween('created_at', [startOfLastWeek.toJSDate(), endOfLastWeek.toJSDate()]);
+    const startOfYear = DateTime.now().setZone('Africa/Lubumbashi').startOf('year')
+    const endOfYear = startOfYear.endOf('year')
 
-salesLastWeek.forEach(sale => {
-  const dayOfWeek = sale.createdAt.setZone('Africa/Lubumbashi').weekday - 1;
-  if (dayOfWeek >= 0 && dayOfWeek < 7) {
-    lastWeekSales[dayOfWeek] += Number(sale.totalPrice);
-  }
-});
+    const salesThisYear = await Sale.query()
+      .where('userid', Number(auth.user?.id))
+      .whereBetween('created_at', [startOfYear.toJSDate(), endOfYear.toJSDate()])
 
-// 3. Données mensuelles (12 mois)
-const salesByMonth = Array(12).fill(0);
-
-const startOfYear = DateTime.now().setZone('Africa/Lubumbashi').startOf('year');
-const endOfYear = startOfYear.endOf('year');
-
-const salesThisYear = await Sale.query()
-  .where('userid', Number(auth.user?.id))
-  .whereBetween('created_at', [startOfYear.toJSDate(), endOfYear.toJSDate()]);
-
-salesThisYear.forEach(sale => {
-  const month = DateTime.fromJSDate(sale.createdAt.toJSDate()).setZone('Africa/Lubumbashi').month - 1; // Janvier=0
-  if (month >= 0 && month < 12) {
-    salesByMonth[month] += Number(sale.totalPrice);
-  }
-});
-
-
+    salesThisYear.forEach((sale) => {
+      const month =
+        DateTime.fromJSDate(sale.createdAt.toJSDate()).setZone('Africa/Lubumbashi').month - 1 // Janvier=0
+      if (month >= 0 && month < 12) {
+        salesByMonth[month] += Number(sale.totalPrice)
+      }
+    })
 
     return view.render('dashboard', {
       salesByHourHier,
       salesByHour,
-  currentWeekSales,
-  lastWeekSales,
-  salesByMonth,
-      augmentationTransactionDayStat:augmentationTransactionDayStat.toFixed(1),
-      augmentationTransactionWeekStat:augmentationTransactionWeekStat.toFixed(1),
-      augmentationTransactionMonthStat:augmentationTransactionMonthStat.toFixed(1),
+      currentWeekSales,
+      lastWeekSales,
+      salesByMonth,
+      augmentationTransactionDayStat: augmentationTransactionDayStat.toFixed(1),
+      augmentationTransactionWeekStat: augmentationTransactionWeekStat.toFixed(1),
+      augmentationTransactionMonthStat: augmentationTransactionMonthStat.toFixed(1),
 
-      augmentationTransactionMonth:augmentationTransactionMonth.toFixed(1),
-      augmentationTransactionWeek:augmentationTransactionWeek.toFixed(1),
-      augmentationTransactionDay:augmentationTransactionDay.toFixed(1),
+      augmentationTransactionMonth: augmentationTransactionMonth.toFixed(1),
+      augmentationTransactionWeek: augmentationTransactionWeek.toFixed(1),
+      augmentationTransactionDay: augmentationTransactionDay.toFixed(1),
 
-      augmentationMonth:augmentationMonth.toFixed(1),
-      augmentationWeek:augmentationWeek.toFixed(1),
-      augmentationDay:auglantationDay.toFixed(1),
+      augmentationMonth: augmentationMonth.toFixed(1),
+      augmentationWeek: augmentationWeek.toFixed(1),
+      augmentationDay: auglantationDay.toFixed(1),
       venteJour,
       venteMois: rawTotal,
       venteWeek,
@@ -431,8 +440,8 @@ salesThisYear.forEach(sale => {
       panierMinWeek,
       panierMaxMonth,
       panierMinMonth,
-      Alerte:alt,
-      DateTime
+      Alerte: alt,
+      DateTime,
     })
   }
 }
