@@ -168,6 +168,8 @@
                                     <p class="text-green-500 mt-1"><i class="fas fa-arrow-up mr-1"></i> {{augmentationDay}} %</p>
                                     @elseif(augmentationDay < 0)
                                     <p class="text-red-500 mt-1"><i class="fas fa-arrow-down mr-1"></i> {{augmentationDay}} %</p>
+                                      @elseif(augmentationDay == 0)
+                                    <p class="text-black mt-1">{{augmentationDay}} %</p>
                                     @endif
                                 </div>
                                 <div class="p-3 rounded-lg bg-blue-100 text-primary">
@@ -186,6 +188,8 @@
                                     <p class="text-green-500 mt-1"><i class="fas fa-arrow-up mr-1"></i> {{augmentationTransactionDay}} %</p>
                                     @elseif(augmentationTransactionDay < 0)
                                     <p class="text-red-500 mt-1"><i class="fas fa-arrow-down mr-1"></i> {{augmentationTransactionDay}} %</p>
+                                        @elseif(augmentationTransactionDay == 0)
+                                    <p class="text-black mt-1">{{augmentationTransactionDay}} %</p>
                                     @endif
                                 </div>
                                 <div class="p-3 rounded-lg bg-blue-100 text-primary">
@@ -210,6 +214,8 @@
                                     <p class="text-green-500 mt-1"><i class="fas fa-arrow-up mr-1"></i> {{augmentationTransactionDayStat}} %</p>
                                     @elseif(augmentationTransactionDayStat < 0)
                                     <p class="text-red-500 mt-1"><i class="fas fa-arrow-down mr-1"></i> {{augmentationTransactionDayStat}} %</p>
+                                    @elseif(augmentationTransactionDayStat == 0)
+                                    <p class="text-black mt-1">{{augmentationTransactionDayStat}} %</p>
                                     @endif
                                 </div>
                                 <div class="p-3 rounded-lg bg-blue-100 text-primary">
@@ -252,37 +258,29 @@
                         </div>
                         
                         <!-- Performance Summary -->
-                        <div>
-                            <div class="dashboard-card bg-white p-6 rounded-xl h-full">
-                                <h3 class="text-lg font-semibold text-dark mb-6">Performance du Jour</h3>
-                                <div class="mt-8">
-                                    <h4 class="font-medium mb-3">Top Produit</h4>
-                                    <div class="space-y-3">
-                                        <div class="flex items-center">
-                                            <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center mr-3">
-                                                <i class="fas fa-user text-primary"></i>
-                                            </div>
-                                            <span class="flex-1">Paracetamol</span>
-                                            <span class="font-medium">100.500 Fc</span>
-                                        </div>
-                                        <div class="flex items-center">
-                                            <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center mr-3">
-                                                <i class="fas fa-user text-primary"></i>
-                                            </div>
-                                            <span class="flex-1">Doliprame</span>
-                                            <span class="font-medium">90.000 Fc</span>
-                                        </div>
-                                        <div class="flex items-center">
-                                            <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center mr-3">
-                                                <i class="fas fa-user text-primary"></i>
-                                            </div>
-                                            <span class="flex-1">Power Plus</span>
-                                            <span class="font-medium">65.000 Fc</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+<div>
+    <div class="dashboard-card bg-white p-6 rounded-xl h-full">
+      <h3 class="text-lg font-semibold text-dark mb-6">Performance du Jour</h3>
+      <div class="mt-8">
+        <h4 class="font-medium mb-3">Top 5 Produit</h4>
+        <div class="space-y-3">
+          @each(product in topProductsToday)
+            <div class="flex items-center">
+              <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center mr-3">
+                <i class="fas fa-pills text-blue-600"></i>
+              </div>
+              <span class="flex-1">{{ product.name }}</span>
+              <span class="font-medium">{{ product.total.toFixed(0) }} Fc</span>
+            </div>
+          @else
+            <div class="text-center py-4 text-gray-500">
+              Aucune vente aujourd'hui
+            </div>
+          @end
+        </div>
+      </div>
+    </div>
+  </div>
                     </div>
                     <!-- Liste des Ventes -->
         <table class="min-w-full divide-y divide-gray-200">
@@ -502,31 +500,29 @@
                         </div>
                         
                         <!-- Weekly Summary -->
-                        <div>
-                            <div class="dashboard-card bg-white p-6 rounded-xl h-full">
-                                <h3 class="text-lg font-semibold text-dark mb-6">Résumé Hebdomadaire</h3>
-                                
-                                <div class="mb-6">
-                                    <h4 class="font-medium mb-3">Meilleurs jours</h4>
-                                    <div class="space-y-3">
-                                        <div class="flex items-center justify-between">
-                                            <span>Jeudi</span>
-                                            <span class="font-medium">8,420 Fc</span>
-                                        </div>
-                                        <div class="flex items-center justify-between">
-                                            <span>Vendredi</span>
-                                            <span class="font-medium">7,980 Fc</span>
-                                        </div>
-                                        <div class="flex items-center justify-between">
-                                            <span>Mercredi</span>
-                                            <span class="font-medium">7,150 Fc</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                           
-                            </div>
-                        </div>
+                       <div>
+    <div class="dashboard-card bg-white p-6 rounded-xl h-full">
+      <h3 class="text-lg font-semibold text-dark mb-6">Performance de la semaine</h3>
+      <div class="mt-8">
+        <h4 class="font-medium mb-3">Top 5 Produit</h4>
+        <div class="space-y-3">
+          @each(product in topProductsweek)
+            <div class="flex items-center">
+              <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center mr-3">
+                <i class="fas fa-pills text-blue-600"></i>
+              </div>
+              <span class="flex-1">{{ product.name }}</span>
+              <span class="font-medium">{{ product.total.toFixed(0) }} Fc</span>
+            </div>
+          @else
+            <div class="text-center py-4 text-gray-500">
+              Aucune vente
+            </div>
+          @end
+        </div>
+      </div>
+    </div>
+  </div>
                     </div>
                     
                     <!-- Time Navigation -->
@@ -647,33 +643,29 @@
                         </div>
                         
                         <!-- Monthly Summary -->
-                        <div>
-                            <div class="dashboard-card bg-white p-6 rounded-xl h-full">
-                                <h3 class="text-lg font-semibold text-dark mb-6">Résumé Mensuel</h3>
-                                
-                                <div class="mb-6">
-                                    <h4 class="font-medium mb-3">Meilleurs Mois</h4>
-                                    <div class="space-y-4">
-                                        <div class="flex justify-between">
-                                            <span>Mars</span>
-                                            <div>
-                                                <span class="font-medium">156,820 Fc</span>
-                                                <span class="text-green-500 ml-2">+8.4%</span>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="flex justify-between">
-                                            <span>Avril</span>
-                                            <div>
-                                                <span class="font-medium">122.15 Fc</span>
-                                                <span class="text-green-500 ml-2">+1.2%</span>
-                                            </div>
-                                        </div>
-                                        
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                          <div>
+                        <div class="dashboard-card bg-white p-6 rounded-xl h-full">
+      <h3 class="text-lg font-semibold text-dark mb-6">Performance du Mois</h3>
+      <div class="mt-8">
+        <h4 class="font-medium mb-3">Top 5 Produit</h4>
+        <div class="space-y-3">
+          @each(product in topProductsMonth)
+            <div class="flex items-center">
+              <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center mr-3">
+                <i class="fas fa-pills text-blue-600"></i>
+              </div>
+              <span class="flex-1">{{ product.name }}</span>
+              <span class="font-medium">{{ product.total.toFixed(0) }} Fc</span>
+            </div>
+          @else
+            <div class="text-center py-4 text-gray-500">
+              Aucune vente
+            </div>
+          @end
+        </div>
+      </div>
+    </div>
+  </div>
                     </div>
                     
                     <!-- Time Navigation -->

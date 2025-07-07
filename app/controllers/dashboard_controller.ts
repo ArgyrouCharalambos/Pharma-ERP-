@@ -192,7 +192,7 @@ export default class DashboardController {
     let augmentationTransactionDay = 0
 
     if (Number(transactionHierDay) === 0) {
-      augmentationTransactionDay = 100
+      augmentationTransactionDay = 0
     } else {
       let cacultransactionHierDay = (transactionDay - transactionHierDay) / transactionHierDay
       augmentationTransactionDay = cacultransactionHierDay * 100
@@ -210,7 +210,7 @@ export default class DashboardController {
       let cacul = (venteJour - ventesHier) / ventesHier
       auglantationDay = cacul * 100
     } else {
-      auglantationDay = 100
+      auglantationDay = 0
     }
 
     // Aller au début de la semaine actuelle, puis reculer de 1 semaine
@@ -290,7 +290,7 @@ export default class DashboardController {
     let augmentationTransactionDayStat = null
     let cacultransactionHierDayStat = 0
     if (isNaN(PanierMoyenDayStat)) {
-      augmentationTransactionDayStat = 100
+      augmentationTransactionDayStat = 0
     } else {
       cacultransactionHierDayStat = (PanierMoyenDay - PanierMoyenDayStat) / PanierMoyenDayStat
       augmentationTransactionDayStat = cacultransactionHierDayStat * 100
@@ -404,7 +404,85 @@ export default class DashboardController {
       }
     })
 
+     // 1. Performance du Jour - Top 3 produits
+     const today = DateTime.now().toISODate()
+     const salesTodayForTopProducts = await Sale.query()
+       .where('created_at', '>=', today)
+       .preload('produits', (query) => {
+         query.preload('product')
+       })
+     
+     // Calcul du top produits du jour
+     const productTotals: Record<string, number> = {}
+     salesTodayForTopProducts.forEach(sale => {
+       sale.produits.forEach(item => {
+         const productName = item.product.name
+         const total = item.quantity * item.prixUnitaire
+         productTotals[productName] = (productTotals[productName] || 0) + total
+       })
+     })
+     const topProductsToday = Object.entries(productTotals)
+       .sort((a, b) => b[1] - a[1])
+       .slice(0, 5)
+       .map(([name, total]) => ({ name, total }))
+
+       // Top Produit week 
+
+         // 1. Performance du week - Top 3 produits
+             const debutWeek = now.startOf('week').toISODate()
+    const finWeek = now.endOf('week').toISODate()
+     const salesWeekForTopProducts = await Sale.query()
+       .whereBetween('created_at',  [debutWeek, finWeek])
+       .preload('produits', (query) => {
+         query.preload('product')
+       })
+     
+     // Calcul du top produits du jour
+     const productTotalsweek: Record<string, number> = {}
+     salesWeekForTopProducts.forEach(sale => {
+       sale.produits.forEach(item => {
+         const productName = item.product.name
+         const total = item.quantity * item.prixUnitaire
+         productTotalsweek[productName] = (productTotalsweek[productName] || 0) + total
+       })
+     })
+     const topProductsweek = Object.entries(productTotalsweek)
+       .sort((a, b) => b[1] - a[1])
+       .slice(0, 5)
+       .map(([name, total]) => ({ name, total }))
+ 
+          // Top Produit week 
+
+         // 1. Performance du week - Top 3 produits
+             const debutMonth = now.startOf('month').toISODate()
+    const finMonth = now.endOf('month').toISODate()
+     const salesMonthForTopProducts = await Sale.query()
+       .whereBetween('created_at',  [debutMonth, finMonth])
+       .preload('produits', (query) => {
+         query.preload('product')
+       })
+     
+     // Calcul du top produits du jour
+     const productTotalsMonth: Record<string, number> = {}
+     salesMonthForTopProducts.forEach(sale => {
+       sale.produits.forEach(item => {
+         const productName = item.product.name
+         const total = item.quantity * item.prixUnitaire
+         productTotalsMonth[productName] = (productTotalsMonth[productName] || 0) + total
+       })
+     })
+     const topProductsMonth = Object.entries(productTotalsMonth)
+       .sort((a, b) => b[1] - a[1])
+       .slice(0, 5)
+       .map(([name, total]) => ({ name, total }))
+ 
+    
+    
+
     return view.render('dashboard', {
+      topProductsMonth,
+topProductsweek,
+      topProductsToday,
       salesByHourHier,
       salesByHour,
       currentWeekSales,
@@ -444,4 +522,5 @@ export default class DashboardController {
       DateTime,
     })
   }
-}
+  
+  }
