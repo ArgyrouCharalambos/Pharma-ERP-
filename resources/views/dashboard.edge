@@ -648,14 +648,20 @@
             
                   <!-- Liens de navigation -->
                   <div class="flex flex-wrap justify-center gap-6">
-                    <a href="/" class="hover:text-blue-200 transition-colors">
-                      <i class="fas fa-chart-pie mr-2"></i> Dashboard
-                    </a>
+                   
                     <a href="/products" class="hover:text-blue-200 transition-colors">
                       <i class="fas fa-pills mr-2"></i> Produits
                     </a>
                     <a href="/sales" class="hover:text-blue-200 transition-colors">
                       <i class="fas fa-receipt mr-2"></i> Ventes
+                    </a>
+                     <a href="/products/alerts" class="hover:text-blue-200 transition-colors">
+                       @if(Alerte)
+             <i class="fas fa-exclamation-triangle mr-2 text-md text-red-600"></i>
+             @else
+           <i class="fas fa-exclamation-triangle mr-2 text-md text-purple-100 "></i>
+           @endif
+            Alertes
                     </a>
                   </div>
             
