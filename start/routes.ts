@@ -23,6 +23,7 @@ router
     router.post('products/update/:id', [ProductsController, 'update'])
     router.post('/productsDestroy/:id', [ProductsController, 'destroy'])
     router.get('sales/stat', [SalesController, 'stats'])
+    router.get('/export/monthly-sales', [SalesController, 'exportMonthlySales'])
 
     // Sales
     router.resource('sales', SalesController).except(['show', 'edit', 'update'])
