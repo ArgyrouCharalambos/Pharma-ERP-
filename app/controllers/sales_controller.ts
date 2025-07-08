@@ -82,7 +82,7 @@ export default class SalesController {
       
     }
 
-     public async exportMonthlySales({ request, response }: HttpContext) {
+     public async exportMonthlySales({auth, request, response }: HttpContext) {
     const selectedMonth = request.input('month')
     
     // Validation du mois
@@ -97,6 +97,7 @@ export default class SalesController {
 
       // Récupération des données (utilisation de toSQL() pour le format compatible avec la BDD)
       const sales = await Sale.query()
+        .where('userid',Number(auth.user?.id))
         .whereBetween('created_at', [startDate.toJSDate(), endDate.toJSDate()])
         .preload('produits', (query) => {
           query.preload('product')
