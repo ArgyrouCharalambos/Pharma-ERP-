@@ -164,9 +164,9 @@
                       </span>
                     </div>
                   </td>
-                  <td class="px-6 py-4 font-semibold text-green-600">{{sale.nombreDeProduit}} Pcs </td>
+                  <td class="px-6 py-4 font-semibold text-green-600">{{sale.nombreDeProduit.toLocaleString('fr-FR')}} Pcs </td>
                  
-                  <td class="px-6 py-4 font-semibold text-green-600">{{sale.totalPrice}} Fc </td>
+                  <td class="px-6 py-4 font-semibold text-green-600">{{sale.totalPrice.toLocaleString('fr-FR')}} Fc </td>
                  
                   <td class="px-6 py-4">
                     <button 
@@ -210,9 +210,9 @@
                                   </div>
                                 </div>
                               </td>
-                              <td class="px-4 py-3">{{item.quantity}}</td>
-                              <td class="px-4 py-3">{{item.prixUnitaire}} Fc</td>
-                              <td class="px-4 py-3 font-medium">{{item.quantity * item.prixUnitaire}} Fc</td>
+                              <td class="px-4 py-3">{{item.quantity.toLocaleString('fr-FR')}}</td>
+                              <td class="px-4 py-3">{{item.prixUnitaire.toLocaleString('fr-FR')}} Fc</td>
+                              <td class="px-4 py-3 font-medium">{{(item.quantity * item.prixUnitaire).toLocaleString('fr-FR')}} Fc</td>
                             </tr>
                             @end
                            
