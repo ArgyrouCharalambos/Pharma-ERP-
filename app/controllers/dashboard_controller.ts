@@ -108,13 +108,15 @@ export default class DashboardController {
     let panierMinDay = Infinity
 
     Panier.forEach((e) => {
-      let price = Number(e.totalPrice)
+      
 
-      if (panierMaxDay < price) {
-        panierMaxDay = e.totalPrice
+      if (panierMaxDay < Number(e.totalPrice)) {
+
+        panierMaxDay = Number(e.totalPrice)
       }
-      if (panierMinDay > price) {
-        panierMinDay = e.totalPrice
+      if (panierMinDay > Number(e.totalPrice) && e.totalPrice !== null ) {
+
+        panierMinDay = Number(e.totalPrice)
       }
     })
 
@@ -126,13 +128,13 @@ export default class DashboardController {
     let panierMinWeek = Infinity
 
     PanierWeek.forEach((e) => {
-      let price = Number(e.totalPrice)
+      
 
-      if (panierMaxWeek < price) {
-        panierMaxWeek = e.totalPrice
+      if (panierMaxWeek < Number(e.totalPrice)) {
+        panierMaxWeek = Number(e.totalPrice)
       }
-      if (panierMinWeek > price) {
-        panierMinWeek = e.totalPrice
+      if (panierMinWeek > Number(e.totalPrice)  && e.totalPrice !== null) {
+        panierMinWeek = Number(e.totalPrice)
       }
     })
 
@@ -144,13 +146,13 @@ export default class DashboardController {
     let panierMinMonth = Infinity
 
     PanierMonth.forEach((e) => {
-      let price = Number(e.totalPrice)
+  
 
-      if (panierMaxMonth < price) {
-        panierMaxMonth = e.totalPrice
+      if (panierMaxMonth < Number(e.totalPrice)) {
+        panierMaxMonth = Number(e.totalPrice)
       }
-      if (panierMinMonth > price) {
-        panierMinMonth = e.totalPrice
+      if (panierMinMonth > Number(e.totalPrice)  && e.totalPrice !== null) {
+        panierMinMonth = Number(e.totalPrice)
       }
     })
 
@@ -236,17 +238,29 @@ export default class DashboardController {
           .first()
       )?.$extras.total || 0
 
-    let cacultransactionHierWeek = (transactionWeek - transactionHierWeek) / transactionHierWeek
-    let augmentationTransactionWeek = cacultransactionHierWeek * 100
+      let augmentationTransactionWeek = null;
+if(transactionHierWeek == 0){
+ augmentationTransactionWeek = 0;
+}
+  else{
+      let cacultransactionHierWeek = (transactionWeek - transactionHierWeek) / transactionHierWeek;
+    augmentationTransactionWeek = cacultransactionHierWeek * 100;
 
+  }
     const ventesSemainePassee = await Sale.query()
       .where('userid', Number(auth.user?.id))
       .whereBetween('created_at', [debutSemainePassee, finSemainePassee])
       .sum('total_price as total')
       .then((result) => Number(result[0]?.$extras.total || 0))
+let augmentationWeek = null;
+      if(ventesSemainePassee == 0){
+    augmentationWeek = 0
 
-    let caculWeek = (venteWeek - ventesSemainePassee) / ventesSemainePassee
-    let augmentationWeek = caculWeek * 100
+      }
+    else{
+      let caculWeek = (venteWeek - ventesSemainePassee) / ventesSemainePassee
+    augmentationWeek = caculWeek * 100
+    }
 
     // Obtenir le début et la fin du mois précédent
     const debutMoisPasse = DateTime.now()
@@ -270,8 +284,13 @@ export default class DashboardController {
           .first()
       )?.$extras.total || 0
 
-    let cacultransactionHierMonth = (transactionMonth - transactionHierMonth) / transactionHierMonth
-    let augmentationTransactionMonth = cacultransactionHierMonth * 100
+      let augmentationTransactionMonth = null;
+    if(transactionHierMonth == 0){
+       augmentationTransactionMonth = 0;
+    }else{
+      let cacultransactionHierMonth = (transactionMonth - transactionHierMonth) / transactionHierMonth
+    augmentationTransactionMonth = cacultransactionHierMonth * 100
+    }
 
     // Faire la requête pour toutes les ventes du mois précédent
     const ventesMoisPasse = await Sale.query()
@@ -280,27 +299,38 @@ export default class DashboardController {
       .sum('total_price as total')
       .then((result) => Number(result[0]?.$extras.total || 0))
 
+      let augmentationMonth = null;
+    if(ventesMoisPasse == 0){
+  augmentationMonth = 0
+    }
+    else{
     let caculMonth = (rawTotal - ventesMoisPasse) / ventesMoisPasse
-    let augmentationMonth = caculMonth * 100
-
+     augmentationMonth = caculMonth * 100
+    }
     const PanierMoyenDayStat = ventesHier / Number(transactionHierDay)
     const PanierMoyenWeekStat = ventesSemainePassee / Number(transactionHierWeek)
     const PanierMoyenMonthStat = Number(ventesMoisPasse) / Number(transactionHierMonth)
 
     let augmentationTransactionDayStat = null
     let cacultransactionHierDayStat = 0
-    if (isNaN(PanierMoyenDayStat)) {
+    if (isNaN(PanierMoyenDayStat) || PanierMoyenDayStat == 0) {
       augmentationTransactionDayStat = 0
     } else {
       cacultransactionHierDayStat = (PanierMoyenDay - PanierMoyenDayStat) / PanierMoyenDayStat
       augmentationTransactionDayStat = cacultransactionHierDayStat * 100
     }
+ let augmentationTransactionWeekStat = null;
 
-    let cacultransactionHierWeekStat = (PanierMoyenWeek - PanierMoyenWeekStat) / PanierMoyenWeekStat
-    let augmentationTransactionWeekStat = cacultransactionHierWeekStat * 100
-
+    if (isNaN(PanierMoyenWeekStat) || PanierMoyenWeekStat == 0) {
+augmentationTransactionWeekStat = 0;
+    }
+    else{
+      let cacultransactionHierWeekStat = (PanierMoyenWeek - PanierMoyenWeekStat) / PanierMoyenWeekStat;
+    augmentationTransactionWeekStat = cacultransactionHierWeekStat * 100;
+    }
+  
     let cacultransactionHierMonthStat = 0
-    if (isNaN(PanierMoyenMonthStat)) {
+    if (isNaN(PanierMoyenMonthStat) || PanierMoyenMonthStat == 0) {
       cacultransactionHierMonthStat = 0
     } else {
       cacultransactionHierMonthStat =

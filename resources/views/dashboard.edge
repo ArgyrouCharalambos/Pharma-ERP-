@@ -158,7 +158,7 @@
                     <h2 class="text-2xl font-bold text-dark mb-6">Rapport Journalier du <span class="text-primary" id="dateDisplay">29 juin 2023</span></h2>
                     
                     <!-- Stats Cards -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
                         <div class="dashboard-card bg-white stat-card p-6 rounded-xl">
                             <div class="flex justify-between items-start">
                                 <div>
@@ -386,7 +386,7 @@
                       {{DateTime.now().setZone('Africa/Lubumbashi').startOf('week').toFormat('dd LLL',{ locale: "fr" })}} - {{DateTime.now().setZone('Africa/Lubumbashi').endOf('week').toFormat('dd LLL yyyy',{ locale: "fr" })}}</span></h2>
                     
                     <!-- Stats Cards -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
                         <div class="dashboard-card bg-white stat-card p-6 rounded-xl">
                             <div class="flex justify-between items-start">
                                 <div>
@@ -396,6 +396,8 @@
                                     <p class="text-green-500 mt-1"><i class="fas fa-arrow-up mr-1"></i> {{augmentationWeek}} %</p>
                                     @elseif(augmentationWeek < 0)
                                     <p class="text-red-500 mt-1"><i class="fas fa-arrow-down mr-1"></i> {{augmentationWeek}} %</p>
+                                        @elseif(augmentationWeek == 0)
+                                    <p class="text-black mt-1"> {{augmentationWeek}} %</p>
                                     @endif
 
                                 </div>
@@ -415,6 +417,8 @@
                                     <p class="text-green-500 mt-1"><i class="fas fa-arrow-up mr-1"></i> {{augmentationTransactionWeek}} %</p>
                                     @elseif(augmentationTransactionWeek < 0)
                                     <p class="text-red-500 mt-1"><i class="fas fa-arrow-down mr-1"></i> {{augmentationTransactionWeek}} %</p>
+                                     @elseif(augmentationTransactionWeek == 0)
+                                    <p class="text-black mt-1"> {{augmentationTransactionWeek}} %</p>
                                     @endif
                                 </div>
                                 <div class="p-3 rounded-lg bg-blue-100 text-primary">
@@ -440,6 +444,8 @@
                                     <p class="text-green-500 mt-1"><i class="fas fa-arrow-up mr-1"></i> {{augmentationTransactionWeekStat}} %</p>
                                     @elseif(augmentationTransactionWeekStat < 0)
                                     <p class="text-red-500 mt-1"><i class="fas fa-arrow-down mr-1"></i> {{augmentationTransactionWeekStat}} %</p>
+                                     @elseif(augmentationTransactionWeekStat == 0)
+                                    <p class="text-black mt-1"> {{augmentationTransactionWeekStat}} %</p>
                                     @endif
                                 </div>
                                 <div class="p-3 rounded-lg bg-blue-100 text-primary">
@@ -514,7 +520,7 @@
                     <h2 class="text-2xl font-bold text-dark mb-6">Rapport Mensuel <span class="text-primary">{{DateTime.now().toFormat('LLL yyyy',{ locale: "fr" })}}</span></h2>
                     
                     <!-- Stats Cards -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
                         <div class="dashboard-card bg-white stat-card p-6 rounded-xl">
                             <div class="flex justify-between items-start">
                                 <div>
@@ -524,6 +530,8 @@
                                     <p class="text-green-500 mt-1"><i class="fas fa-arrow-up mr-1"></i> {{augmentationMonth}} %</p>
                                     @elseif(augmentationMonth < 0)
                                     <p class="text-red-500 mt-1"><i class="fas fa-arrow-down mr-1"></i> {{augmentationMonth}} %</p>
+                                   @elseif(augmentationMonth == 0)
+                                    <p class="text-black mt-1"> {{augmentationMonth}} %</p>
                                     @endif
                                 </div>
                                 <div class="p-3 rounded-lg bg-blue-100 text-primary">
@@ -542,6 +550,8 @@
                                     <p class="text-green-500 mt-1"><i class="fas fa-arrow-up mr-1"></i> {{augmentationTransactionMonth}} %</p>
                                     @elseif(augmentationTransactionMonth < 0)
                                     <p class="text-red-500 mt-1"><i class="fas fa-arrow-down mr-1"></i> {{augmentationTransactionMonth}} %</p>
+                                    @elseif(augmentationTransactionMonth == 0)
+                                    <p class="text-black mt-1"> {{augmentationTransactionMonth}} %</p>
                                     @endif
                                 </div>
                                 <div class="p-3 rounded-lg bg-blue-100 text-primary">
@@ -566,6 +576,8 @@
                                     <p class="text-green-500 mt-1"><i class="fas fa-arrow-up mr-1"></i> {{augmentationTransactionMonthStat}} %</p>
                                     @elseif(augmentationTransactionMonthStat < 0)
                                     <p class="text-red-500 mt-1"><i class="fas fa-arrow-down mr-1"></i> {{augmentationTransactionMonthStat}} %</p>
+                                     @elseif(augmentationTransactionMonthStat == 0)
+                                    <p class="text-black mt-1"> {{augmentationTransactionMonthStat}} %</p>
                                     @endif
                                 </div>
                                 <div class="p-3 rounded-lg bg-blue-100 text-primary">
