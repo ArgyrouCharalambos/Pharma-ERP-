@@ -163,7 +163,7 @@
                             <div class="flex justify-between items-start">
                                 <div>
                                     <p class="text-gray-500">Chiffre d'Affaires</p>
-                                    <p class="text-2xl font-bold mt-2">{{ venteJour }} Fc</p>
+                                    <p class="text-2xl font-bold mt-2">{{ venteJour.toLocaleString('fr-FR') }} Fc</p>
                                     @if(augmentationDay > 0)
                                     <p class="text-green-500 mt-1"><i class="fas fa-arrow-up mr-1"></i> {{augmentationDay}} %</p>
                                     @elseif(augmentationDay < 0)
@@ -183,7 +183,7 @@
                             <div class="flex justify-between items-start">
                                 <div>
                                     <p class="text-gray-500">Transactions</p>
-                                    <p class="text-2xl font-bold mt-2"> {{  transactionDay }} </p>
+                                    <p class="text-2xl font-bold mt-2"> {{  transactionDay.toLocaleString('fr-FR') }} </p>
                                     @if(augmentationTransactionDay > 0)
                                     <p class="text-green-500 mt-1"><i class="fas fa-arrow-up mr-1"></i> {{augmentationTransactionDay}} %</p>
                                     @elseif(augmentationTransactionDay < 0)
@@ -206,7 +206,7 @@
                                 <div>
                                     <p class="text-gray-500">Panier Moyen</p>
                                     @if(PanierMoyenDay)
-                                    <p class="text-2xl font-bold mt-2">{{PanierMoyenDay.toFixed(0)}} Fc</p>
+                                    <p class="text-2xl font-bold mt-2">{{PanierMoyenDay.toLocaleString('fr-FR')}} Fc</p>
                                     @else 
                                     <p class="text-2xl font-bold mt-2">0 Fc</p>
                                     @endif
@@ -227,13 +227,13 @@
                                   @if(panierMaxDay === -Infinity)
                                   <span>Max: 0 Fc</span>
                                     @else 
-                                    <span>Max: {{panierMaxDay}} Fc</span>
+                                    <span>Max: {{panierMaxDay.toLocaleString('fr-FR')}} Fc</span>
                                     @endif
 
                                   @if(panierMinDay === Infinity)
                                   <span>Min: 0 Fc</span>
                                     @else 
-                                    <span>Min: {{panierMinDay}} Fc</span>
+                                    <span>Min: {{panierMinDay.toLocaleString('fr-FR')}} Fc</span>
                                     @endif
 
 
@@ -270,7 +270,7 @@
                 <i class="fas fa-pills text-blue-600"></i>
               </div>
               <span class="flex-1">{{ product.name }}</span>
-              <span class="font-medium">{{ product.total.toFixed(0) }} Fc</span>
+              <span class="font-medium">{{ product.total.toLocaleString('fr-FR') }} Fc</span>
             </div>
           @else
             <div class="text-center py-4 text-gray-500">
@@ -304,14 +304,14 @@
                 <div class="flex items-center">
                   <i class="fas fa-clock text-gray-400 mr-2"></i>
                   <span>
-            {{ sale.createdAt.plus({ hours: 2 }).toFormat('dd/MM/yyyy HH:mm') }}
+            {{ sale.createdAt.toFormat('dd/MM/yyyy HH:mm') }}
 
                   </span>
                 </div>
               </td>
               <td class="px-6 py-4 font-semibold text-green-600">{{sale.nombreDeProduit}} Pcs </td>
              
-              <td class="px-6 py-4 font-semibold text-green-600">{{Number(sale.totalPrice).toFixed(0)}} Fc </td>
+              <td class="px-6 py-4 font-semibold text-green-600">{{Number(sale.totalPrice).toLocaleString('fr-FR')}} Fc </td>
              
               <td class="px-6 py-4">
                 <button 
@@ -356,8 +356,8 @@
                             </div>
                           </td>
                           <td class="px-4 py-3">{{item.quantity}}</td>
-                          <td class="px-4 py-3">{{item.prixUnitaire}} Fc</td>
-                          <td class="px-4 py-3 font-medium">{{item.quantity * item.prixUnitaire}} Fc</td>
+                          <td class="px-4 py-3">{{item.prixUnitaire.toLocaleString('fr-FR')}} Fc</td>
+                          <td class="px-4 py-3 font-medium">{{(item.quantity * item.prixUnitaire).toLocaleString('fr-FR')}} Fc</td>
                         </tr>
                         @end
                        
@@ -391,7 +391,7 @@
                             <div class="flex justify-between items-start">
                                 <div>
                                     <p class="text-gray-500">Chiffre d'Affaires</p>
-                                    <p class="text-2xl font-bold mt-2">{{ Number(venteWeek).toFixed(0)}} Fc</p>
+                                    <p class="text-2xl font-bold mt-2">{{ Number(venteWeek).toLocaleString('fr-FR')}} Fc</p>
                                     @if(augmentationWeek > 0)
                                     <p class="text-green-500 mt-1"><i class="fas fa-arrow-up mr-1"></i> {{augmentationWeek}} %</p>
                                     @elseif(augmentationWeek < 0)
@@ -412,7 +412,7 @@
                             <div class="flex justify-between items-start">
                                 <div>
                                     <p class="text-gray-500">Transactions</p>
-                                    <p class="text-2xl font-bold mt-2">{{transactionWeek }} </p>
+                                    <p class="text-2xl font-bold mt-2">{{transactionWeek.toLocaleString('fr-FR') }} </p>
                                     @if(augmentationTransactionWeek > 0)
                                     <p class="text-green-500 mt-1"><i class="fas fa-arrow-up mr-1"></i> {{augmentationTransactionWeek}} %</p>
                                     @elseif(augmentationTransactionWeek < 0)
@@ -435,7 +435,7 @@
                                 <div>
                                     <p class="text-gray-500">Panier Moyen</p>
                                     @if(PanierMoyenWeek)
-                                    <p class="text-2xl font-bold mt-2">{{PanierMoyenWeek.toFixed(0)}} Fc</p>
+                                    <p class="text-2xl font-bold mt-2">{{PanierMoyenWeek.toLocaleString('fr-FR')}} Fc</p>
                                     @else 
                                     <p class="text-2xl font-bold mt-2">0 Fc</p>
                                     @endif
@@ -457,13 +457,13 @@
                                   @if(panierMaxWeek === -Infinity)
                                   <span>Max: 0 Fc</span>
                                   @else 
-                                  <span>Max: {{panierMaxWeek}} Fc</span>
+                                  <span>Max: {{panierMaxWeek.toLocaleString('fr-FR')}} Fc</span>
                                   @endif
 
                                 @if(panierMinWeek === Infinity)
                                 <span>Min: 0 Fc</span>
                                   @else 
-                                  <span>Min: {{panierMinWeek}} Fc</span>
+                                  <span>Min: {{panierMinWeek.toLocaleString('fr-FR')}} Fc</span>
                                   @endif
                                    
                                 </div>
@@ -499,7 +499,7 @@
                 <i class="fas fa-pills text-blue-600"></i>
               </div>
               <span class="flex-1">{{ product.name }}</span>
-              <span class="font-medium">{{ product.total.toFixed(0) }} Fc</span>
+              <span class="font-medium">{{ product.total.toLocaleString('fr-FR') }} Fc</span>
             </div>
           @else
             <div class="text-center py-4 text-gray-500">
@@ -525,11 +525,11 @@
                             <div class="flex justify-between items-start">
                                 <div>
                                     <p class="text-gray-500">Chiffre d'Affaires</p>
-                                    <p class="text-2xl font-bold mt-2"> {{ Number(venteMois).toFixed(0) }} Fc</p>
+                                    <p class="text-2xl font-bold mt-2"> {{ Number(venteMois).toLocaleString('fr-FR') }} Fc</p>
                                     @if(augmentationMonth > 0)
-                                    <p class="text-green-500 mt-1"><i class="fas fa-arrow-up mr-1"></i> {{augmentationMonth}} %</p>
+                                    <p class="text-green-500 mt-1"><i class="fas fa-arrow-up mr-1"></i> {{augmentationMonth.toLocaleString('fr-FR')}} %</p>
                                     @elseif(augmentationMonth < 0)
-                                    <p class="text-red-500 mt-1"><i class="fas fa-arrow-down mr-1"></i> {{augmentationMonth}} %</p>
+                                    <p class="text-red-500 mt-1"><i class="fas fa-arrow-down mr-1"></i> {{augmentationMonth.toLocaleString('fr-FR')}} %</p>
                                    @elseif(augmentationMonth == 0)
                                     <p class="text-black mt-1"> {{augmentationMonth}} %</p>
                                     @endif
@@ -545,13 +545,13 @@
                             <div class="flex justify-between items-start">
                                 <div>
                                     <p class="text-gray-500">Transactions</p>
-                                    <p class="text-2xl font-bold mt-2"> {{ transactionMonth}} </p>
+                                    <p class="text-2xl font-bold mt-2"> {{ transactionMonth.toLocaleString('fr-FR')}} </p>
                                     @if(augmentationTransactionMonth > 0)
-                                    <p class="text-green-500 mt-1"><i class="fas fa-arrow-up mr-1"></i> {{augmentationTransactionMonth}} %</p>
+                                    <p class="text-green-500 mt-1"><i class="fas fa-arrow-up mr-1"></i> {{augmentationTransactionMonth.toLocaleString('fr-FR')}} %</p>
                                     @elseif(augmentationTransactionMonth < 0)
-                                    <p class="text-red-500 mt-1"><i class="fas fa-arrow-down mr-1"></i> {{augmentationTransactionMonth}} %</p>
+                                    <p class="text-red-500 mt-1"><i class="fas fa-arrow-down mr-1"></i> {{augmentationTransactionMonth.toLocaleString('fr-FR')}} %</p>
                                     @elseif(augmentationTransactionMonth == 0)
-                                    <p class="text-black mt-1"> {{augmentationTransactionMonth}} %</p>
+                                    <p class="text-black mt-1"> {{augmentationTransactionMonth.toLocaleString('fr-FR')}} %</p>
                                     @endif
                                 </div>
                                 <div class="p-3 rounded-lg bg-blue-100 text-primary">
@@ -567,15 +567,15 @@
                                 <div>
                                     <p class="text-gray-500">Panier Moyen</p>
                                     @if(PanierMoyenMonth)
-                                    <p class="text-2xl font-bold mt-2">{{PanierMoyenMonth.toFixed(0)}} Fc</p>
+                                    <p class="text-2xl font-bold mt-2">{{PanierMoyenMonth.toLocaleString('fr-FR')}} Fc</p>
                                     @else 
                                     <p class="text-2xl font-bold mt-2">0 Fc</p>
                                     @endif
 
                                     @if(augmentationTransactionMonthStat > 0)
-                                    <p class="text-green-500 mt-1"><i class="fas fa-arrow-up mr-1"></i> {{augmentationTransactionMonthStat}} %</p>
+                                    <p class="text-green-500 mt-1"><i class="fas fa-arrow-up mr-1"></i> {{augmentationTransactionMonthStat.toLocaleString('fr-FR')}} %</p>
                                     @elseif(augmentationTransactionMonthStat < 0)
-                                    <p class="text-red-500 mt-1"><i class="fas fa-arrow-down mr-1"></i> {{augmentationTransactionMonthStat}} %</p>
+                                    <p class="text-red-500 mt-1"><i class="fas fa-arrow-down mr-1"></i> {{augmentationTransactionMonthStat.toLocaleString('fr-FR')}} %</p>
                                      @elseif(augmentationTransactionMonthStat == 0)
                                     <p class="text-black mt-1"> {{augmentationTransactionMonthStat}} %</p>
                                     @endif
@@ -589,13 +589,13 @@
                                   @if(panierMaxMonth === -Infinity)
                                   <span>Max: 0 Fc</span>
                                   @else 
-                                  <span>Max: {{panierMaxMonth}} Fc</span>
+                                  <span>Max: {{panierMaxMonth.toLocaleString('fr-FR')}} Fc</span>
                                   @endif
 
                                 @if(panierMinMonth === Infinity)
                                 <span>Min: 0 Fc</span>
                                   @else 
-                                  <span>Min: {{panierMinMonth}} Fc</span>
+                                  <span>Min: {{panierMinMonth.toLocaleString('fr-FR')}} Fc</span>
                                   @endif
                                 </div>
                             </div>
@@ -629,7 +629,7 @@
                 <i class="fas fa-pills text-blue-600"></i>
               </div>
               <span class="flex-1">{{ product.name }}</span>
-              <span class="font-medium">{{ product.total.toFixed(0) }} Fc</span>
+              <span class="font-medium">{{ product.total.toLocaleString('fr-FR') }} Fc</span>
             </div>
           @else
             <div class="text-center py-4 text-gray-500">
@@ -757,7 +757,7 @@
                             },
                             ticks: {
                                 callback: function(value) {
-                                    return  value + 'Fc';
+                                    return  value.toLocaleString('fr-FR') + 'Fc';
                                 }
                             }
                         },
@@ -811,7 +811,7 @@
                             },
                             ticks: {
                                 callback: function(value) {
-                                    return value + 'Fc';
+                                    return value.toLocaleString('fr-FR') + 'Fc';
                                 }
                             }
                         },
@@ -852,7 +852,7 @@
                             },
                             ticks: {
                                 callback: function(value) {
-                                    return value + 'Fc' ;
+                                    return value.toLocaleString('fr-FR') + 'Fc' ;
                                 }
                             }
                         },

@@ -55,7 +55,8 @@ export default class SalesController {
         const vente = await Sale.create({
           nombreDeProduit: nombreDeProduit,
           totalPrice: prixTotal,
-          userid:auth.user?.id
+          userid:auth.user?.id,
+          createdAt:DateTime.now().plus({ hours: 2 })
         })
   
         // Créer les produits associés à cette vente

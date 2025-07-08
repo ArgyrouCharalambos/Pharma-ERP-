@@ -350,7 +350,7 @@ augmentationTransactionWeekStat = 0;
       .whereBetween('created_at', [startOfDay2, endOfDay2])
 
     salesToday.forEach((sale) => {
-      const hour = sale.createdAt.setZone('Africa/Lubumbashi').plus({ hours: -1 }).hour
+      const hour = sale.createdAt.setZone('Africa/Lubumbashi').plus({ hours: -3 }).hour
       if (hour >= 0 && hour <= 23) {
         salesByHour[hour - 0] += Number(sale.totalPrice)
       }

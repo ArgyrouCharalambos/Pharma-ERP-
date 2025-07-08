@@ -33,7 +33,7 @@ export default class Sale extends BaseModel {
   @belongsTo(() => Product)
   declare product: relations.BelongsTo<typeof Product>
 
-  @column.dateTime({ autoCreate: true })
+  @column.dateTime({ autoCreate: false })
   declare createdAt: DateTime
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })
