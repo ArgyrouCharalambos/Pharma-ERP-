@@ -407,6 +407,7 @@ export default class DashboardController {
      // 1. Performance du Jour - Top 3 produits
      const today = DateTime.now().toISODate()
      const salesTodayForTopProducts = await Sale.query()
+       .where('userid',Number(auth.user?.id))
        .where('created_at', '>=', today)
        .preload('produits', (query) => {
          query.preload('product')
@@ -432,6 +433,7 @@ export default class DashboardController {
              const debutWeek = now.startOf('week').toISODate()
     const finWeek = now.endOf('week').toISODate()
      const salesWeekForTopProducts = await Sale.query()
+       .where('userid',Number(auth.user?.id))
        .whereBetween('created_at',  [debutWeek, finWeek])
        .preload('produits', (query) => {
          query.preload('product')
@@ -457,6 +459,7 @@ export default class DashboardController {
              const debutMonth = now.startOf('month').toISODate()
     const finMonth = now.endOf('month').toISODate()
      const salesMonthForTopProducts = await Sale.query()
+       .where('userid',Number(auth.user?.id))
        .whereBetween('created_at',  [debutMonth, finMonth])
        .preload('produits', (query) => {
          query.preload('product')

@@ -229,19 +229,13 @@
                   alertExpired: {{product.alertExpired}},
                   quantity:{{product.quantity}} ,
                   status:
-                  @if((product.expirationDate).toFormat('yyyy') <= DateTime.now().toFormat('yyyy'))
-                  @if((product.expirationDate).toFormat('MM') <= DateTime.now().toFormat('MM'))
-                  @if((product.expirationDate).toFormat('dd') <= DateTime.now().toFormat('dd'))
-                  "EXPIRÉ"
-                  @else
-                  'VALIDE'
-                  @endif
-                  @else
-                  'VALIDE'
-                  @endif
-                   @else
-                   "VALIDE"
-                   @endif
+                  @if(Number(DateTime.fromISO(product.expirationDate).toFormat('yyyy')) < Number(DateTime.now().toFormat('yyyy')) || 
+    (Number(DateTime.fromISO(product.expirationDate).toFormat('yyyy')) === Number(DateTime.now().toFormat('yyyy')) && Number(DateTime.fromISO(product.expirationDate).toFormat('MM')) < Number(DateTime.now().toFormat('MM'))) || 
+    (Number(DateTime.fromISO(product.expirationDate).toFormat('yyyy')) === Number(DateTime.now().toFormat('yyyy')) && Number(DateTime.fromISO(product.expirationDate).toFormat('MM')) === Number(DateTime.now().toFormat('MM')) && Number(DateTime.fromISO(product.expirationDate).toFormat('dd')) <=  Number(DateTime.now().toFormat('dd'))))
+  'EXPIRÉ'
+@else
+  'VALIDE'
+@endif
                    ,
                   price: {{product.price}},
                   expirationDate: "{{(product.expirationDate).toFormat('dd/MM/yyyy')}}",
