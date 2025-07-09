@@ -221,7 +221,7 @@
               </div>
             </div>
              <!-- Données de la vente -->
-  <input type="hidden" name="nombre_de_produit" :value="cart.length">
+  <input type="hidden" name="nombre_de_produit" :value="cart.reduce((total, item) => total + parseInt(item.quantity), 0)">
   <input type="hidden" name="prix_total" :value="calculateTotal()">
 
   <!-- Produits du panier -->

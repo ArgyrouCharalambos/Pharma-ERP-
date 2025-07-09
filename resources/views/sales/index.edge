@@ -8,13 +8,13 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
   <style>
-        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
-        body {
-            font-family: 'Montserrat', sans-serif;
-            background-color: #f0f9ff;
-        }
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background-color: #f0f9ff;
+    }
     .slide-enter-active, .slide-leave-active {
       transition: all 0.3s ease-out;
     }
@@ -37,6 +37,12 @@
     }
     .scrollbar-custom::-webkit-scrollbar-thumb:hover {
       background: #94a3b8;
+    }
+    .disabled\:opacity-50:disabled {
+      opacity: 0.5;
+    }
+    .disabled\:cursor-not-allowed:disabled {
+      cursor: not-allowed;
     }
   </style>
 </head>
@@ -65,32 +71,23 @@
         <i class="fas fa-receipt mr-3"></i> <p class="ml-1">Ventes</p>
       </a>
       <a href="/products/alerts" class="flex gap-3 text-sm font-medium items-center p-3 text-white/90 hover:bg-blue-700/20 rounded-lg transition-all">
-       @if(Alerte)
-           <i class="fas fa-exclamation-triangle text-md text-red-600"></i>
-           @else
-         <i class="fas fa-exclamation-triangle text-md text-purple-100 "></i>
-         @endif
-         <p>
-           Alertes
-         </p>
-     </a>
-     </nav>
+        <i class="fas fa-exclamation-triangle text-md text-purple-100 "></i>
+        <p>Alertes</p>
+      </a>
+    </nav>
   </div>
   
   <div class="h-full flex flex-col transition-all duration-300" :class="sidebarOpen ? 'ml-48' : 'ml-0'">
-     <!-- Header -->
-     <header class="bg-white shadow-sm">
+    <!-- Header -->
+    <header class="bg-white shadow-sm">
       <div class="flex items-center justify-between px-6 py-4">
         <button @click="sidebarOpen = !sidebarOpen" class="text-blue-600 hover:text-blue-800">
           <i class="fas fa-bars text-xl"></i>
         </button>
         <div class="flex items-center space-x-4">
-          
           <div class="flex items-center space-x-2">
-            
-            <span class="text-gray-700 font-medium p-3 pt-2 text-white font-bold text-center bg-blue-600 w-10 h-10 rounded-[50%] ">{{(auth.user?.fullName).charAt(0)}} </span>
-                
-            <span class="text-gray-700 font-medium">{{auth.user?.fullName}} </span>
+            <span class="text-gray-700 font-medium p-3 pt-2 text-white font-bold text-center bg-blue-600 w-10 h-10 rounded-[50%] ">U</span>
+            <span class="text-gray-700 font-medium">Utilisateur</span>
           </div>
         </div>
       </div>
@@ -106,7 +103,6 @@
             <p class="text-gray-600 mt-2">Consultez l'historique des transactions de votre pharmacie</p>
           </div>
           <div class="flex space-x-4 mt-4 lg:mt-0">
-            
             <a href="/sales/create" 
                class="bg-gradient-to-r from-blue-600 to-indigo-700 text-white px-6 py-3 rounded-xl hover:from-blue-700 hover:to-indigo-800 transition-all flex items-center shadow-md">
               <i class="fas fa-plus mr-2"></i>Nouvelle Vente
@@ -114,31 +110,27 @@
           </div>
         </div>
 
-      
-
         <!-- Liste des Ventes -->
         <div class="bg-white rounded-2xl shadow-card overflow-hidden">
-   <!-- Ajouter ceci dans votre header -->
-<div class="flex items-center space-x-3 mt-3 md:mt-0 px-3 py-2">
-  <form id="exportForm" action="/export/monthly-sales" method="GET">
-    <div class="flex items-center">
-      <input 
-        type="month" 
-        name="month" 
-        id="monthPicker"
-        class="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-        value="{{ 
-         DateTime.now().toFormat('yyyy-MM') }}"
-      >
-      <button 
-        type="submit"
-        class="ml-2 bg-gradient-to-r from-blue-600 to-indigo-700 text-white px-6 py-3 rounded-xl hover:from-blue-700 hover:to-indigo-800 transition-all flex items-center shadow-md"
-      >
-        <i class="fas fa-file-pdf mr-2"></i>Exporter PDF
-      </button>
-    </div>
-  </form>
-</div>
+          <div class="flex items-center space-x-3 mt-3 md:mt-0 px-3 py-2">
+            <form id="exportForm" action="/export/monthly-sales" method="GET">
+              <div class="flex items-center">
+                <input 
+                  type="month" 
+                  name="month" 
+                  id="monthPicker"
+                  class="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  value="2025-07"
+                >
+                <button 
+                  type="submit"
+                  class="ml-2 bg-gradient-to-r from-blue-600 to-indigo-700 text-white px-6 py-3 rounded-xl hover:from-blue-700 hover:to-indigo-800 transition-all flex items-center shadow-md"
+                >
+                  <i class="fas fa-file-pdf mr-2"></i>Exporter PDF
+                </button>
+              </div>
+            </form>
+          </div>
           
           <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-gray-200">
@@ -150,98 +142,20 @@
                   <th class="px-6 py-4 text-left text-sm font-semibold text-blue-600 uppercase w-32">Actions</th>
                 </tr>
               </thead>
-              <tbody class="divide-y divide-gray-200">
-                <!-- Vente 1 -->
-                
-          @each(sale in sales)
-                <tr class="hover:bg-blue-50 transition-colors">
-                  <td class="px-6 py-4">
-                    <div class="flex items-center">
-                      <i class="fas fa-clock text-gray-400 mr-2"></i>
-                      <span>
-                {{ sale.createdAt.toFormat('dd/MM/yyyy HH:mm') }}
-
-                      </span>
-                    </div>
-                  </td>
-                  <td class="px-6 py-4 font-semibold text-green-600">{{sale.nombreDeProduit.toLocaleString('fr-FR')}} Pcs </td>
-                 
-                  <td class="px-6 py-4 font-semibold text-green-600">{{sale.totalPrice.toLocaleString('fr-FR')}} Fc </td>
-                 
-                  <td class="px-6 py-4">
-                    <button 
-                      @click="expandedSaleId = expandedSaleId === {{sale.id}} ? null : {{sale.id}}"
-                      class="text-blue-600 hover:text-blue-800 flex items-center"
-                    >
-                      <i class="fas" :class="expandedSaleId === {{sale.id}} ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
-                      <span class="ml-2">Détails</span>
-                    </button>
-                  </td>
-                </tr>
-                
-                <!-- Détails de la vente 1 -->
-                <tr x-show="expandedSaleId === {{sale.id}}" x-transition:enter="slide-enter" x-transition:leave="slide-enter">
-                  <td colspan="6" class="px-6 py-4 bg-blue-50">
-                    <div class="ml-10">
-                      <h3 class="font-bold text-gray-800 mb-4 flex items-center">
-                        Produits vendus
-                      </h3>
-                      
-                      <div class="bg-white rounded-lg border border-gray-200 overflow-hidden">
-                        <table class="min-w-full divide-y divide-gray-200">
-                          <thead class="bg-gray-50">
-                            <tr>
-                              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Produit</th>
-                              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Quantité</th>
-                              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Prix Unitaire</th>
-                              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Total</th>
-                            </tr>
-                          </thead>
-                          <tbody class="divide-y divide-gray-200">
-                            @each(item in sale.produits)               
-                            <tr>
-                              <td class="px-4 py-3">
-                                <div class="flex items-center">
-                                  <div class="bg-blue-100 rounded-lg p-2 mr-3">
-                                    <i class="fas fa-pills text-blue-600"></i>
-                                  </div>
-                                  <div>
-                                    <div class="font-medium">{{item.product?.name}}</div>
-                                  </div>
-                                </div>
-                              </td>
-                              <td class="px-4 py-3">{{item.quantity.toLocaleString('fr-FR')}}</td>
-                              <td class="px-4 py-3">{{item.prixUnitaire.toLocaleString('fr-FR')}} Fc</td>
-                              <td class="px-4 py-3 font-medium">{{(item.quantity * item.prixUnitaire).toLocaleString('fr-FR')}} Fc</td>
-                            </tr>
-                            @end
-                           
-                           
-                          </tbody>
-                        </table>
-                      </div>
-                     </div>
-                    </div>
-                  </td>
-                </tr>
-
-                @end
-
+              <tbody class="divide-y divide-gray-200" id="sales-container">
+                <!-- Les ventes seront injectées ici par JavaScript -->
               </tbody>
             </table>
           </div>
           
           <!-- Pagination -->
           <div class="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
-           
+            <div id="pagination-info" class="text-sm text-gray-600">Affichage de 1 à 5 sur 15 ventes</div>
             <div class="flex space-x-2">
-              <button class="px-3 py-1 rounded-md border border-gray-300 text-gray-600 hover:bg-gray-100">
+              <button id="prev-page" class="px-3 py-1 rounded-md border border-gray-300 text-gray-600 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
                 <i class="fas fa-chevron-left"></i>
               </button>
-              <button class="px-3 py-1 rounded-md bg-blue-600 text-white">1</button>
-              <button class="px-3 py-1 rounded-md border border-gray-300 text-gray-600 hover:bg-gray-100">2</button>
-              <button class="px-3 py-1 rounded-md border border-gray-300 text-gray-600 hover:bg-gray-100">3</button>
-              <button class="px-3 py-1 rounded-md border border-gray-300 text-gray-600 hover:bg-gray-100">
+              <button id="next-page" class="px-3 py-1 rounded-md border border-gray-300 text-gray-600 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed">
                 <i class="fas fa-chevron-right"></i>
               </button>
             </div>
@@ -249,44 +163,258 @@
         </div>
       </div>
     </main>
-     <!-- Footer avec déconnexion -->
-  <footer class="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-6">
-    <div class="container mx-auto px-4">
-      <div class="flex flex-col md:flex-row justify-between items-center">
-        <!-- Logo et copyright -->
-        <div class="mb-4 md:mb-0">
-          <div class="flex items-center space-x-2">
-            <i class="fas fa-clinic-medical text-2xl"></i>
-            <span class="text-xl font-bold">PharmaManager</span>
+    <!-- Footer avec déconnexion -->
+    <footer class="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-6">
+      <div class="container mx-auto px-4">
+        <div class="flex flex-col md:flex-row justify-between items-center">
+          <!-- Logo et copyright -->
+          <div class="mb-4 md:mb-0">
+            <div class="flex items-center space-x-2">
+              <i class="fas fa-clinic-medical text-2xl"></i>
+              <span class="text-xl font-bold">PharmaManager</span>
+            </div>
+            <p class="text-blue-100 text-sm mt-1">© 2025 Tous droits réservés</p>
           </div>
-          <p class="text-blue-100 text-sm mt-1">© 2025 Tous droits réservés</p>
+
+          <!-- Bouton de déconnexion -->
+          <form method="GET" action="/deconnect" class="mt-4 md:mt-0">
+            <button type="submit" class="bg-white text-blue-600 hover:bg-blue-50 px-4 py-2 rounded-lg font-medium flex items-center transition-colors">
+              <i class="fas fa-sign-out-alt mr-2"></i> Déconnexion
+            </button>
+          </form>
         </div>
-
-
-        <!-- Bouton de déconnexion -->
-        <form method="GET" action="/deconnect" class="mt-4 md:mt-0">
-          <button type="submit" class="bg-white text-blue-600 hover:bg-blue-50 px-4 py-2 rounded-lg font-medium flex items-center transition-colors">
-            <i class="fas fa-sign-out-alt mr-2"></i> Déconnexion
-          </button>
-        </form>
       </div>
-    </div>
-  </footer>
+    </footer>
   </div>
-<script>
- document.getElementById('exportForm').addEventListener('submit', function(e) {
-    e.preventDefault()
-    const month = document.getElementById('monthPicker').value
-    
-    if (!month) {
-      alert('Veuillez sélectionner un mois')
-      return
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Configuration
+      const salesPerPage = 5;
+      let currentPage = 1;
+      let allSales = [];
+      let filteredSales = [];
+
+      // Éléments du DOM
+      const salesContainer = document.getElementById('sales-container');
+      const paginationInfo = document.getElementById('pagination-info');
+      const prevButton = document.getElementById('prev-page');
+      const nextButton = document.getElementById('next-page');
+      const searchInput = document.querySelector('[x-ref="searchInput"]');
+      
+      // Générer des ventes de démonstration
+      function generateSampleSales(count) {
+        const sales = [];
+      
+      // Utilisation des données dynamiques du template
+      @each(sale in sales)
+      sales.push({
+        id: {{sale.id}},
+        date: "{{sale.createdAt.toFormat('dd/MM/yyyy HH:mm')}}",
+        productsCount: {{sale.nombreDeProduit}},
+        totalAmount: {{sale.totalPrice}},
+        products: [
+          @each(item in sale.produits)
+          {
+              name: "{{item.product?.name}}",
+            quantity: {{item.quantity}},
+            unitPrice: {{item.prixUnitaire}},
+            total: {{item.quantity * item.prixUnitaire}}
+          },
+          @end
+        ]
+      });
+      @end
+      
+      return sales;
     }
-    
-    if (confirm(`Exporter les ventes pour ${month}?`)) {
-      this.submit()
-    }
-  })
-</script>       
+      
+      // Formater un montant
+      function formatAmount(amount) {
+        return amount.toLocaleString('fr-FR') + ' Fc';
+      }
+      
+      // Rendre les ventes
+      function renderSales(sales) {
+        salesContainer.innerHTML = ''; // Vider le conteneur
+
+        sales.forEach(sale => {
+          // Ligne de résumé
+          const summaryRow = document.createElement('tr');
+          summaryRow.className = 'hover:bg-blue-50 transition-colors';
+          summaryRow.innerHTML = `
+            <td class="px-6 py-4">
+              <div class="flex items-center">
+                <i class="fas fa-clock text-gray-400 mr-2"></i>
+                <span>${sale.date}</span>
+              </div>
+            </td>
+            <td class="px-6 py-4 font-semibold text-green-600">${sale.productsCount.toLocaleString('fr-FR')} Pcs</td>
+            <td class="px-6 py-4 font-semibold text-green-600">${formatAmount(sale.totalAmount)}</td>
+            <td class="px-6 py-4">
+              <button 
+                class="text-blue-600 hover:text-blue-800 flex items-center toggle-details"
+                data-sale-id="${sale.id}"
+              >
+                <i class="fas fa-chevron-down"></i>
+                <span class="ml-2">Détails</span>
+              </button>
+            </td>
+          `;
+          salesContainer.appendChild(summaryRow);
+
+          // Ligne de détails
+          const detailRow = document.createElement('tr');
+          detailRow.id = `details-${sale.id}`;
+          detailRow.className = 'hidden';
+          detailRow.innerHTML = `
+            <td colspan="6" class="px-6 py-4 bg-blue-50">
+              <div class="ml-10">
+                <h3 class="font-bold text-gray-800 mb-4 flex items-center">
+                  Produits vendus
+                </h3>
+                <div class="bg-white rounded-lg border border-gray-200 overflow-hidden">
+                  <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                      <tr>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Produit</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Quantité</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Prix Unitaire</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Total</th>
+                      </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200">
+                      ${sale.products.map(product => `
+                        <tr>
+                          <td class="px-4 py-3">
+                            <div class="flex items-center">
+                              <div class="bg-blue-100 rounded-lg p-2 mr-3">
+                                <i class="fas fa-pills text-blue-600"></i>
+                              </div>
+                              <div>
+                                <div class="font-medium">${product.name}</div>
+                              </div>
+                            </div>
+                          </td>
+                          <td class="px-4 py-3">${product.quantity.toLocaleString('fr-FR')}</td>
+                          <td class="px-4 py-3">${formatAmount(product.unitPrice)}</td>
+                          <td class="px-4 py-3 font-medium">${formatAmount(product.total)}</td>
+                        </tr>
+                      `).join('')}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </td>
+          `;
+          salesContainer.appendChild(detailRow);
+        });
+
+        // Ajouter les écouteurs d'événements pour les détails
+        document.querySelectorAll('.toggle-details').forEach(button => {
+          button.addEventListener('click', function() {
+            const saleId = this.getAttribute('data-sale-id');
+            const detailsRow = document.getElementById(`details-${saleId}`);
+            const icon = this.querySelector('i');
+            
+            if (detailsRow.classList.contains('hidden')) {
+              detailsRow.classList.remove('hidden');
+              icon.classList.remove('fa-chevron-down');
+              icon.classList.add('fa-chevron-up');
+            } else {
+              detailsRow.classList.add('hidden');
+              icon.classList.remove('fa-chevron-up');
+              icon.classList.add('fa-chevron-down');
+            }
+          });
+        });
+      }
+      
+      // Initialisation
+      function init() {
+        // Générer des ventes de démonstration
+        allSales = generateSampleSales(15);
+        filteredSales = [...allSales];
+        
+        // Initialiser l'affichage
+        updateDisplay();
+        setupEventListeners();
+      }
+      
+      // Configuration des écouteurs d'événements
+      function setupEventListeners() {
+        // Navigation pagination
+        prevButton.addEventListener('click', () => navigateToPage(currentPage - 1));
+        nextButton.addEventListener('click', () => navigateToPage(currentPage + 1));
+      }
+      
+      // Mise à jour de l'affichage
+      function updateDisplay() {
+        // Calculer les ventes à afficher pour la page courante
+        const startIdx = (currentPage - 1) * salesPerPage;
+        const endIdx = startIdx + salesPerPage;
+        const salesToShow = filteredSales.slice(startIdx, endIdx);
+        
+        // Afficher les ventes
+        renderSales(salesToShow);
+        
+        // Mettre à jour les informations de pagination
+        updatePaginationInfo();
+        
+        // Mettre à jour l'état des boutons de navigation
+        updateNavigationButtons();
+      }
+      
+      // Mettre à jour les informations de pagination
+      function updatePaginationInfo() {
+        const totalSales = filteredSales.length;
+        const start = Math.min((currentPage - 1) * salesPerPage + 1, totalSales);
+        const end = Math.min(currentPage * salesPerPage, totalSales);
+        
+        paginationInfo.textContent = `Affichage de ${start} à ${end} sur ${totalSales} ventes`;
+      }
+      
+      // Mettre à jour l'état des boutons de navigation
+      function updateNavigationButtons() {
+        const totalSales = filteredSales.length;
+        const totalPages = Math.ceil(totalSales / salesPerPage);
+        
+        // Bouton précédent
+        prevButton.disabled = currentPage === 1;
+        
+        // Bouton suivant
+        nextButton.disabled = currentPage === totalPages || totalPages === 0;
+      }
+      
+      // Navigation entre les pages
+      function navigateToPage(page) {
+        const totalSales = filteredSales.length;
+        const totalPages = Math.ceil(totalSales / salesPerPage);
+        
+        if (page >= 1 && page <= totalPages) {
+          currentPage = page;
+          updateDisplay();
+        }
+      }
+      
+      // Initialisation
+      init();
+      
+      // Export PDF
+      document.getElementById('exportForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const month = document.getElementById('monthPicker').value;
+        
+        if (!month) {
+          alert('Veuillez sélectionner un mois');
+          return;
+        }
+        
+        if (confirm(`Exporter les ventes pour ${month}?`)) {
+          this.submit();
+        }
+      });
+    });
+  </script>
 </body>
 </html>
