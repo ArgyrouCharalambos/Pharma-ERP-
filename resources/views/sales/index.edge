@@ -85,15 +85,18 @@
   
   <div class="h-full flex flex-col transition-all duration-300" :class="sidebarOpen ? 'ml-48' : 'ml-0'">
     <!-- Header -->
-    <header class="bg-white shadow-sm">
+     <header class="bg-white shadow-sm">
       <div class="flex items-center justify-between px-6 py-4">
         <button @click="sidebarOpen = !sidebarOpen" class="text-blue-600 hover:text-blue-800">
           <i class="fas fa-bars text-xl"></i>
         </button>
         <div class="flex items-center space-x-4">
+          
           <div class="flex items-center space-x-2">
-            <span class="text-gray-700 font-medium p-3 pt-2 text-white font-bold text-center bg-blue-600 w-10 h-10 rounded-[50%] ">U</span>
-            <span class="text-gray-700 font-medium">Utilisateur</span>
+            
+            <span class="text-gray-700 font-medium p-3 pt-2 text-white font-bold text-center bg-blue-600 w-10 h-10 rounded-[50%] ">{{(auth.user?.fullName.toUpperCase()).charAt(0)}} </span>
+                
+            <span class="text-gray-700 font-medium">{{auth.user?.fullName}} </span>
           </div>
         </div>
       </div>
