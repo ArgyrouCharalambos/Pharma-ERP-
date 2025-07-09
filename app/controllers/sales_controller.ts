@@ -193,8 +193,8 @@ export default class SalesController {
     sales.forEach(sale => {
       tableBody.push([
         { text: sale.createdAt.toFormat('dd/MM/yyyy HH:mm'), style: 'tableHeader' },
-        { text: `${sale.nombreDeProduit} Pcs`, style: 'tableHeader' },
-        { text: `Total : ${Number(sale.totalPrice).toFixed(0)} Fc`, style: 'tableHeader' }
+        { text: `${sale.nombreDeProduit.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ')} Pcs`, style: 'tableHeader' },
+        { text: `Total : ${Number(sale.totalPrice).toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ')} Fc`, style: 'tableHeader' }
       ])
       vente = vente + Number(sale.totalPrice)
       
@@ -202,8 +202,8 @@ export default class SalesController {
       sale.produits.forEach(produit => {
         tableBody.push([
           { text: '', style: 'tableHeader' },
-          { text: `- ${produit.product?.name} (x${produit.quantity}) ${produit.prixUnitaire} Fc/unités`, style: 'tableHeader2' },
-          { text: `- ${produit.quantity * produit.prixUnitaire} Fc`, style: 'tableHeader2' }
+          { text: `- ${produit.product?.name} (x${produit.quantity.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ')}) ${produit.prixUnitaire.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ')} Fc/unités`, style: 'tableHeader2' },
+          { text: `- ${(produit.quantity * produit.prixUnitaire).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ')} Fc`, style: 'tableHeader2' }
         ])
       })
     })
@@ -211,7 +211,7 @@ export default class SalesController {
       tableBody.push([
         { text: "", style: 'tableHeader' },
         { text:"", style: 'tableHeader' },
-        { text: `Total Général : ${Number(vente)} Fc`, style: 'tableHeader' }
+        { text: `Total Général : ${Number(vente).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ')} Fc`, style: 'tableHeader' }
       ])
 
     interface TableCell {
