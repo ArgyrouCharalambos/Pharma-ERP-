@@ -18,7 +18,7 @@ export default class ProductsController {
               .first()
           )?.$extras.total || 0
 
-     const critiqueResult = await Product.query().where('userid',Number(auth.user?.id)).where('quantity', '<', 10).count('* as total')
+     const critiqueResult = await Product.query().where('userid',Number(auth.user?.id)).whereRaw('quantity < alert_seuil').count('* as total')
               const Critique = critiqueResult[0]?.$extras.total || 0
               const Expire =
                 (
@@ -48,13 +48,14 @@ export default class ProductsController {
   }
 
   public async store({ request, response, auth }: HttpContext) {
-    const data = request.only(['name', 'quantity', 'price', 'expiration_date'])
+    const data = request.only(['name', 'quantity', 'price', 'expiration_date','alert_seuil'])
     await Product.create({
       name: data.name,
       quantity: data.quantity,
       price: data.price,
       expirationDate: data.expiration_date,
       userid: auth.user?.id,
+      alertSeuil:data.alert_seuil
     })
     return response.redirect().toRoute('products.index')
   }
@@ -71,7 +72,7 @@ export default class ProductsController {
 
   public async update({ params, request, response }: HttpContext) {
     const product = await Product.findOrFail(params.id)
-    product.merge(request.only(['name', 'quantity', 'price', 'expiration_date']))
+    product.merge(request.only(['name', 'quantity', 'price', 'expiration_date','alert_seuil']))
     await product.save()
     return response.redirect().toRoute('products.index')
   }
@@ -83,11 +84,11 @@ export default class ProductsController {
   }
 
   public async alerts({ view, auth }: HttpContext) {
-    const products = await Product.query()
+    const products = await Product.query().where('userid',Number(auth.user?.id))
     const PRODUCTS = await Product.query().where('userid',Number(auth.user?.id)).where('expiration_date', '<=', DateTime.now().setZone('Africa/Lubumbashi').toJSDate())
-    const critiqueResult = await Product.query().where('userid',Number(auth.user?.id)).where('quantity', '<', 10).count('* as total')
+    const critiqueResult = await Product.query().where('userid',Number(auth.user?.id)).whereRaw('quantity < alert_seuil').count('* as total')
     const Critique = critiqueResult[0]?.$extras.total || 0
-    const PRODUCT = await Product.query().where('userid',Number(auth.user?.id)).where('quantity', '<', 10)
+    const PRODUCT = await Product.query().where('userid',Number(auth.user?.id)).whereRaw('quantity < alert_seuil')
     const Expire =
       (
         await Product.query()

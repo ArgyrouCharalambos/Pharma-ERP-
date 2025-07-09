@@ -158,7 +158,7 @@ export default class DashboardController {
 
     const critiqueResult = await Product.query()
       .where('userid', Number(auth.user?.id))
-      .where('quantity', '<', 10)
+      .whereRaw('quantity < alert_seuil')
       .count('* as total')
     const Critique = critiqueResult[0]?.$extras.total || 0
     const Expire =

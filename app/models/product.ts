@@ -19,6 +19,9 @@ export default class Product extends BaseModel {
   @column()
   declare userid: number
 
+  @column()
+  declare alertSeuil: number
+
   @column.date()
   declare expirationDate: DateTime
 

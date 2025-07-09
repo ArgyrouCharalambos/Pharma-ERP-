@@ -239,7 +239,8 @@
                    ,
                   price: {{product.price}},
                   expirationDate: "{{(product.expirationDate).toFormat('dd/MM/yyyy')}}",
-                  updatedAt:"{{(product.updatedAt).toFormat('dd/MM/yyyy')}}" 
+                  updatedAt:"{{(product.updatedAt).toFormat('dd/MM/yyyy')}}" ,
+                  alertSeuil:"{{product.alertSeuil}}"
           } )
           @end
 
@@ -278,6 +279,11 @@
 
         const header = document.createElement('div');
         header.className = 'flex items-baseline gap-2 flex-wrap';
+
+
+        const alert_seuil = document.createElement('p');
+        alert_seuil.className = 'text-xs font-semibold text-gray-500';
+        alert_seuil.textContent = `Seuil d'Alerte : ${product.alertSeuil} unités`;
 
         const name = document.createElement('h3');
         name.className = 'product-name text-lg md:text-xl font-bold text-gray-800 truncate';
@@ -338,6 +344,8 @@
         detailsGrid.appendChild(priceDiv);
 
         infoWrapper.appendChild(header);
+        infoWrapper.appendChild(alert_seuil);
+
         infoWrapper.appendChild(detailsGrid);
 
         mainColumn.appendChild(iconWrapper);
