@@ -192,7 +192,7 @@ export default class SalesController {
     let vente = 0;
     sales.forEach(sale => {
       tableBody.push([
-        { text: sale.createdAt.plus({ hours: 2 }).toFormat('dd/MM/yyyy HH:mm'), style: 'tableHeader' },
+        { text: sale.createdAt.toFormat('dd/MM/yyyy HH:mm'), style: 'tableHeader' },
         { text: `${sale.nombreDeProduit} Pcs`, style: 'tableHeader' },
         { text: `Total : ${Number(sale.totalPrice).toFixed(0)} Fc`, style: 'tableHeader' }
       ])
@@ -202,8 +202,8 @@ export default class SalesController {
       sale.produits.forEach(produit => {
         tableBody.push([
           { text: '', style: 'tableHeader' },
-          { text: `${produit.product?.name} (x${produit.quantity}) ${produit.prixUnitaire} Fc/Pcs`, style: 'tableHeader2' },
-          { text: `${produit.quantity * produit.prixUnitaire} Fc`, style: 'tableHeader2' }
+          { text: `- ${produit.product?.name} (x${produit.quantity}) ${produit.prixUnitaire} Fc/unités`, style: 'tableHeader2' },
+          { text: `- ${produit.quantity * produit.prixUnitaire} Fc`, style: 'tableHeader2' }
         ])
       })
     })
