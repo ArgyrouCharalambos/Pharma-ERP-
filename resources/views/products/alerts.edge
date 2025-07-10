@@ -15,7 +15,7 @@
     }
 </style>
 </head>
-<body class="h-full" x-data="{ sidebarOpen: true }">
+<body class="h-full" x-data="{ sidebarOpen: false }">
  <div class="fixed inset-y-0 z-40 w-[200px] bg-gradient-to-b from-blue-800 to-blue-900 shadow-2xl transform transition-transform duration-300"
  :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'">
  <div class="py-6 px-2 border-b border-blue-700">
@@ -143,6 +143,7 @@
   <!-- Footer avec déconnexion -->
 <footer class="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-6 mt-10">
   <div class="container mx-auto px-4">
+   
     <div class="flex flex-col md:flex-row justify-between items-center">
       <!-- Logo et copyright -->
       <div class="mb-4 md:mb-0">
@@ -153,9 +154,29 @@
         <p class="text-blue-100 text-sm mt-1">© 2025 Tous droits réservés</p>
       </div>
 
+        <!-- Liens de navigation -->
+                 @if(auth.user?.role === 'proprietaire')
+                  <div class="flex flex-wrap justify-center gap-6">
+                   
+                    <a href="/products" class="hover:text-blue-200 transition-colors">
+                      <i class="fas fa-pills mr-2"></i> Produits
+                    </a>
+                    <a href="/sales" class="hover:text-blue-200 transition-colors">
+                      <i class="fas fa-receipt mr-2"></i> Ventes
+                    </a>
+                     <a href="/products/alerts" class="hover:text-blue-200 transition-colors">
+                       @if(Alerte)
+             <i class="fas fa-exclamation-triangle mr-2 text-md text-red-600"></i>
+             @else
+           <i class="fas fa-exclamation-triangle mr-2 text-md text-purple-100 "></i>
+           @endif
+            Alertes
+                    </a>
+                  </div>
+                  @endif
       <!-- Bouton de déconnexion -->
       <form method="GET" action="/deconnect" class="mt-4 md:mt-0">
-        <button type="submit" class="bg-white text-blue-600 hover:bg-blue-50 px-4 py-2 rounded-lg font-medium flex items-center transition-colors">
+        <button type="submit" class="hover:text-blue-600 text-white hover:bg-blue-50 px-4 py-2 rounded-lg font-medium flex items-center transition-colors">
           <i class="fas fa-sign-out-alt mr-2"></i> Déconnexion
         </button>
       </form>

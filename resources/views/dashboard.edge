@@ -89,15 +89,21 @@
             background-color: #1e40af;
             color: white;
         }
+         .transition-all {
+            transition-property: all;
+            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+            transition-duration: 150ms;
+        }
     </style>
 </head>
 <body class="bg-gray-50" x-data="{ 
+  sidebarOpen: false,
   expandedSaleId: null 
 }">
     <div class="flex min-h-screen">
        <!-- Sidebar -->
-  <div class="hidden md:block z-40 w-[200px] bg-gradient-to-b from-blue-800 to-blue-900 shadow-2xl transform transition-transform duration-300"
-  :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'">
+  <div class="fixed inset-y-0 z-40 w-[200px] bg-gradient-to-b from-blue-800 to-blue-900 shadow-2xl transform transition-transform duration-300"
+       :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'">
   <div class="py-6 px-2 border-b border-blue-700">
     <h1 class="text-lg font-bold text-white flex items-center">
       <i class="fas fa-clinic-medical mr-1"></i>PharmaManager
@@ -129,11 +135,14 @@
 </div>
         
         <!-- Main Content -->
-        <div class="flex-1 flex flex-col overflow-hidden">
+        <div class="flex-1 flex flex-col overflow-hidden transition-all duration-300" :class="sidebarOpen ? 'ml-48' : 'ml-0'">
         
             <!-- Header -->
             <header class="bg-white border-b border-gray-200">
                 <div class="md:flex justify-between items-center py-4 px-6">
+                   <button @click="sidebarOpen = !sidebarOpen" class="text-blue-600 hover:text-blue-800">
+          <i class="fas fa-bars text-xl"></i>
+        </button>
                     <div class="flex items-center">
                         <h2 class="text-xl font-semibold text-dark">Rapport de Ventes</h2>
                         <div class="flex ml-6 space-x-1">
@@ -284,98 +293,86 @@
     </div>
   </div>
                     </div>
-                    <!-- Liste des Ventes -->
-        <table class="min-w-full divide-y divide-gray-200">
-          <div>
-            <p class="px-6 py-4 text-left text-lg font-semibold text-dark bg-white rounded-xl">5 Dernières Ventes</p>
-          </div>
-          <thead class="bg-blue-50">
-            <tr>
-              <th class="px-6 py-4 text-left text-sm font-semibold text-blue-600 uppercase">Date & Heure</th>
-              <th class="px-6 py-4 text-left text-sm font-semibold text-blue-600 uppercase">Nombre de Produit</th>
-              <th class="px-6 py-4 text-left text-sm font-semibold text-blue-600 uppercase">Montant</th>
-              <th class="px-6 py-4 text-left text-sm font-semibold text-blue-600 uppercase w-32">Actions</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-gray-200">
-            <!-- Vente 1 -->
-            
-      @each(sale in sales)
-            <tr class="hover:bg-blue-50 bg-white transition-colors">
-              <td class="px-6 py-4">
-                <div class="flex items-center">
-                  <i class="fas fa-clock text-gray-400 mr-2"></i>
-                  <span>
-            {{ sale.createdAt.toFormat('dd/MM/yyyy HH:mm') }}
+       <!-- Liste des Ventes - Responsive -->
+<div class="bg-white shadow rounded-xl overflow-hidden">
+  <p class="px-6 py-4 text-lg font-semibold text-dark">5 Dernières Ventes</p>
 
-                  </span>
-                </div>
-              </td>
-              <td class="px-6 py-4 font-semibold text-green-600">{{sale.nombreDeProduit}} Pcs </td>
-             
-              <td class="px-6 py-4 font-semibold text-green-600">{{Number(sale.totalPrice).toLocaleString('fr-FR')}} Fc </td>
-             
-              <td class="px-6 py-4">
-                <button 
-                  @click="expandedSaleId = expandedSaleId === {{sale.id}} ? null : {{sale.id}}"
-                  class="text-blue-600 hover:text-blue-800 flex items-center"
-                >
-                  <i class="fas" :class="expandedSaleId === {{sale.id}} ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
-                  <span class="ml-2">Détails</span>
-                </button>
-              </td>
-            </tr>
-            
-            <!-- Détails de la vente 1 -->
-            <tr x-show="expandedSaleId === {{sale.id}}" x-transition:enter="slide-enter" x-transition:leave="slide-enter">
-              <td colspan="6" class="px-6 py-4 bg-blue-50">
-                <div class="ml-10">
-                  <h3 class="font-bold text-gray-800 mb-4 flex items-center">
-                 Produits vendus
-                  </h3>
-                  
-                  <div class="bg-white rounded-lg border border-gray-200 overflow-hidden">
-                    <table class="min-w-full divide-y divide-gray-200">
-                      <thead class="bg-gray-50">
-                        <tr>
-                          <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Produit</th>
-                          <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Quantité</th>
-                          <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Prix Unitaire</th>
-                          <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Total</th>
-                        </tr>
-                      </thead>
-                      <tbody class="divide-y divide-gray-200">
-                        @each(item in sale.produits)               
-                        <tr>
-                          <td class="px-4 py-3">
-                            <div class="flex items-center">
-                              <div class="bg-blue-100 rounded-lg p-2 mr-3">
-                                <i class="fas fa-pills text-blue-600"></i>
-                              </div>
-                              <div>
-                                <div class="font-medium">{{item.product?.name}}</div>
-                              </div>
-                            </div>
-                          </td>
-                          <td class="px-4 py-3">{{item.quantity}}</td>
-                          <td class="px-4 py-3">{{item.prixUnitaire.toLocaleString('fr-FR')}} Fc</td>
-                          <td class="px-4 py-3 font-medium">{{(item.quantity * item.prixUnitaire).toLocaleString('fr-FR')}} Fc</td>
-                        </tr>
-                        @end
-                       
-                       
-                      </tbody>
-                    </table>
-                  </div>
-                 </div>
-                </div>
-              </td>
-            </tr>
+  <div class="overflow-x-auto">
+    <table class="min-w-full divide-y divide-gray-200">
+      <thead class="bg-blue-50">
+        <tr>
+          <th class="px-6 py-4 text-left text-sm font-semibold text-blue-600 uppercase whitespace-nowrap">Date & Heure</th>
+          <th class="px-6 py-4 text-left text-sm font-semibold text-blue-600 uppercase whitespace-nowrap">Nombre de Produits</th>
+          <th class="px-6 py-4 text-left text-sm font-semibold text-blue-600 uppercase whitespace-nowrap">Montant</th>
+          <th class="px-6 py-4 text-left text-sm font-semibold text-blue-600 uppercase whitespace-nowrap w-32">Actions</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-200">
+        @each(sale in sales)
+        <tr class="hover:bg-blue-50 bg-white transition-colors">
+          <td class="px-6 py-4">
+            <div class="flex items-center">
+              <i class="fas fa-clock text-gray-400 mr-2"></i>
+              <span>{{ sale.createdAt.toFormat('dd/MM/yyyy HH:mm') }}</span>
+            </div>
+          </td>
+          <td class="px-6 py-4 font-semibold text-green-600">{{ sale.nombreDeProduit }} Pcs</td>
+          <td class="px-6 py-4 font-semibold text-green-600">{{ Number(sale.totalPrice).toLocaleString('fr-FR') }} Fc</td>
+          <td class="px-6 py-4">
+            <button 
+              @click="expandedSaleId = expandedSaleId === {{ sale.id }} ? null : {{ sale.id }}"
+              class="text-blue-600 hover:text-blue-800 flex items-center"
+            >
+              <i class="fas" :class="expandedSaleId === {{ sale.id }} ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+              <span class="ml-2">Détails</span>
+            </button>
+          </td>
+        </tr>
 
-            @end
+        <!-- Détails de la vente -->
+        <tr x-show="expandedSaleId === {{ sale.id }}" x-transition>
+          <td colspan="6" class="px-6 py-4 bg-blue-50">
+            <div class="ml-4">
+              <h3 class="font-bold text-gray-800 mb-4">Produits vendus</h3>
 
-          </tbody>
-        </table>
+              <div class="overflow-x-auto border border-gray-200 rounded-lg bg-white">
+                <table class="min-w-full divide-y divide-gray-200">
+                  <thead class="bg-gray-50">
+                    <tr>
+                      <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Produit</th>
+                      <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Quantité</th>
+                      <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Prix Unitaire</th>
+                      <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Total</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-gray-200">
+                    @each(item in sale.produits)
+                    <tr>
+                      <td class="px-4 py-3">
+                        <div class="flex items-center">
+                          <div class="bg-blue-100 rounded-lg p-2 mr-3">
+                            <i class="fas fa-pills text-blue-600"></i>
+                          </div>
+                          <div class="font-medium">{{ item.product?.name }}</div>
+                        </div>
+                      </td>
+                      <td class="px-4 py-3">{{ item.quantity }}</td>
+                      <td class="px-4 py-3">{{ item.prixUnitaire.toLocaleString('fr-FR') }} Fc</td>
+                      <td class="px-4 py-3 font-medium">{{ (item.quantity * item.prixUnitaire).toLocaleString('fr-FR') }} Fc</td>
+                    </tr>
+                    @end
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </td>
+        </tr>
+        @end
+      </tbody>
+    </table>
+  </div>
+</div>
+
                    
                     
                   
@@ -661,6 +658,7 @@
                   </div>
             
                   <!-- Liens de navigation -->
+                 @if(auth.user?.role === 'proprietaire')
                   <div class="flex flex-wrap justify-center gap-6">
                    
                     <a href="/products" class="hover:text-blue-200 transition-colors">
@@ -678,12 +676,13 @@
             Alertes
                     </a>
                   </div>
+                  @endif
             
                   <!-- Bouton de déconnexion -->
                   <form method="GET" action="/deconnect" class="mt-4 md:mt-0">
-                    <button type="submit" class="bg-white text-blue-600 hover:bg-blue-50 px-4 py-2 rounded-lg font-medium flex items-center transition-colors">
-                      <i class="fas fa-sign-out-alt mr-2"></i> Déconnexion
-                    </button>
+                     <button type="submit" class="hover:text-blue-600 text-white hover:bg-blue-50 px-4 py-2 rounded-lg font-medium flex items-center transition-colors">
+          <i class="fas fa-sign-out-alt mr-2"></i> Déconnexion
+        </button>
                   </form>
                 </div>
               </div>

@@ -31,7 +31,7 @@
         }
   </style>
 </head>
-<body class="h-full"  x-data="{ searchQuery: '', sortBy: 'name' ,sidebarOpen: true}">
+<body class="h-full"  x-data="{ searchQuery: '', sortBy: 'name' ,sidebarOpen: false}">
   <!-- ... (Structure similaire au dashboard pour sidebar/header) ... -->
   <div class="fixed inset-y-0 z-40 w-[200px] bg-gradient-to-b from-blue-800 to-blue-900 shadow-2xl transform transition-transform duration-300"
        :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'">
@@ -137,7 +137,7 @@
     <div class="space-y-4">
         <!-- Header de la liste -->
         <div class="bg-gradient-to-r from-blue-600 to-cyan-500 rounded-xl p-4 shadow-md">
-            <div class="flex items-center justify-between text-white">
+            <div class="md:flex items-center justify-between text-white">
                 <h2 class="text-xl font-bold">Inventaire des Médicaments</h2>
                 <div class="flex items-center space-x-4">
                     <span id="total-products" class="text-sm font-medium bg-white/20 px-3 py-1 rounded-full">Total : 0 produits</span>
@@ -195,10 +195,29 @@
         <p class="text-blue-100 text-sm mt-1">© 2025 Tous droits réservés</p>
       </div>
 
-
+        <!-- Liens de navigation -->
+                 @if(auth.user?.role === 'proprietaire')
+                  <div class="flex flex-wrap justify-center gap-6">
+                   
+                    <a href="/products" class="hover:text-blue-200 transition-colors">
+                      <i class="fas fa-pills mr-2"></i> Produits
+                    </a>
+                    <a href="/sales" class="hover:text-blue-200 transition-colors">
+                      <i class="fas fa-receipt mr-2"></i> Ventes
+                    </a>
+                     <a href="/products/alerts" class="hover:text-blue-200 transition-colors">
+                       @if(Alerte)
+             <i class="fas fa-exclamation-triangle mr-2 text-md text-red-600"></i>
+             @else
+           <i class="fas fa-exclamation-triangle mr-2 text-md text-purple-100 "></i>
+           @endif
+            Alertes
+                    </a>
+                  </div>
+                  @endif
       <!-- Bouton de déconnexion -->
       <form method="GET" action="/deconnect" class="mt-4 md:mt-0">
-        <button type="submit" class="bg-white text-blue-600 hover:bg-blue-50 px-4 py-2 rounded-lg font-medium flex items-center transition-colors">
+        <button type="submit" class="hover:text-blue-600 text-white hover:bg-blue-50 px-4 py-2 rounded-lg font-medium flex items-center transition-colors">
           <i class="fas fa-sign-out-alt mr-2"></i> Déconnexion
         </button>
       </form>
