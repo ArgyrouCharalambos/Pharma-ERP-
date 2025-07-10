@@ -15,9 +15,13 @@ const EmailsController = () => import('#controllers/emails_controller')
 const ProductsController = () => import('#controllers/products_controller')
 const SalesController = () => import('#controllers/sales_controller')
 
+router.on('/newCaissier').render('security/create_caissier')
+
 // Products
 router
   .group(() => {
+    router.post('/createCaissier', [UsersController, 'createCaissier'])
+
     router.resource('products', ProductsController).except(['show', 'update','destroy'])
     router.get('products/alerts', [ProductsController, 'alerts'])
     router.post('products/update/:id', [ProductsController, 'update'])

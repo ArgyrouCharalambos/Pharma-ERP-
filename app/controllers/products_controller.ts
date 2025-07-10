@@ -84,12 +84,38 @@ export default class ProductsController {
   }
 
   public async alerts({ view, auth }: HttpContext) {
-    const products = await Product.query().where('userid',Number(auth.user?.id))
-    const PRODUCTS = await Product.query().where('userid',Number(auth.user?.id)).where('expiration_date', '<=', DateTime.now().setZone('Africa/Lubumbashi').toJSDate())
+
+    let products = null;
+    let PRODUCTS = null;
+    let PRODUCT = null;
+    let alt = null;
+    let Critique = null;
+    let Expire = null;
+
+
+    if(auth.user?.idProprietaire !== null){
+
+      products = await Product.query().where('userid',Number(auth.user?.idProprietaire))
+     PRODUCTS = await Product.query().where('userid',Number(auth.user?.idProprietaire)).where('expiration_date', '<=', DateTime.now().setZone('Africa/Lubumbashi').toJSDate())
+    const critiqueResult = await Product.query().where('userid',Number(auth.user?.idProprietaire)).whereRaw('quantity < alert_seuil').count('* as total')
+     Critique = critiqueResult[0]?.$extras.total || 0
+     PRODUCT = await Product.query().where('userid',Number(auth.user?.idProprietaire)).whereRaw('quantity < alert_seuil')
+     Expire =
+      (
+        await Product.query()
+          .where('userid',Number(auth.user?.idProprietaire))
+          .where('expiration_date', '<=', DateTime.now().setZone('Africa/Lubumbashi').toJSDate())
+          .count('* as total')
+      )[0]?.$extras.total || 0
+               
+    alt = (Number(Critique) + Number(Expire))
+    }else{
+       products = await Product.query().where('userid',Number(auth.user?.id))
+     PRODUCTS = await Product.query().where('userid',Number(auth.user?.id)).where('expiration_date', '<=', DateTime.now().setZone('Africa/Lubumbashi').toJSDate())
     const critiqueResult = await Product.query().where('userid',Number(auth.user?.id)).whereRaw('quantity < alert_seuil').count('* as total')
-    const Critique = critiqueResult[0]?.$extras.total || 0
-    const PRODUCT = await Product.query().where('userid',Number(auth.user?.id)).whereRaw('quantity < alert_seuil')
-    const Expire =
+     Critique = critiqueResult[0]?.$extras.total || 0
+     PRODUCT = await Product.query().where('userid',Number(auth.user?.id)).whereRaw('quantity < alert_seuil')
+     Expire =
       (
         await Product.query()
           .where('userid',Number(auth.user?.id))
@@ -97,7 +123,9 @@ export default class ProductsController {
           .count('* as total')
       )[0]?.$extras.total || 0
                
-   let alt = (Number(Critique) + Number(Expire))
+    alt = (Number(Critique) + Number(Expire))
+    }
+    
     return view.render('products/alerts', { products, auth, Expire, PRODUCTS, Critique, PRODUCT ,Alerte:alt})
   }
 }

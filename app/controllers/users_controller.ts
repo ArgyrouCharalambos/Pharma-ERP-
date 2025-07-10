@@ -11,8 +11,25 @@ export default class UsersController {
       fullName: payload.fullName,
       password: payload.password,
       email: payload.email,
+      idProprietaire: null,
+      role:'proprietaire'
     })
     response.redirect('/login')
+  }
+
+  public async createCaissier({ auth,request, response }: HttpContext) {
+     const data = request.all()
+    const payload = await createUserValidator.validate(data)
+
+    await USER.create({
+      fullName: payload.fullName,
+      password: payload.password,
+      email: payload.email,
+      idProprietaire: auth.user?.id,
+      role: 'caissier',
+    })
+
+    return response.redirect('/') // ou une autre page
   }
   //connexion d'un utilisateur
   public async login({ request, auth, response }: HttpContext) {

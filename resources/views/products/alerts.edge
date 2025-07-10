@@ -24,26 +24,29 @@
   </h1>
 </div>
 <nav class="p-4 space-y-2">
-  <a href="/" class="flex items-center p-3 text-white/90  hover:bg-blue-700/20  text-sm font-medium rounded-lg transition-all">
-    <i class="fas fa-chart-pie mr-3"></i> Tableau de bord
-  </a>
-  <a href="/products" class="flex items-center p-3 text-white/90 text-sm font-medium hover:bg-blue-700/20 rounded-lg transition-all">
-    <i class="fas fa-pills mr-3"></i> Produits
-  </a>
-  <a href="/sales" class="flex items-center p-3 text-white/90 text-sm font-medium hover:bg-blue-700/20 rounded-lg transition-all">
-    <i class="fas fa-receipt mr-3"></i> <p class="ml-1">Ventes</p>
-  </a>
-  <a href="/products/alerts" class="flex bg-blue-700/30 gap-3 text-sm font-medium items-center p-3 text-white/90 hover:bg-blue-700/20 rounded-lg transition-all">
-   @if(Alerte)
-       <i class="fas fa-exclamation-triangle text-md text-red-600"></i>
-       @else
-     <i class="fas fa-exclamation-triangle text-md text-purple-100 "></i>
-     @endif
-     <p>
-       Alertes
-     </p>
+@if(auth.user?.role === 'proprietaire')
+ <a href="/" class="flex items-center p-3 text-white/90 bg-blue-700/30 hover:bg-blue-700/20 text-sm font-medium rounded-lg transition-all">
+   <i class="fas fa-chart-pie mr-3"></i> Tableau de bord
  </a>
- </nav>
+ <a href="/products" class="flex items-center p-3 text-white/90 text-sm font-medium hover:bg-blue-700/20 rounded-lg transition-all">
+   <i class="fas fa-pills mr-3"></i> Produits
+ </a>
+ @endif
+ <a href="/sales" class="flex items-center p-3 text-white/90 text-sm font-medium hover:bg-blue-700/20 rounded-lg transition-all">
+   <i class="fas fa-receipt mr-3"></i> <p class="ml-1">Ventes</p>
+ </a>
+ <a href="/products/alerts" class="flex gap-3 text-sm font-medium items-center p-3 text-white/90 hover:bg-blue-700/20 rounded-lg transition-all">
+  @if(Alerte)
+      <i class="fas fa-exclamation-triangle text-md text-red-600"></i>
+      @else
+    <i class="fas fa-exclamation-triangle text-md text-purple-100 "></i>
+    @endif
+    <p>
+      Alertes
+    </p>
+</a>
+
+</nav>
 </div>
 <div class="h-full flex flex-col transition-all duration-300" :class="sidebarOpen ? 'ml-48' : 'ml-0'">
 <!-- Header -->
@@ -88,6 +91,7 @@
               <h3 class="font-bold text-red-800">{{ product.name }}</h3>
               <p class="text-sm text-red-600">Expiré depuis {{ (product.expirationDate.diffNow('days').days * -1).toFixed(0) }} jours</p>
             </div>
+    @if(auth.user?.role === 'proprietaire')
             <form action="/productsDestroy/{{product.id}}" method="POST">
         {{ csrfField() }}
               <input type="hidden" name="_method" value="DELETE">
@@ -95,6 +99,7 @@
                 <i class="fas fa-trash"></i>
               </button>
             </form>
+            @endif
           </div>
         </div>
         @end
@@ -118,14 +123,16 @@
             <div>
               <h3 class="font-bold text-orange-800">{{ product.name }}</h3>
               <p class="text-sm text-orange-600">Stock restant: {{ product.quantity }}</p>
-              {{--  <div class="mt-2">
-                <p class="text-gray-600">Seuil d'alerte: {{ product.alertThreshold || 'Non défini' }}</p>
-              </div>  --}}
+              <div class="mt-2">
+                <p class="text-gray-600">Seuil d'alerte: {{ product.alertSeuil || 'Non défini' }}</p>
+              </div>
             </div>
+    @if(auth.user?.role === 'proprietaire')
             <a href="{{ route('products.edit', [product.id]) }}" 
                class="text-orange-600 hover:text-orange-800">
               <i class="fas fa-edit"></i>
             </a>
+            @endif
           </div>
         </div>
         @endeach
