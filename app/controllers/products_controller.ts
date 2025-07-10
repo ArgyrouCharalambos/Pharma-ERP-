@@ -5,12 +5,56 @@ import { DateTime } from 'luxon'
 export default class ProductsController {
   public async index({ view, request, auth }: HttpContext) {
     const sortBy = request.input('sortBy', 'id') 
-    const PRODUCT = await Product.query()
+    let PRODUCT = null;
+    let total = null;
+    let products = null;
+    let alt = null;
+    let valeurTotalDuStock = 0;
+
+
+  if(auth.user?.idProprietaire !== null){
+
+     PRODUCT = await Product.query()
+      .orderBy(sortBy, 'asc')
+      .where('userid', Number(auth.user?.idProprietaire))
+     products = await Product.findManyBy('userid', auth.user?.idProprietaire)
+
+      total =
+          (
+            await Product.query()
+              .sum('quantity as total')
+              .where('userid', Number(auth.user?.idProprietaire))
+              .first()
+          )?.$extras.total || 0
+
+     const critiqueResult = await Product.query().where('userid',Number(auth.user?.idProprietaire)).whereRaw('quantity < alert_seuil').count('* as total')
+              const Critique = critiqueResult[0]?.$extras.total || 0
+              const Expire =
+                (
+                  await Product.query()
+                    .where('userid',Number(auth.user?.idProprietaire))
+                    .where('expiration_date', '<=', DateTime.now().setZone('Africa/Lubumbashi').toJSDate())
+                    .count('* as total')
+                )[0]?.$extras.total || 0
+    
+                 alt = (Number(Critique) + Number(Expire))
+
+                const Total = Product.findManyBy('userid', auth.user?.idProprietaire)
+
+                 valeurTotalDuStock = 0;
+                
+                (await Total).forEach(e => {
+                  valeurTotalDuStock = valeurTotalDuStock + (e.quantity * e.price);
+
+                });
+
+  }else{
+       PRODUCT = await Product.query()
       .orderBy(sortBy, 'asc')
       .where('userid', Number(auth.user?.id))
-    const products = await Product.findManyBy('userid', auth.user?.id)
+     products = await Product.findManyBy('userid', auth.user?.id)
 
-     const total =
+      total =
           (
             await Product.query()
               .sum('quantity as total')
@@ -28,16 +72,17 @@ export default class ProductsController {
                     .count('* as total')
                 )[0]?.$extras.total || 0
     
-                let alt = (Number(Critique) + Number(Expire))
+                 alt = (Number(Critique) + Number(Expire))
 
                 const Total = Product.findManyBy('userid', auth.user?.id)
 
-                let valeurTotalDuStock = 0;
+                 valeurTotalDuStock = 0;
                 
                 (await Total).forEach(e => {
                   valeurTotalDuStock = valeurTotalDuStock + (e.quantity * e.price);
 
                 });
+  }
 
 
     return view.render('products/index', { totalStock: total,products, PRODUCT, auth,Alerte:alt ,valeurTotalDuStock,DateTime})

@@ -45,10 +45,11 @@
  <a href="/" class="flex items-center p-3 text-white/90 bg-blue-700/30 hover:bg-blue-700/20 text-sm font-medium rounded-lg transition-all">
    <i class="fas fa-chart-pie mr-3"></i> Tableau de bord
  </a>
- <a href="/products" class="flex items-center p-3 text-white/90 text-sm font-medium hover:bg-blue-700/20 rounded-lg transition-all">
+
+ @endif
+  <a href="/products" class="flex items-center p-3 text-white/90 text-sm font-medium hover:bg-blue-700/20 rounded-lg transition-all">
    <i class="fas fa-pills mr-3"></i> Produits
  </a>
- @endif
  <a href="/sales" class="flex items-center p-3 text-white/90 text-sm font-medium hover:bg-blue-700/20 rounded-lg transition-all">
    <i class="fas fa-receipt mr-3"></i> <p class="ml-1">Ventes</p>
  </a>
@@ -140,9 +141,11 @@
                 <h2 class="text-xl font-bold">Inventaire des Médicaments</h2>
                 <div class="flex items-center space-x-4">
                     <span id="total-products" class="text-sm font-medium bg-white/20 px-3 py-1 rounded-full">Total : 0 produits</span>
+                @if(auth.user?.role === 'proprietaire')
                     <a href="{{ route('products.create' )}}" class="bg-white text-blue-600 px-4 py-2 rounded-lg font-semibold hover:bg-gray-50 transition-all">
                         <i class="fas fa-plus mr-2"></i>Ajouter
                     </a>
+                    @endif
                 </div>
             </div>
         </div>
@@ -358,22 +361,25 @@
         secondaryColumn.className = 'border-t md:border-t-0 md:border-l border-gray-100 md:w-48 flex flex-col';
 
         const topBar = document.createElement('div');
-        topBar.className = 'p-4 lg:pb-6 lg:pt-7 flex items-center justify-between';
+        topBar.className = 'p-4 lg:pb-9 h-full lg:pt-7 flex items-center justify-between';
 
         const expiration = document.createElement('div');
         expiration.className = `flex items-center text-sm`;
-        const calIcon = document.createElement('i');
-        calIcon.className = 'far fa-calendar mr-2';
+        
         const dateText = document.createElement('span');
-        dateText.textContent = product.expirationDate;
+        dateText.textContent = `MAJ : ${product.updatedAt}`;
+        dateText.className = `text-[13px]`;
 
-        expiration.appendChild(calIcon);
+
         expiration.appendChild(dateText);
 
         const actions = document.createElement('div');
         actions.className = 'flex space-x-3 opacity-0 group-hover:opacity-100 transition-opacity';
 
-        const editLink = document.createElement('a');
+        topBar.appendChild(expiration);
+
+        if("{{auth.user?.role}}" == 'proprietaire'){
+           const editLink = document.createElement('a');
         editLink.href = `/products/${product.id}/edit`;
         editLink.className = 'text-blue-500 hover:text-blue-700';
         const editIcon = document.createElement('i');
@@ -383,6 +389,9 @@
         const deleteForm = document.createElement('form');
         deleteForm.action = `/productsDestroy/${product.id}`;
         deleteForm.method = 'POST';
+          
+        
+       
 
         const csrfInput = document.createElement('input');
         csrfInput.className = 'hidden';
@@ -408,16 +417,31 @@
 
         actions.appendChild(editLink);
         actions.appendChild(deleteForm);
-
-        topBar.appendChild(expiration);
         topBar.appendChild(actions);
 
+        }
+
+        const exp = document.createElement('div');
+
+
+        const calIcon2 = document.createElement('i');
+        calIcon2.className = 'far fa-calendar mr-2';
+
         const bottomBar = document.createElement('div');
-        bottomBar.className = 'p-4 lg:pt-6 h-full bg-gray-50 text-xs text-gray-500 border-t border-gray-100';
-        bottomBar.textContent = 'MAJ : ' + product.updatedAt;
+        bottomBar.className = 'p-4 flex gap-[1px] items-center lg:pt-6 lg:pb-5 h-full bg-gray-50 text-xs text-gray-500 border-t border-gray-100';
+
+        const bottomBarT = document.createElement('div');
+        bottomBarT.textContent = 'EXP : ' + product.expirationDate  ;
+
+        bottomBar.appendChild(calIcon2);
+        bottomBar.appendChild(bottomBarT);
+
+        exp.appendChild(bottomBar);
+
+        
 
         secondaryColumn.appendChild(topBar);
-        secondaryColumn.appendChild(bottomBar);
+        secondaryColumn.appendChild(exp);
 
         // Ajout final
         layoutWrapper.appendChild(mainColumn);
